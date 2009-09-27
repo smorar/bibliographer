@@ -1497,7 +1497,7 @@ public class BibliographerUI
             history[cur] = history[cur - 1];
         }
         history[0] = filename;
-        Config.SetKey("file_history", history);
+        Config.SetKey("file_history", history.ToArray());
 
         UpdateMenuFileHistory();
     }
@@ -1505,8 +1505,7 @@ public class BibliographerUI
     private void FileHistoryActivate(object o, EventArgs a)
     {
         MenuItem item = (MenuItem) o;
-        int index = (int) item.GetData("i");
-        //int index = (int) item.UserData;
+		int index = (int) item.Data["i"];
         if (Config.KeyExists("max_file_history_count") && index >= 0 && index < Config.GetInt("max_file_history_count") && Config.KeyExists("file_history"))
         {
             string[] history = (string[])Config.GetKey("file_history");
@@ -1526,7 +1525,7 @@ public class BibliographerUI
         ArrayList temp = new ArrayList();
         // Workaround for clear file history bug - set history to contain a single empty string
         temp.Add("");
-        Config.SetKey("file_history", temp);
+        Config.SetKey("file_history", temp.ToArray());
         UpdateMenuFileHistory();
     }
 
@@ -1553,8 +1552,7 @@ public class BibliographerUI
 	                string label = string.Format("{0} ", i + 1) + (string) history[i];
 	                MenuItem item = new MenuItem(label);
 	                item.Activated += FileHistoryActivate;
-	                item.SetData("i", (System.IntPtr)i);
-	                //item.UserData = (System.IntPtr)i;
+					item.Data.Add("i", (System.IntPtr)i);
 	                recentFilesMenu.Append(item);
 	                gotOne = true;
                 }
