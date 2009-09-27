@@ -1,0 +1,91 @@
+address
+Publisher's address. For major publishing houses, just the city is given. For small publishers, you can help the reader by giving the complete address.
+1
+
+annote
+An annotation, used only for annotated bibliography styles (which are not among the standard ones).
+1
+ 
+author
+The name(s) of the author(s).
+1
+ 
+booktitle
+Title of a book, part of which is being cited.
+1
+
+chapter
+A chapter number.
+1
+
+edition
+The edition of a book.
+1
+
+editor
+Name(s) of editor(s). If there is also an "author" field, then the "editor" field gives the editor of the book or collection in which the reference appears.
+1
+ 
+howpublished
+How something strange has been published.
+1
+ 
+institution
+The institution that published the work.
+1
+
+journal
+A journal name.
+1
+
+key
+Used for alphabetizing and creating a label when the "author" and "editor" fields are missing.
+1
+
+month
+The month in which the work was published or, for an unpublished work, in which it was written.
+1 
+
+note
+Any additional information that can help the reader.
+1
+ 
+number
+The number of a journal, magazine, or technical report.
+1
+ 
+organization
+The organization sponsoring a conference.
+1
+
+pages
+A page number or range of numbers.
+1
+
+publisher
+The publisher's name.
+1
+
+school
+The name of the school where a thesis was written.
+1
+
+series
+The name of a series or set of books.
+1
+ 
+title
+The work's title.
+1
+
+type
+The type of a technical report.
+1
+
+volume
+The volume of a journal or multivolume book work.
+1
+
+year
+The year of publication or, for an unpublished work, the year it was written.
+1

@@ -1,0 +1,21 @@
+Source: bibliographer
+Section: gnome
+Priority: optional
+Maintainer: Sameer Morar <smorar@gmail.com>
+Build-Depends: debhelper (>= 4.1.0), mono-gmcs, mono-2.0-devel, libmono-dev, libmono2.0-cil, libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.0-cil (>=2.3.9), libglade2.0-cil (>= 2.3.9)
+Standards-Version: 3.8.0
+
+Package: bibliographer
+Architecture: any
+Depends: libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.0-cil (>=2.3.9), libglade2.0-cil (>= 2.3.9), libmono2.0-cil, mono-runtime, antiword, poppler-utils
+Recommends: texlive-base
+Description: A bibliographic database management tool
+ Bibliographer is a bibtex bibliography database editor which 
+ aims to be easy to use. Its features include linking files to
+ your records with indexing and searching support.
+ .
+ The interface is designed for the easy navigation of your 
+ bibliography, and double clicking a record will open the 
+ linked file.
+ .
+ http://bibliographer.homelinux.net

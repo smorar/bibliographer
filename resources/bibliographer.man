@@ -1,0 +1,19 @@
+.TH BIBLIOGRAPHER 1 "January 22, 2006"
+.SH NAME
+bibliographer \- A bibliographic database management tool
+.SH SYNOPSIS
+.B bibliographer
+.I file.bib
+.SH DESCRIPTION
+.B bibliographer
+is a bibtex bibliography database editor which aims to be easy to use. Its features include linking files to your records with indexing and searching support.
+
+The interface is designed for the easy navigation of your bibliography, and double clicking a record will open the linked file.
+
+.SH SEE ALSO
+.BR bibtex (1),
+.br
+.SH AUTHORS
+bibliographer was written by Sameer Morar <smorar@gmail.com> and Carl Hultquist <chultquist@gmail.com>.
+.PP
+This manual page was written by Sameer Morar <smorar@gmail.com>.

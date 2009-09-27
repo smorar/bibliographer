@@ -1,0 +1,83 @@
+article
+An article from a journal or magazine.
+1
+author,title,journal,year,volume,number,pages,month,note
+1,2,3,4,0,0,0,0,0
+
+book
+ A book with an explicit publisher.
+1
+author,editor,title,publisher,year,volume,series,address,edition,month,note
+1,1,2,3,4,0,0,0,0,0,0
+
+booklet
+A work that is printed and bound, but without a named publisher or sponsoring institution.
+1
+title,author,howpublished,address,month,year,note
+1,0,0,0,0,0,0
+
+conference
+An article in the proceedings of a conference.
+1
+author,title,booktitle,year,editor,pages,organization,publisher,address,month,note
+1,2,3,4,0,0,0,0,0,0,0
+
+inbook
+A part of a book, which may be a chapter and/or a range of pages.
+1
+author,editor,title,chapter,pages,publisher,year,volume,series,address,edition,month,note
+1,1,2,3,3,4,5,0,0,0,0,0,0
+
+incollection
+A part of a book with its own title.
+1
+author,title,booktitle,year,editor,pages,organization,publisher,address,month,note
+1,2,3,4,0,0,0,0,0,0,0
+
+inproceedings
+An article in the proceedings of a conference.
+1
+author,title,booktitle,year,editor,pages,organization,publisher,address,month,note
+1,2,3,4,0,0,0,0,0,0,0
+
+manual
+Technical documentation.
+1
+title,author,organization,address,edition,month,year,note
+1,0,0,0,0,0,0,0
+
+mastersthesis
+A Master's thesis.
+1
+author,title,school,year,address,month,note
+1,2,3,4,0,0,0
+
+misc
+Use this type when nothing else seems appropriate.
+1
+author,title,howpublished,month,year,note
+0,0,0,0,0,0
+
+phdthesis
+A PhD thesis.
+1
+author,title,school,year,address,month,note
+1,2,3,4,0,0,0
+
+proceedings
+The proceedings of a conference.
+1
+title,year,editor,organization,publisher,address,month,note
+1,2,0,0,0,0,0,0
+
+techreport
+A report published by a school or other institution, usually numbered within a series.
+1
+author,title,institution,year,type,number,address,month,note
+1,2,3,4,0,0,0,0,0
+
+unpublished
+A document with an author and title, but not formally published.
+1
+author,title,note,month,year
+1,2,3,0,0

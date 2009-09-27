@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Bibliographer
+GenericName=Bibliography Manager
+Comment=Manage bibtex bibliographic databases
+Icon=bibliographer.png
+Exec=bibliographer
+Terminal=false
+Type=Application
+Categories=GNOME;Application;Office
+StartupNotify=true
+MimeType=text/x-bibtex;

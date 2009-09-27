@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<UserCombinePreferences filename="/home/smorar/Projects/bibliographer/trunk/bibliographer-2.4.mds">
+  <Files>
+    <File filename="Welcome" />
+    <File filename="./src/BibtexRecord.cs" />
+    <File filename="./src/BibtexRecords.cs" />
+    <File filename="./src/BibliographerUI.cs" />
+    <File filename="./src/FileIndexer.cs" />
+    <File filename="./src/BibliographerStartup.cs" />
+    <File filename="./src/IntArrayList.cs" />
+    <File filename="./src/LitListStore.cs" />
+    <File filename="./src/StringArrayList.cs" />
+  </Files>
+  <Views>
+    <ViewMemento Id="MonoDevelop.Ide.Gui.Pads.ProjectPad">
+      <TreeView>
+        <Node expanded="True">
+          <Node name="bibliographer" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Resources" expanded="True" />
+            <Node name="src" expanded="True">
+              <Node name="StringArrayList.cs" expanded="False" selected="True" />
+            </Node>
+          </Node>
+        </Node>
+      </TreeView>
+    </ViewMemento>
+    <ViewMemento Id="MonoDevelop.Ide.Gui.Pads.ClassPad">
+      <TreeView>
+        <Node expanded="True" selected="True">
+          <Node name="bibliographer" expanded="True">
+            <Node name="bibliographer" expanded="True">
+              <Node name="FileIndexer" expanded="True" />
+            </Node>
+          </Node>
+        </Node>
+      </TreeView>
+    </ViewMemento>
+  </Views>
+  <Properties>
+    <Properties>
+      <Property key="ActiveConfiguration" value="Debug" />
+      <Property key="ActiveWindow" value="/home/smorar/Projects/bibliographer/trunk/src/StringArrayList.cs" />
+    </Properties>
+  </Properties>
+</UserCombinePreferences>

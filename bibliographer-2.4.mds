@@ -1,0 +1,17 @@
+<Combine name="bibliographer" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry build="True" name="bibliographer" configuration="Debug" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry build="True" name="bibliographer" configuration="Release" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="bibliographer" single="True">
+    <Execute type="None" entry="bibliographer" />
+  </StartMode>
+  <DeployTargets />
+  <Entries>
+    <Entry filename="./bibliographer-2.4.mdp" />
+  </Entries>
+</Combine>

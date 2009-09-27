@@ -1,0 +1,24 @@
+bibliographer (0.1+svn20081117~ppa2) intrepid; urgency=low
+
+  * Update build-depends, and recommends
+
+ -- Sameer Morar <smorar@gmail.com>  Mon, 22 Nov 2008 21:39:00 +0200
+
+bibliographer (0.1+svn20081117~ppa1) intrepid; urgency=low
+
+  * Update build-depends to require mono-gmcs and remove unnecessary
+    dependancies
+
+ -- Sameer Morar <smorar@gmail.com>  Mon, 22 Nov 2008 19:38:00 +0200
+
+bibliographer (0.1+svn20081117~ppa0) intrepid; urgency=low
+
+  * Latest subversion snapshot
+
+ -- Sameer Morar <smorar@gmail.com>  Mon, 22 Nov 2008 14:58:00 +0200
+
+bibliographer (0.1) intrepid; urgency=low
+
+  * Initial Release.
+
+ -- Sameer Morar <smorar@gmail.com>  Sun, 22 Jan 2006 21:08:36 +0200
