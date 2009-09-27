@@ -1505,7 +1505,7 @@ public class BibliographerUI
     private void FileHistoryActivate(object o, EventArgs a)
     {
         MenuItem item = (MenuItem) o;
-		int index = (int) item.Data["i"];
+		int index = (int) System.Convert.ToUInt16((string) item.Data["i"].ToString());
         if (Config.KeyExists("max_file_history_count") && index >= 0 && index < Config.GetInt("max_file_history_count") && Config.KeyExists("file_history"))
         {
             string[] history = (string[])Config.GetKey("file_history");
