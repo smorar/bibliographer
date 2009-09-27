@@ -1,3 +1,10 @@
+bibliographer (0.1+bzr20090927~ppa0) karmic; urgency=low
+
+  * Fix crasher bug where null object was added to a string array list. Insert empty string instead.
+  * Import bibliographer to launchpad
+
+ -- Sameer Morar <smorar@gmail.com>  Sun, 27 Sep 2009 21:57:49 +0200
+
 bibliographer (0.1+svn20081117~ppa2) intrepid; urgency=low
 
   * Update build-depends, and recommends
