@@ -12,6 +12,6 @@
   </StartMode>
   <DeployTargets />
   <Entries>
-    <Entry filename="./bibliographer-2.4.mdp" />
+    <Entry filename="./bibliographer.mdp" />
   </Entries>
 </Combine>
