@@ -13,7 +13,9 @@ public class StringArrayList : System.Collections.CollectionBase
 
   public int Add(string str)
   {
-    return List.Add(str);
+	if (str == null)
+		str = "";
+	return List.Add(str);
   }
 
   public void Insert(int index, string str)
