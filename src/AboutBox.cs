@@ -25,7 +25,7 @@ namespace bibliographer
 		    this.Logo = new Gdk.Pixbuf(null, "bibliographer.png");
 		    this.Copyright = "Copyright ©2005-2007";
 		    this.Comments = "A Bibtex editor";
-		    this.Name = name;
+		    this.ProgramName = name;
 		    this.Version = version;
 
 		}
