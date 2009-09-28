@@ -1882,7 +1882,8 @@ public class BibliographerUI
         bibtexRecords.Add(record);
 
         iter = litStore.GetIter(record);
-        litTreeView.Selection.SelectIter(iter);
+			
+		litTreeView.SetCursor(litStore.GetPath(iter),litTreeView.GetColumn(0),false);
 
         BibtexGenerateKeySetStatus();
 
@@ -1979,9 +1980,21 @@ public class BibliographerUI
     {
         TreeIter iter;
         TreeModel model;
+		TreePath newpath;
 
         if (litTreeView.Selection.GetSelected(out model, out iter))
         {
+			// select next row, or previous row if we are on the last row
+			newpath = model.GetPath(iter);
+			newpath.Next();
+			litTreeView.SetCursor(newpath, litTreeView.GetColumn(0), false);
+			if (!litTreeView.Selection.PathIsSelected(newpath))
+			{
+				newpath = model.GetPath(iter);
+				newpath.Prev();
+				litTreeView.SetCursor(newpath, litTreeView.GetColumn(0), false);
+			}
+
             // model and iter are TreeModelSort types
             // Obtain the search model
             TreeModel searchModel = ((TreeModelSort) model).Model;

@@ -83,30 +83,30 @@ public class LitListStore : Gtk.ListStore
         {
             Gtk.TreeIter treeIter;
             BibtexRecord rec;
-
+				
             Debug.WriteLine(5, "bibtexRecords.Count: {0}", this.bibtexRecords.Count);
             if (this.GetIterFirst(out treeIter))
             {
-                rec = this.GetValue(treeIter, 0) as BibtexRecord;
-                if (!this.bibtexRecords.Contains(rec))
-                    this.Remove(ref treeIter);
-
-                while(this.IterNext(ref treeIter))
-                {
-                    rec = this.GetValue(treeIter, 0) as BibtexRecord;
-                    if (!this.bibtexRecords.Contains(rec))
-                        this.Remove(ref treeIter);
-                }
+				while (this.IterIsValid(treeIter))
+				{
+	                rec = this.GetValue(treeIter, 0) as BibtexRecord;
+	                if (!this.bibtexRecords.Contains(rec))
+					{
+			        	this.Remove(ref treeIter);
+					}
+					if(this.IterIsValid(treeIter))
+						this.IterNext(ref treeIter);
+				}
             }
 
-            BibtexRecords btRecords = this.GetListStoreBibtexRecords();
+			BibtexRecords btRecords = this.GetListStoreBibtexRecords();
             for (int i = 0; i < this.bibtexRecords.Count; i++)
             {
                 if (!btRecords.Contains(this.bibtexRecords[i]))
                 {
                     Debug.WriteLine(5, "Inserting record into TreeIter at pos: {0}", i);
                     Gtk.TreeIter iter_ = this.Insert(i);
-                    this.SetValue(iter_, 0, this.bibtexRecords[i]);
+                    this.SetValue(iter_, 0,(BibtexRecord) this.bibtexRecords[i]);
                 }
             }
         }
@@ -121,7 +121,7 @@ public class LitListStore : Gtk.ListStore
         {
             rec = this.GetValue(iter, 0) as BibtexRecord;
 
-            if (rec == record)
+            if (rec.GetHashCode() == record.GetHashCode())
             {
                 return iter;
             }
@@ -130,7 +130,7 @@ public class LitListStore : Gtk.ListStore
             {
                 rec = this.GetValue(iter, 0) as BibtexRecord;
 
-                if (rec == record)
+                if (rec.GetHashCode() == record.GetHashCode())
                 {
                     return iter;
                 }
