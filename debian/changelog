@@ -1,4 +1,10 @@
-bibliographer (0.1.1~ppa0.karmic) karmic; urgency=low
+bibliographer (0.1.1~ppa1.jaunty) jaunty; urgency=low
+
+  * Fix build depends for jaunty upload
+
+ -- Sameer Morar <smorar@gmail.com>  Mon, 28 Sep 2009 17:08:00 +0200
+
+bibliographer (0.1.1~ppa0.jaunty) jaunty; urgency=low
 
   * Import bibliographer to launchpad
   * Fix crasher bug where null object was added to a string array list. 
