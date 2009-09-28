@@ -31,7 +31,7 @@ namespace bibliographer
   {
     public static void Main (string[] args)
     {
-        Gnome.Program program = new Gnome.Program("bibliographer", "0.1", Gnome.Modules.UI, args);
+        Gnome.Program program = new Gnome.Program("bibliographer", "0.1.1", Gnome.Modules.UI, args);
         
         try{
 	        Utilities.SetProcessName("bibliographer");
