@@ -48,7 +48,7 @@ public class SidePaneTreeStore : Gtk.TreeStore, Gtk.TreeSortable
 		
 		Debug.WriteLine(10, btRecord.ToBibtexString());
 		
-        this.UpdateTreeStore(btRecord);
+        UpdateTreeStore(btRecord);
     }
     
     private void OnBibtexRecordAdded(object o, EventArgs e)
@@ -498,7 +498,7 @@ public class SidePaneTreeStore : Gtk.TreeStore, Gtk.TreeSortable
         {
             Gtk.TreeIter iter;
             this.IterChildren(out iter, iterAuth);
-            for (int i = 0; i < this.IterNChildren(iterAuth); i++)
+			while(this.IterIsValid(iter))
             {
                 string author = (string) this.GetValue(iter, 0);
                 authors.Add(author);
@@ -518,7 +518,7 @@ public class SidePaneTreeStore : Gtk.TreeStore, Gtk.TreeSortable
 
             Gtk.TreeIter iter;
             this.IterChildren(out iter, iterYear);
-            for (int i = 0; i < this.IterNChildren(iterAuth); i++)
+			while(this.IterIsValid(iter))
             {
                 string year = (string) this.GetValue(iter, 0);
                 years.Add(year);
@@ -537,7 +537,7 @@ public class SidePaneTreeStore : Gtk.TreeStore, Gtk.TreeSortable
         {
             Gtk.TreeIter iter;
             this.IterChildren(out iter, iterJourn);
-            for (int i = 0; i < this.IterNChildren(iterAuth); i++)
+			while(this.IterIsValid(iter))
             {
                 string journal = (string) this.GetValue(iter, 0);
                 journals.Add(journal);
