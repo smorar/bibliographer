@@ -1,4 +1,4 @@
-bibliographer (0.1.1~ppa0) karmic; urgency=low
+bibliographer (0.1.1~ppa0.karmic) karmic; urgency=low
 
   * Import bibliographer to launchpad
   * Fix crasher bug where null object was added to a string array list. 
