@@ -1,17 +1,19 @@
-bibliographer (0.1+bzr20090927~ppa0) karmic; urgency=low
+bibliographer (0.1.1~ppa0) karmic; urgency=low
 
   * Import bibliographer to launchpad
-  * Fix crasher bug where null object was added to a string array list. Insert empty string instead.
+  * Fix crasher bug where null object was added to a string array list. 
+    Insert empty string instead.
   * Fix a warning - AboutBox.Name changed to AboutBox.ProgramName
   * Replace deprecated use of Object.SetData and Object.GetData
   * Fix bug where recent file list was not being updated
   * Fix bug where activating recent file menu item caused a crash
   * Fix error with invalidating iters on adding and removing records
   * Fix bug where newly added record should be selected
-  * Fix bug where the selection moves to the next record when a record is deleted, or the previous record in the case of th elast record
+  * Fix bug where the selection moves to the next record when a record is 
+    deleted, or the previous record in the case of th elast record
   * Fix bugs with the side pane where the wrong iter was being iterated over
 
- -- Sameer Morar <smorar@gmail.com>  Mon, 28 Sep 2009 05:28:48 +0200
+ -- Sameer Morar <smorar@gmail.com>  Mon, 28 Sep 2009 06:08:55 +0200
 
 bibliographer (0.1+svn20081117~ppa2) intrepid; urgency=low
 
