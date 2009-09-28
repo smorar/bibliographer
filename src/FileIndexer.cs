@@ -82,6 +82,7 @@ public class FileIndexer
 
     }
 
+	/*
     private static StringArrayList ReadFromFile(String filename)
     {
         System.IO.StreamReader stream = new System.IO.StreamReader(new System.IO.FileStream(filename, System.IO.FileMode.Open));
@@ -96,6 +97,7 @@ public class FileIndexer
         stream.Close();
         return result;
     }
+	*/
 
 	private static StringArrayList GetTextualExtractor(MimeType mimeType)
 	{
