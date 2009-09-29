@@ -843,6 +843,13 @@ public class BibtexRecord
         return journal;
     }
 
+	public bool HasURI()
+	{
+		if ((this.GetURI() != null) || (this.GetURI() != ""))
+			return true;
+		return false;
+	}
+		
     public Gdk.Pixbuf GetSmallThumbnail()
     {
         Debug.Write(5, "getSmallThumbnail: ");

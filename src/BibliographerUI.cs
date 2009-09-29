@@ -202,8 +202,11 @@ public class BibliographerUI
 		{
 	        BibtexRecord record = (BibtexRecord) model.GetValue(iter, 0);
 
-			if ((cell != null) && (record != null) && (record.GetSmallThumbnail() != null))
+			//if ((cell != null) && (record != null) && (record.GetSmallThumbnail() != null))
+			if ((cell != null) && (record != null) && (record.HasURI()))
+			{
 		        (cell as Gtk.CellRendererPixbuf).Pixbuf = record.GetSmallThumbnail();
+			}
 	    }
     }
 
