@@ -61,6 +61,9 @@ bibliographer_DATA = $(TARGET) $(TARGET).config
 
 bin_SCRIPTS = $(WRAPPER)
 
+EXTRA_DIST = $(BIBLIOGRAPHER_CSFILES) \
+	bibliographer.in bibliographer.exe.config.in
+
 CLEANFILES = 					\
 	$(TARGET)				\
 	$(TARGET).config			\
