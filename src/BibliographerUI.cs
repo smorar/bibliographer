@@ -113,7 +113,6 @@ public class BibliographerUI
     private TreeModelFilter fieldFilter;
     private TreeModelSort sorter;
     private string file_name;
-    private bool file_modified;
     private bool new_selected_record;
 
     // Thread related members
@@ -135,8 +134,7 @@ public class BibliographerUI
 
         gxml.Autoconnect (this);
 
-        //entryReqBibtexKey.Changed += OnBibtexKeyChanged;
-		entryReqBibtexKey.Changed += OnBibtexKeyChanged;
+		entryReqBibtexKey.Changed += OnEntryReqBibtexKeyChanged;
 
         indexerThread = new System.Threading.Thread(new ThreadStart(IndexerThread));
         indexerQueue = new Queue();
@@ -263,9 +261,8 @@ public class BibliographerUI
 
     private void OnBibtexRecordsModified(object o, EventArgs a)
     {
-        file_modified = true;
         // Refresh the Article Type field
-        UpdateTitle();
+        TitleModified();
         UpdateRecordTypeCombo();
     }
     
@@ -890,7 +887,7 @@ public class BibliographerUI
 	    	return false;
     }
 
-    private void OnBibtexKeyChanged(object o, EventArgs a)
+    private void OnEntryReqBibtexKeyChanged(object o, EventArgs a)
     {
         // the next check stops bad things from happening when
         // the user selects a new record in the list view,
@@ -1448,8 +1445,7 @@ public class BibliographerUI
             //	store);
             //btparser.Save(file_name);
             bibtexRecords.Save(file_name);
-            file_modified = false;
-            UpdateTitle();
+            Title();
             return (int) ResponseType.Ok;
         }
         else
@@ -1615,8 +1611,7 @@ public class BibliographerUI
         foreach (BibtexRecord record in bibtexRecords)
             alterationMonitorQueue.Enqueue(record);
         System.Threading.Monitor.Exit(alterationMonitorQueue);
-        file_modified = false;
-        UpdateTitle();
+        Title();
         // Disable editing of opened document
         //DisableEditing();
         viewRDVViewRecords.Activate();
@@ -1693,27 +1688,19 @@ public class BibliographerUI
 
         //if (file_name == null)
         file_name = "Untitled.bib";
-        file_modified = false;
-        UpdateTitle();
+        Title();
     }
 
-    private bool IsModified()
+    private void Title()
     {
-        return file_modified;
+        mainWindow.Title = application_name + " - " + file_name;
     }
-
-    private void UpdateTitle()
+    
+    private void TitleModified()
     {
-        if (file_modified == false)
-        {
-            mainWindow.Title = application_name + " - " + file_name;
-        }
-        else
-        {
-            mainWindow.Title = application_name + " - " + file_name+"*";
-        }
+        mainWindow.Title = application_name + " - " + file_name+"*";
     }
-
+    
     private void OnFileQuitActivate (object o, EventArgs a)
     {
         Quit();
