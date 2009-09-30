@@ -1,4 +1,4 @@
-bibliographer (0.1.1~ppa1.jaunty) jaunty; urgency=low
+bibliographer (0.1.1~ppa1.karmic) karmic; urgency=low
 
   * Fix build depends for jaunty upload
 
