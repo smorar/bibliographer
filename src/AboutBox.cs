@@ -14,19 +14,29 @@ namespace bibliographer
 	{
 		public AboutBox()
 		{
-			System.Reflection.AssemblyName asm = 
-				System.Reflection.Assembly.GetEntryAssembly().GetName();
-			
-			string name = asm.Name[0].ToString().ToUpper() + asm.Name.Substring(1);
-			string version = asm.Version.Major + "." + asm.Version.Minor;
-			string[] authors = {"Sameer Morar <smorar@gmail.com>", "Carl Hultquist <chultquist@gmail.com>"};
+
+            System.Reflection.AssemblyTitleAttribute title = (System.Reflection.AssemblyTitleAttribute) 
+                Attribute.GetCustomAttribute(System.Reflection.Assembly.GetExecutingAssembly(),
+                                             typeof(System.Reflection.AssemblyTitleAttribute));
+                                             
+            System.Reflection.AssemblyCopyrightAttribute copyright = (System.Reflection.AssemblyCopyrightAttribute) 
+                Attribute.GetCustomAttribute(System.Reflection.Assembly.GetExecutingAssembly(),
+                                             typeof(System.Reflection.AssemblyCopyrightAttribute));
+
+            System.Reflection.AssemblyDescriptionAttribute description = (System.Reflection.AssemblyDescriptionAttribute)
+                Attribute.GetCustomAttribute(System.Reflection.Assembly.GetExecutingAssembly(),
+                                             typeof(System.Reflection.AssemblyDescriptionAttribute));
+
+            System.Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            
+            string[] authors = {"Sameer Morar <smorar@gmail.com>", "Carl Hultquist <chultquist@gmail.com>"};
 		    
 		    this.Authors = authors;
 		    this.Logo = new Gdk.Pixbuf(null, "bibliographer.png");
-		    this.Copyright = "Copyright ©2005-2007";
-		    this.Comments = "A Bibtex editor";
-		    this.ProgramName = name;
-		    this.Version = version;
+		    this.Copyright = copyright.Copyright;
+		    this.Comments = description.Description;
+            this.ProgramName = title.Title;
+            this.Version = version.Major.ToString() + "." + version.Minor.ToString();
 
 		}
 	}
