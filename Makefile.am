@@ -13,6 +13,5 @@ EXTRA_DIST = resources/bibliographer.png \
 	resources/bibliographer_records \
 	resources/bibliographer_fields \
 	resources/bibliographer.man \
-	resources/error.png \
-	resources/gui.glade
+	resources/error.png
 

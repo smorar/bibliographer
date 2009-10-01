@@ -19,14 +19,12 @@
     <File name="src/BibtexRecordField.cs" subtype="Code" buildaction="Compile" />
     <File name="src/BibtexRecord.cs" subtype="Code" buildaction="Compile" />
     <File name="src/BibtexCustomRecordField.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerUI.cs" subtype="Code" buildaction="Compile" />
     <File name="COPYING" subtype="Code" buildaction="Nothing" />
     <File name="AUTHORS" subtype="Code" buildaction="Nothing" />
     <File name="ChangeLog" subtype="Code" buildaction="Nothing" />
     <File name="NEWS" subtype="Code" buildaction="Nothing" />
     <File name="README" subtype="Code" buildaction="Nothing" />
     <File name="TODO" subtype="Code" buildaction="Nothing" />
-    <File name="resources/gui.glade" subtype="Code" buildaction="EmbedAsResource" />
     <File name="src/AboutBox.cs" subtype="Code" buildaction="Compile" />
     <File name="src/BibliographerStartup.cs" subtype="Code" buildaction="Compile" />
     <File name="src/BibtexRecordType.cs" subtype="Code" buildaction="Compile" />
@@ -48,6 +46,14 @@
     <File name="src/Debug.cs" subtype="Code" buildaction="Compile" />
     <File name="src/LitListStore.cs" subtype="Code" buildaction="Compile" />
     <File name="src/RunOnMainThread.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/gui.stetic" subtype="Code" buildaction="EmbedAsResource" />
+    <File name="gtk-gui/generated.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/bibliographer.BibliographerMainWindow.cs" subtype="Code" buildaction="Compile" />
+    <File name="src/BibliographerMainWindow.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/bibliographer.BibtexEntryDialog.cs" subtype="Code" buildaction="Compile" />
+    <File name="src/BibtexEntryDialog.cs" subtype="Code" buildaction="Compile" />
+    <File name="src/BibliographerChooseColumns.cs" subtype="Code" buildaction="Compile" />
+    <File name="gtk-gui/bibliographer.BibliographerChooseColumns.cs" subtype="Code" buildaction="Compile" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -55,13 +61,13 @@
     <ProjectReference type="Gac" localcopy="True" refto="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <ProjectReference type="Gac" localcopy="True" refto="gnome-vfs-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <ProjectReference type="Gac" localcopy="True" refto="gconf-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <ProjectReference type="Gac" localcopy="True" refto="gnome-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <ProjectReference type="Gac" localcopy="True" refto="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <ProjectReference type="Gac" localcopy="True" refto="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <ProjectReference type="Gac" localcopy="True" refto="gconf-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <ProjectReference type="Gac" localcopy="True" refto="gnome-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <ProjectReference type="Gac" localcopy="True" refto="gnome-vfs-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </References>
   <DeploymentInformation strategy="File" />
 </Project>

@@ -4,18 +4,24 @@ TARGET = bibliographer.exe
 WRAPPER = bibliographer
 
 BIBLIOGRAPHER_CSFILES = 				\
+	$(top_srcdir)/gtk-gui/bibliographer.BibliographerMainWindow.cs 	\
+	$(top_srcdir)/gtk-gui/bibliographer.BibliographerChooseColumns.cs \
+	$(top_srcdir)/gtk-gui/bibliographer.BibtexEntryDialog.cs 	\
+	$(top_srcdir)/gtk-gui/generated.cs		\
 	$(srcdir)/AboutBox.cs				\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/BibliographerStartup.cs		\
-	$(srcdir)/BibliographerUI.cs			\
+	$(srcdir)/BibliographerChooseColumns.cs		\
+	$(srcdir)/BibliographerMainWindow.cs		\
 	$(srcdir)/BibtexCustomRecordField.cs		\
+	$(srcdir)/BibtexEntryDialog.cs			\
 	$(srcdir)/BibtexRecord.cs			\
 	$(srcdir)/BibtexRecords.cs			\
 	$(srcdir)/BibtexRecordField.cs			\
 	$(srcdir)/IntArrayList.cs			\
 	$(srcdir)/StringArrayList.cs			\
 	$(srcdir)/BibtexRecordType.cs			\
-	$(srcdir)/RunOnMainThread.cs		\
+	$(srcdir)/RunOnMainThread.cs			\
 	$(srcdir)/BibtexRecordFieldType.cs		\
 	$(srcdir)/BibtexRecordTypeLibrary.cs		\
 	$(srcdir)/BibtexRecordFieldTypeLibrary.cs	\
@@ -28,7 +34,6 @@ BIBLIOGRAPHER_CSFILES = 				\
   $(srcdir)/Debug.cs
 
 BIBLIOGRAPHER_RESOURCES =					\
-	-resource:$(top_srcdir)/resources/gui.glade		\
 	-resource:$(top_srcdir)/resources/bibliographer.png	\
 	-resource:$(top_srcdir)/resources/bibliographer_records	\
 	-resource:$(top_srcdir)/resources/bibliographer_fields  \
@@ -62,6 +67,7 @@ bibliographer_DATA = $(TARGET) $(TARGET).config
 bin_SCRIPTS = $(WRAPPER)
 
 EXTRA_DIST = $(BIBLIOGRAPHER_CSFILES) \
+	$(top_srcdir)/gtk-gui/gui.stetic
 	bibliographer.in bibliographer.exe.config.in
 
 CLEANFILES = 					\
