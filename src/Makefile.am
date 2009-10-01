@@ -38,7 +38,6 @@ BIBLIOGRAPHER_RESOURCES =					\
 	-resource:$(top_srcdir)/resources/bibliographer_records	\
 	-resource:$(top_srcdir)/resources/bibliographer_fields  \
 	-resource:$(top_srcdir)/resources/error.png		\
-	-pkg:glade-sharp-2.0					\
 	-pkg:gnome-sharp-2.0					\
 	-pkg:gtk-sharp-2.0					\
 	-pkg:gtk-dotnet-2.0					\
@@ -67,7 +66,7 @@ bibliographer_DATA = $(TARGET) $(TARGET).config
 bin_SCRIPTS = $(WRAPPER)
 
 EXTRA_DIST = $(BIBLIOGRAPHER_CSFILES) \
-	$(top_srcdir)/gtk-gui/gui.stetic
+	$(top_srcdir)/gtk-gui/gui.stetic \
 	bibliographer.in bibliographer.exe.config.in
 
 CLEANFILES = 					\

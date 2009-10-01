@@ -15,7 +15,6 @@ PKG_CHECK_MODULES(MONO,
 PKG_CHECK_MODULES(GTKSHARP,
 	gtk-sharp-2.0 >= $GTKSHARP_REQUIRED \
 	gnome-sharp-2.0 >= $GTKSHARP_REQUIRED \
-	glade-sharp-2.0 >= $GTKSHARP_REQUIRED \
 	gconf-sharp-2.0 >= $GTKSHARP_REQUIRED)
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)

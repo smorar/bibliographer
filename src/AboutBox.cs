@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using Gtk;
-using Glade;
 using Gnome;
 
 namespace bibliographer
