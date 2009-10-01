@@ -1325,6 +1325,15 @@ namespace bibliographer
 
         protected virtual void OnEntryReqBibtexKeyChanged (object sender, System.EventArgs e)
         {
+            
+            Gtk.Entry bibtexEntry = (Gtk.Entry) sender;
+            Gtk.TreeIter iter;
+            Gtk.TreeModel model;
+            if (litTreeView.Selection.GetSelected(out model, out iter))
+            {
+                BibtexRecord record = (BibtexRecord) model.GetValue(iter, 0);
+                record.SetKey(bibtexEntry.Text);
+            }
         }
         
         protected virtual void OnURIBrowseClicked(object o, EventArgs a)
@@ -1435,9 +1444,12 @@ namespace bibliographer
             bibtexRecords.Add(record);
     
             iter = litStore.GetIter(record);
-                
+
+            // TODO: Unfilter
+            // TODO: Remove search
+            // TODO: Unsort and then resort
             litTreeView.SetCursor(litStore.GetPath(iter),litTreeView.GetColumn(0),false);
-    
+            
             BibtexGenerateKeySetStatus();
     
             System.Threading.Monitor.Enter(alterationMonitorQueue);
@@ -1689,10 +1701,13 @@ namespace bibliographer
             modelFilter.Refilter();
         }
 
-        protected virtual void OnButtonBibtexKeyGenerateActivated (object sender, System.EventArgs e)
+        protected virtual void OnButtonBibtexKeyGenerateClicked (object sender, System.EventArgs e)
         {
+            System.Console.WriteLine("Generate a Bibtex Key");
+            
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
+            
             if (litTreeView.Selection.GetSelected(out model, out iter))
             {
                 // TODO: check if this is the correct bibtexRecordFieldType
@@ -1703,7 +1718,7 @@ namespace bibliographer
                 string authors = record.HasField("author") ? (record.GetField("author").ToLower()).Trim() : "";
                 string year = record.HasField("year") ? record.GetField("year").Trim() : "";
     
-                //Console.WriteLine("authors: " + authors);
+                System.Console.WriteLine("authors: " + authors);
     
                 authors = authors.Replace(" and ", "&");
                 string []   authorarray = authors.Split(("&").ToCharArray());
@@ -1713,19 +1728,19 @@ namespace bibliographer
                     ArrayList authorsurname = new ArrayList();
                     foreach (string author in authorarray)
                     {
-                        //Console.WriteLine(author);
+                        System.Console.WriteLine(author);
                         // Deal with format of "Surname, Firstname ..."
                         if (author.IndexOf(",")>0)
                         {
                             string []   authorname = author.Split(',');
-                            //Console.WriteLine("Surname: " + authorname[0]);
+                            System.Console.WriteLine("Surname: " + authorname[0]);
                             authorsurname.Add(authorname[0]);
                         }
                         // Deal with format of "Firstname ... Surname"
                         else
                         {
                             string []   authorname = author.Split(' ');
-                            //Console.WriteLine("Surname: " + authorname[authorname.Length - 1]);
+                            System.Console.WriteLine("Surname: " + authorname[authorname.Length - 1]);
                             authorsurname.Add(authorname[authorname.Length - 1]);
                         }
                     }
@@ -1886,5 +1901,6 @@ namespace bibliographer
                 this.Resize(Config.GetInt("window_width"), Config.GetInt("window_height"));
             }
         }
+
     }
 }

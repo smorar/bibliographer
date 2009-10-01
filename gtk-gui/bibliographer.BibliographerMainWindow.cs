@@ -594,7 +594,7 @@ namespace bibliographer {
             this.litTreeView.RowActivated += new Gtk.RowActivatedHandler(this.OnLitTreeViewRowActivated);
             this.entryReqBibtexKey.Changed += new System.EventHandler(this.OnEntryReqBibtexKeyChanged);
             this.comboRecordType.Changed += new System.EventHandler(this.OnComboRecordTypeChanged);
-            this.buttonBibtexKeyGenerate.Activated += new System.EventHandler(this.OnButtonBibtexKeyGenerateActivated);
+            this.buttonBibtexKeyGenerate.Clicked += new System.EventHandler(this.OnButtonBibtexKeyGenerateClicked);
             this.toggleEditRecords.Toggled += new System.EventHandler(this.OnToggleEditRecordsActivated);
         }
     }

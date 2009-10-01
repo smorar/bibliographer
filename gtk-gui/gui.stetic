@@ -5,7 +5,6 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/bibliographer.exe" internal="true" />
     <widget-library name="gnome-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </import>
@@ -444,7 +443,7 @@
                                     <property name="Type">TextOnly</property>
                                     <property name="Label" translatable="yes">Generate</property>
                                     <property name="UseUnderline">True</property>
-                                    <signal name="Activated" handler="OnButtonBibtexKeyGenerateActivated" />
+                                    <signal name="Clicked" handler="OnButtonBibtexKeyGenerateClicked" />
                                   </widget>
                                   <packing>
                                     <property name="TopAttach">1</property>
