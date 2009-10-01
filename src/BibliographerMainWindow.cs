@@ -1333,6 +1333,7 @@ namespace bibliographer
             {
                 BibtexRecord record = (BibtexRecord) model.GetValue(iter, 0);
                 record.SetKey(bibtexEntry.Text);
+                model.EmitRowChanged(model.GetPath(iter), iter);
             }
         }
         
@@ -1703,7 +1704,7 @@ namespace bibliographer
 
         protected virtual void OnButtonBibtexKeyGenerateClicked (object sender, System.EventArgs e)
         {
-            System.Console.WriteLine("Generate a Bibtex Key");
+            //System.Console.WriteLine("Generate a Bibtex Key");
             
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
@@ -1718,7 +1719,7 @@ namespace bibliographer
                 string authors = record.HasField("author") ? (record.GetField("author").ToLower()).Trim() : "";
                 string year = record.HasField("year") ? record.GetField("year").Trim() : "";
     
-                System.Console.WriteLine("authors: " + authors);
+                //System.Console.WriteLine("authors: " + authors);
     
                 authors = authors.Replace(" and ", "&");
                 string []   authorarray = authors.Split(("&").ToCharArray());
@@ -1728,19 +1729,19 @@ namespace bibliographer
                     ArrayList authorsurname = new ArrayList();
                     foreach (string author in authorarray)
                     {
-                        System.Console.WriteLine(author);
+                        //System.Console.WriteLine(author);
                         // Deal with format of "Surname, Firstname ..."
                         if (author.IndexOf(",")>0)
                         {
                             string []   authorname = author.Split(',');
-                            System.Console.WriteLine("Surname: " + authorname[0]);
+                            //System.Console.WriteLine("Surname: " + authorname[0]);
                             authorsurname.Add(authorname[0]);
                         }
                         // Deal with format of "Firstname ... Surname"
                         else
                         {
                             string []   authorname = author.Split(' ');
-                            System.Console.WriteLine("Surname: " + authorname[authorname.Length - 1]);
+                            //System.Console.WriteLine("Surname: " + authorname[authorname.Length - 1]);
                             authorsurname.Add(authorname[authorname.Length - 1]);
                         }
                     }
