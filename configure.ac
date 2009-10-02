@@ -6,8 +6,8 @@ AM_INIT_AUTOMAKE(bibliographer, 0.1.1)
 
 AM_MAINTAINER_MODE
 
-MONO_REQUIRED=1.0
-GTKSHARP_REQUIRED=2.0
+MONO_REQUIRED=2.0
+GTKSHARP_REQUIRED=2.12
 
 PKG_CHECK_MODULES(MONO,
 	mono >= $MONO_REQUIRED)
@@ -18,8 +18,6 @@ PKG_CHECK_MODULES(GTKSHARP,
 	gconf-sharp-2.0 >= $GTKSHARP_REQUIRED)
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
-#AM_GCONF_SOURCE_2
-
 AC_PATH_PROG(MONO, mono)
 AC_PATH_PROGS(MCS, [gmcs gmcs2])
 
@@ -44,9 +42,6 @@ AC_PATH_PROG(GACUTIL, gacutil)
 if test x$GACUTIL = x; then
         AC_MSG_ERROR(You need gacutil)
 fi
-
-#GACUTIL_FLAGS='/package muine /gacdir $(libdir) /root $(DESTDIR)$(libdir)'
-#AC_SUBST(GACUTIL_FLAGS)
 
 AC_OUTPUT([
 Makefile
