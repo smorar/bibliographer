@@ -78,3 +78,5 @@ CLEANFILES = 					\
 	$(TARGET).config			\
 	$(WRAPPER)
 
+MAINTAINERCLEANFILES = \
+	Makefile.in

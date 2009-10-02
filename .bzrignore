@@ -1,0 +1,13 @@
+Makefile
+Makefile.in
+configure
+build-stamp
+bibliographer.pidb
+bibliographer.userprefs
+bibliographer.usertasks
+bibliographer-0.1.1.tar.gz
+bin
+debian/bibliographer
+debian/bibliographer.debhelper.log
+debian/bibliographer.substvars
+debian/files

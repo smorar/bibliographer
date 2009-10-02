@@ -15,3 +15,16 @@ EXTRA_DIST = resources/bibliographer.png \
 	resources/bibliographer.man \
 	resources/error.png
 
+DISTCLEANFILES = \
+	*.bak
+	*~
+	*.pidb
+
+MAINTAINERCLEANFILES = \
+	aclocal.m4 \
+	ltmain.sh \
+	Makefile.in \
+	configure \
+	config.sub \
+	config.guess
+	
