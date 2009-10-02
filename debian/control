@@ -1,9 +1,11 @@
 Source: bibliographer
 Section: gnome
 Priority: optional
-Maintainer: Sameer Morar <smorar@gmail.com>
-Build-Depends: debhelper (>= 7.0), mono-gmcs, mono-2.0-devel, libmono-dev, libmono2.0-cil, libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.24-cil (>=2.3.9) | libgconf2.0-cil (>=2.3.9)
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+XSBC-Original-Maintainer: Sameer Morar <smorar@gmail.com>
 Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 7.0), mono-gmcs, mono-2.0-devel, libmono-dev, libmono2.0-cil, libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.24-cil (>=2.3.9) | libgconf2.0-cil (>=2.3.9)
+Homepage: https://launchpad.net/bibliographer
 
 Package: bibliographer
 Architecture: any
@@ -17,5 +19,3 @@ Description: A bibliographic database management tool
  The interface is designed for the easy navigation of your 
  bibliography, and double clicking a record will open the 
  linked file.
- .
- http://bibliographer.homelinux.net

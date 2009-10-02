@@ -21,7 +21,7 @@ AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
 #AM_GCONF_SOURCE_2
 
 AC_PATH_PROG(MONO, mono)
-AC_PATH_PROG(MCS, gmcs)
+AC_PATH_PROGS(MCS, [gmcs gmcs2])
 
 CS="C#"
 if test "$MCS" = "no" ; then

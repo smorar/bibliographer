@@ -1,10 +1,12 @@
-This is bibliographer, maintained by Sameer Morar <smorar@gmail.com>
-on Sun, 22 Jan 2006 21:08:36 +0200.
+This package was debianized by Sameer Morar <smorar@gmail.com>
+Fri, 02 Oct 2009 01:56:30 +0200
 
-The original source can always be found at:
-	http://bibliographer.homelinux.net
+It was downloaded from: http://launchpad.net/bibliographer
 
-Copyright (C) 2005  Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
+Upstream Authors: Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
+
+Copyright:
+	Copyright (C) 2005-2009 by Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
 
 License:
 
@@ -24,3 +26,7 @@ License:
 
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL'.
+
+Packaging:
+	Copyright (C) 2009 by Sameer Morar <smorar@gmail.com>
+	released under the GNU General Public License, version 2 or later

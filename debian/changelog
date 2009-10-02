@@ -1,3 +1,28 @@
+bibliographer (0.1.1-0ubuntu1~ppa4.karmic) karmic; urgency=low
+
+  * Aargh!! I forgot to run autoconf to regenerate configure
+
+ -- Sameer Morar <smorar@gmail.com>  Fri, 02 Oct 2009 00:55:36 +0200
+
+bibliographer (0.1.1-0ubuntu1~ppa3.karmic) karmic; urgency=low
+
+  * Modify AC_PATH_PROG to search for gmcs2 too
+
+ -- Sameer Morar <smorar@gmail.com>  Fri, 02 Oct 2009 00:36:02 +0200
+
+bibliographer (0.1.1-0ubuntu1~ppa2.karmic) karmic; urgency=low
+
+  * Migrate UI over to stetic and remove all references to glade
+  * Remove remenants from checkinstall
+  * Fix bug with file change notification
+  * Update copyright info in assembly
+  * Query program name and version etc... from assembly info
+  * Modify Makefile.am so that make dist works to build a release tarball
+  * Fix a bug where records that have no files associated with them have icons
+  * Add a keybinding to the recent file menu
+
+ -- Sameer Morar <smorar@gmail.com>  Fri, 02 Oct 2009 00:09:38 +0200
+
 bibliographer (0.1.1~ppa1.karmic) karmic; urgency=low
 
   * Fix build depends for jaunty upload
