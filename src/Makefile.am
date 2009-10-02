@@ -1,3 +1,5 @@
+MCS_FLAGS += -nowarn:0169
+MCS_FLAGS += -unsafe+
 CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS)
 
 TARGET = bibliographer.exe
@@ -12,7 +14,9 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/BibliographerChooseColumns.cs		\
+	$(srcdir)/BibliographerHoverImageButton.cs	\
 	$(srcdir)/BibliographerMainWindow.cs		\
+	$(srcdir)/BibliographerSearchEntry.cs		\
 	$(srcdir)/BibtexCustomRecordField.cs		\
 	$(srcdir)/BibtexEntryDialog.cs			\
 	$(srcdir)/BibtexRecord.cs			\

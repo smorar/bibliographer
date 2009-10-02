@@ -5,7 +5,7 @@ package = bibliographer
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
-MCS_FLAGS = -warnaserror -nowarn:CS0169
+MCS_FLAGS = -warnaserror -nowarn:0169 -unsave+
 
 ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	MCS_FLAGS += -optimize+

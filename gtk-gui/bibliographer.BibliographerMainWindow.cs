@@ -77,7 +77,13 @@ namespace bibliographer {
         
         private Gtk.MenuBar menuBar;
         
-        private Gtk.Toolbar toolBar;
+        private Gtk.HBox hbox1;
+        
+        private Gtk.Toolbar toolBar1;
+        
+        private Gtk.HBox searchHbox;
+        
+        private Gtk.Label searchLabel;
         
         private Gtk.HPaned hpane;
         
@@ -86,12 +92,6 @@ namespace bibliographer {
         private Gtk.TreeView sidePaneTreeView;
         
         private Gtk.VBox vbox2;
-        
-        private Gtk.HBox hbox1;
-        
-        private Gtk.Label searchLabel;
-        
-        private Gtk.Entry searchEntry;
         
         private Gtk.VPaned vpane;
         
@@ -195,6 +195,7 @@ namespace bibliographer {
             this.AddRecordFromBibTeXAction.ShortLabel = Mono.Unix.Catalog.GetString("Add record from _BibTeX...");
             w1.Add(this.AddRecordFromBibTeXAction, null);
             this.AddRecordFromClipboardAction = new Gtk.Action("AddRecordFromClipboardAction", Mono.Unix.Catalog.GetString("Add record from clipboard"), null, null);
+            this.AddRecordFromClipboardAction.Sensitive = false;
             this.AddRecordFromClipboardAction.ShortLabel = Mono.Unix.Catalog.GetString("Add record from clipboard");
             w1.Add(this.AddRecordFromClipboardAction, null);
             this.SidebarAction = new Gtk.ToggleAction("SidebarAction", Mono.Unix.Catalog.GetString("_Sidebar"), null, null);
@@ -258,67 +259,63 @@ namespace bibliographer {
             w2.Expand = false;
             w2.Fill = false;
             // Container child vbox1.Gtk.Box+BoxChild
-            this.UIManager.AddUiFromString("<ui><toolbar name='toolBar'><toolitem name='ToolbarNewAction' action='ToolbarNewAction'/><toolitem name='ToolbarOpenAction' action='ToolbarOpenAction'/><toolitem name='ToolbarSaveAction' action='ToolbarSaveAction'/><toolitem name='ToolbarSaveAsAction' action='ToolbarSaveAsAction'/><separator/><toolitem name='ToolbarAddAction' action='ToolbarAddAction'/><toolitem name='ToolbarRemoveAction' action='ToolbarRemoveAction'/></toolbar></ui>");
-            this.toolBar = ((Gtk.Toolbar)(this.UIManager.GetWidget("/toolBar")));
-            this.toolBar.Name = "toolBar";
-            this.toolBar.ShowArrow = false;
-            this.toolBar.ToolbarStyle = ((Gtk.ToolbarStyle)(0));
-            this.toolBar.IconSize = ((Gtk.IconSize)(3));
-            this.vbox1.Add(this.toolBar);
-            Gtk.Box.BoxChild w3 = ((Gtk.Box.BoxChild)(this.vbox1[this.toolBar]));
-            w3.Position = 1;
-            w3.Expand = false;
-            w3.Fill = false;
-            // Container child vbox1.Gtk.Box+BoxChild
-            this.hpane = new Gtk.HPaned();
-            this.hpane.CanFocus = true;
-            this.hpane.Name = "hpane";
-            this.hpane.Position = 105;
-            // Container child hpane.Gtk.Paned+PanedChild
-            this.scrolledwindowSidePane = new Gtk.ScrolledWindow();
-            this.scrolledwindowSidePane.CanFocus = true;
-            this.scrolledwindowSidePane.Name = "scrolledwindowSidePane";
-            this.scrolledwindowSidePane.ShadowType = ((Gtk.ShadowType)(1));
-            // Container child scrolledwindowSidePane.Gtk.Container+ContainerChild
-            this.sidePaneTreeView = new Gtk.TreeView();
-            this.sidePaneTreeView.CanFocus = true;
-            this.sidePaneTreeView.Name = "sidePaneTreeView";
-            this.scrolledwindowSidePane.Add(this.sidePaneTreeView);
-            this.hpane.Add(this.scrolledwindowSidePane);
-            Gtk.Paned.PanedChild w5 = ((Gtk.Paned.PanedChild)(this.hpane[this.scrolledwindowSidePane]));
-            w5.Resize = false;
-            // Container child hpane.Gtk.Paned+PanedChild
-            this.vbox2 = new Gtk.VBox();
-            this.vbox2.Name = "vbox2";
-            // Container child vbox2.Gtk.Box+BoxChild
             this.hbox1 = new Gtk.HBox();
             this.hbox1.Name = "hbox1";
+            this.hbox1.Homogeneous = true;
             // Container child hbox1.Gtk.Box+BoxChild
+            this.UIManager.AddUiFromString("<ui><toolbar name='toolBar1'><toolitem name='ToolbarNewAction' action='ToolbarNewAction'/><toolitem name='ToolbarOpenAction' action='ToolbarOpenAction'/><toolitem name='ToolbarSaveAction' action='ToolbarSaveAction'/><toolitem name='ToolbarSaveAsAction' action='ToolbarSaveAsAction'/><separator/><toolitem name='ToolbarAddAction' action='ToolbarAddAction'/><toolitem name='ToolbarRemoveAction' action='ToolbarRemoveAction'/></toolbar></ui>");
+            this.toolBar1 = ((Gtk.Toolbar)(this.UIManager.GetWidget("/toolBar1")));
+            this.toolBar1.Name = "toolBar1";
+            this.toolBar1.ShowArrow = false;
+            this.toolBar1.ToolbarStyle = ((Gtk.ToolbarStyle)(0));
+            this.toolBar1.IconSize = ((Gtk.IconSize)(3));
+            this.hbox1.Add(this.toolBar1);
+            Gtk.Box.BoxChild w3 = ((Gtk.Box.BoxChild)(this.hbox1[this.toolBar1]));
+            w3.Position = 0;
+            // Container child hbox1.Gtk.Box+BoxChild
+            this.searchHbox = new Gtk.HBox();
+            this.searchHbox.Name = "searchHbox";
+            // Container child searchHbox.Gtk.Box+BoxChild
             this.searchLabel = new Gtk.Label();
             this.searchLabel.Name = "searchLabel";
             this.searchLabel.Xpad = 6;
             this.searchLabel.Xalign = 1F;
             this.searchLabel.LabelProp = Mono.Unix.Catalog.GetString("Search:");
             this.searchLabel.Justify = ((Gtk.Justification)(1));
-            this.hbox1.Add(this.searchLabel);
-            Gtk.Box.BoxChild w6 = ((Gtk.Box.BoxChild)(this.hbox1[this.searchLabel]));
-            w6.Position = 0;
-            // Container child hbox1.Gtk.Box+BoxChild
-            this.searchEntry = new Gtk.Entry();
-            this.searchEntry.CanFocus = true;
-            this.searchEntry.Name = "searchEntry";
-            this.searchEntry.IsEditable = true;
-            this.searchEntry.WidthChars = 10;
-            this.searchEntry.InvisibleChar = '●';
-            this.hbox1.Add(this.searchEntry);
-            Gtk.Box.BoxChild w7 = ((Gtk.Box.BoxChild)(this.hbox1[this.searchEntry]));
-            w7.Position = 1;
-            w7.Expand = false;
-            this.vbox2.Add(this.hbox1);
-            Gtk.Box.BoxChild w8 = ((Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-            w8.Position = 0;
-            w8.Expand = false;
-            w8.Fill = false;
+            this.searchHbox.Add(this.searchLabel);
+            Gtk.Box.BoxChild w4 = ((Gtk.Box.BoxChild)(this.searchHbox[this.searchLabel]));
+            w4.Position = 0;
+            this.hbox1.Add(this.searchHbox);
+            Gtk.Box.BoxChild w5 = ((Gtk.Box.BoxChild)(this.hbox1[this.searchHbox]));
+            w5.Position = 1;
+            this.vbox1.Add(this.hbox1);
+            Gtk.Box.BoxChild w6 = ((Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+            w6.Position = 1;
+            w6.Expand = false;
+            w6.Fill = false;
+            // Container child vbox1.Gtk.Box+BoxChild
+            this.hpane = new Gtk.HPaned();
+            this.hpane.CanFocus = true;
+            this.hpane.Name = "hpane";
+            this.hpane.Position = 150;
+            this.hpane.BorderWidth = ((uint)(2));
+            // Container child hpane.Gtk.Paned+PanedChild
+            this.scrolledwindowSidePane = new Gtk.ScrolledWindow();
+            this.scrolledwindowSidePane.CanFocus = true;
+            this.scrolledwindowSidePane.Name = "scrolledwindowSidePane";
+            this.scrolledwindowSidePane.ShadowType = ((Gtk.ShadowType)(1));
+            this.scrolledwindowSidePane.BorderWidth = ((uint)(2));
+            // Container child scrolledwindowSidePane.Gtk.Container+ContainerChild
+            this.sidePaneTreeView = new Gtk.TreeView();
+            this.sidePaneTreeView.CanFocus = true;
+            this.sidePaneTreeView.Name = "sidePaneTreeView";
+            this.scrolledwindowSidePane.Add(this.sidePaneTreeView);
+            this.hpane.Add(this.scrolledwindowSidePane);
+            Gtk.Paned.PanedChild w8 = ((Gtk.Paned.PanedChild)(this.hpane[this.scrolledwindowSidePane]));
+            w8.Resize = false;
+            // Container child hpane.Gtk.Paned+PanedChild
+            this.vbox2 = new Gtk.VBox();
+            this.vbox2.Name = "vbox2";
             // Container child vbox2.Gtk.Box+BoxChild
             this.vpane = new Gtk.VPaned();
             this.vpane.CanFocus = true;
@@ -330,6 +327,7 @@ namespace bibliographer {
             this.scrolledwindowTreeView.CanFocus = true;
             this.scrolledwindowTreeView.Name = "scrolledwindowTreeView";
             this.scrolledwindowTreeView.ShadowType = ((Gtk.ShadowType)(1));
+            this.scrolledwindowTreeView.BorderWidth = ((uint)(2));
             // Container child scrolledwindowTreeView.Gtk.Container+ContainerChild
             this.litTreeView = new Gtk.TreeView();
             this.litTreeView.CanFocus = true;
@@ -341,6 +339,7 @@ namespace bibliographer {
             // Container child vpane.Gtk.Paned+PanedChild
             this.recordDetailsView = new Gtk.VBox();
             this.recordDetailsView.Name = "recordDetailsView";
+            this.recordDetailsView.BorderWidth = ((uint)(2));
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.recordView = new Gtk.VBox();
             this.recordView.Name = "recordView";
@@ -522,6 +521,7 @@ namespace bibliographer {
             w26.Position = 1;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.hbuttonbox1 = new Gtk.HButtonBox();
+            this.hbuttonbox1.Name = "hbuttonbox1";
             this.hbuttonbox1.LayoutStyle = ((Gtk.ButtonBoxStyle)(4));
             // Container child hbuttonbox1.Gtk.ButtonBox+ButtonBoxChild
             this.toggleEditRecords = new Gtk.ToggleButton();
@@ -539,10 +539,11 @@ namespace bibliographer {
             w28.Position = 2;
             w28.Expand = false;
             w28.Fill = false;
+            w28.Padding = ((uint)(2));
             this.vpane.Add(this.recordDetailsView);
             this.vbox2.Add(this.vpane);
             Gtk.Box.BoxChild w30 = ((Gtk.Box.BoxChild)(this.vbox2[this.vpane]));
-            w30.Position = 1;
+            w30.Position = 0;
             this.hpane.Add(this.vbox2);
             this.vbox1.Add(this.hpane);
             Gtk.Box.BoxChild w32 = ((Gtk.Box.BoxChild)(this.vbox1[this.hpane]));
@@ -587,7 +588,6 @@ namespace bibliographer {
             this.ToolbarRemoveAction.Activated += new System.EventHandler(this.OnRemoveRecordActivated);
             this.ViewRecordsAction.Activated += new System.EventHandler(this.OnRadioViewRecordsActivated);
             this.EditRecordsAction.Activated += new System.EventHandler(this.OnRadioEditRecordsActivated);
-            this.searchEntry.Changed += new System.EventHandler(this.OnFilterEntryChanged);
             this.litTreeView.DragDataReceived += new Gtk.DragDataReceivedHandler(this.OnLitTreeViewDragDataReceived);
             this.litTreeView.DragMotion += new Gtk.DragMotionHandler(this.OnLitTreeViewDragMotion);
             this.litTreeView.DragLeave += new Gtk.DragLeaveHandler(this.OnLitTreeViewDragLeave);

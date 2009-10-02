@@ -25,10 +25,12 @@ namespace bibliographer
     
     public partial class BibliographerMainWindow : Gtk.Window
     {
-        Gtk.Viewport viewportRequired;
-        Gtk.Viewport viewportOptional;
-        Gtk.Viewport viewportOther;
-        Gtk.Viewport viewportBibliographerData;
+        private Gtk.Viewport viewportRequired;
+        private Gtk.Viewport viewportOptional;
+        private Gtk.Viewport viewportOther;
+        private Gtk.Viewport viewportBibliographerData;
+        
+        private SearchEntry sexySearchEntry;
         
         private BibtexRecords bibtexRecords;
         private SidePaneTreeStore sidePaneStore;
@@ -283,6 +285,15 @@ namespace bibliographer
             Gtk.Drag.DestSet (litTreeView, Gtk.DestDefaults.All, target_table,
                               Gdk.DragAction.Copy);
 
+            // Search entry
+            sexySearchEntry = new SearchEntry();
+            searchHbox.Add(sexySearchEntry);
+            sexySearchEntry.BorderWidth = 6;
+            
+            sexySearchEntry.InnerEntry.Changed += OnFilterEntryChanged;
+            sexySearchEntry.Show();
+
+            
             UpdateMenuFileHistory();
     
             // Activate new file
@@ -436,14 +447,15 @@ namespace bibliographer
     
         private bool ModelFilterListStore(Gtk.TreeModel model, Gtk.TreeIter iter)
         {
-            if (searchEntry.Text == "" || searchEntry.Text == null)
+            
+            if (sexySearchEntry.InnerEntry.Text == "" || sexySearchEntry.InnerEntry.Text == null)
                 return true;
     
             BibtexRecord record = (BibtexRecord) model.GetValue (iter, 0);
     
             if (record != null)
             {
-                if (record.SearchRecord(searchEntry.Text) == true)
+                if (record.SearchRecord(sexySearchEntry.InnerEntry.Text) == true)
                     return true;
                 else
                     return false;

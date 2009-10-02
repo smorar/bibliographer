@@ -15,7 +15,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="636 622">
+  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 658">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -106,6 +106,7 @@
       <action id="AddRecordFromClipboardAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Add record from clipboard</property>
+        <property name="Sensitive">False</property>
         <property name="ShortLabel" translatable="yes">Add record from clipboard</property>
         <signal name="Activated" handler="OnAddRecordFromClipboardActivated" />
       </action>
@@ -271,20 +272,52 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Toolbar" id="toolBar">
+          <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
-            <property name="ShowArrow">False</property>
-            <property name="ButtonStyle">Icons</property>
-            <property name="IconSize">LargeToolbar</property>
-            <node name="toolBar" type="Toolbar">
-              <node type="Toolitem" action="ToolbarNewAction" />
-              <node type="Toolitem" action="ToolbarOpenAction" />
-              <node type="Toolitem" action="ToolbarSaveAction" />
-              <node type="Toolitem" action="ToolbarSaveAsAction" />
-              <node type="Separator" />
-              <node type="Toolitem" action="ToolbarAddAction" />
-              <node type="Toolitem" action="ToolbarRemoveAction" />
-            </node>
+            <property name="Homogeneous">True</property>
+            <child>
+              <widget class="Gtk.Toolbar" id="toolBar1">
+                <property name="MemberName" />
+                <property name="ShowArrow">False</property>
+                <property name="ButtonStyle">Icons</property>
+                <property name="IconSize">LargeToolbar</property>
+                <node name="toolBar" type="Toolbar">
+                  <node type="Toolitem" action="ToolbarNewAction" />
+                  <node type="Toolitem" action="ToolbarOpenAction" />
+                  <node type="Toolitem" action="ToolbarSaveAction" />
+                  <node type="Toolitem" action="ToolbarSaveAsAction" />
+                  <node type="Separator" />
+                  <node type="Toolitem" action="ToolbarAddAction" />
+                  <node type="Toolitem" action="ToolbarRemoveAction" />
+                </node>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.HBox" id="searchHbox">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="searchLabel">
+                    <property name="MemberName" />
+                    <property name="Xpad">6</property>
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Search:</property>
+                    <property name="Justify">Right</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -297,12 +330,14 @@
           <widget class="Gtk.HPaned" id="hpane">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Position">105</property>
+            <property name="Position">150</property>
+            <property name="BorderWidth">2</property>
             <child>
               <widget class="Gtk.ScrolledWindow" id="scrolledwindowSidePane">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="ShadowType">In</property>
+                <property name="BorderWidth">2</property>
                 <child>
                   <widget class="Gtk.TreeView" id="sidePaneTreeView">
                     <property name="MemberName" />
@@ -318,45 +353,6 @@
               <widget class="Gtk.VBox" id="vbox2">
                 <property name="MemberName" />
                 <child>
-                  <widget class="Gtk.HBox" id="hbox1">
-                    <property name="MemberName" />
-                    <child>
-                      <widget class="Gtk.Label" id="searchLabel">
-                        <property name="MemberName" />
-                        <property name="Xpad">6</property>
-                        <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Search:</property>
-                        <property name="Justify">Right</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Entry" id="searchEntry">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="IsEditable">True</property>
-                        <property name="WidthChars">10</property>
-                        <property name="InvisibleChar">●</property>
-                        <signal name="Changed" handler="OnFilterEntryChanged" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">False</property>
-                        <property name="Expand">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
                   <widget class="Gtk.VPaned" id="vpane">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
@@ -367,6 +363,7 @@
                         <property name="HeightRequest">200</property>
                         <property name="CanFocus">True</property>
                         <property name="ShadowType">In</property>
+                        <property name="BorderWidth">2</property>
                         <child>
                           <widget class="Gtk.TreeView" id="litTreeView">
                             <property name="MemberName" />
@@ -385,6 +382,7 @@
                     <child>
                       <widget class="Gtk.VBox" id="recordDetailsView">
                         <property name="MemberName" />
+                        <property name="BorderWidth">2</property>
                         <child>
                           <widget class="Gtk.VBox" id="recordView">
                             <property name="MemberName" />
@@ -719,13 +717,14 @@
                             <property name="AutoSize">False</property>
                             <property name="Expand">False</property>
                             <property name="Fill">False</property>
+                            <property name="Padding">2</property>
                           </packing>
                         </child>
                       </widget>
                     </child>
                   </widget>
                   <packing>
-                    <property name="Position">1</property>
+                    <property name="Position">0</property>
                     <property name="AutoSize">True</property>
                   </packing>
                 </child>
