@@ -11,3 +11,12 @@ debian/bibliographer
 debian/bibliographer.debhelper.log
 debian/bibliographer.substvars
 debian/files
+aclocal.m4
+autom4te.cache
+config.h
+config.log
+config.status
+stamp-h1
+src/bibliographer
+src/bibliographer.exe
+src/bibliographer.exe.config
