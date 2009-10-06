@@ -1,4 +1,4 @@
-<Combine name="bibliographer" fileversion="2.0">
+<Combine fileversion="2.0" name="bibliographer">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
       <Entry build="True" name="bibliographer" configuration="Debug" />
@@ -10,8 +10,7 @@
   <StartMode startupentry="bibliographer" single="True">
     <Execute type="None" entry="bibliographer" />
   </StartMode>
-  <DeployTargets />
   <Entries>
-    <Entry filename="./bibliographer.mdp" />
+    <Entry filename="bibliographer.mdp" />
   </Entries>
 </Combine>

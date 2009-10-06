@@ -10,11 +10,12 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(top_srcdir)/gtk-gui/bibliographer.BibliographerChooseColumns.cs \
 	$(top_srcdir)/gtk-gui/bibliographer.BibtexEntryDialog.cs 	\
 	$(top_srcdir)/gtk-gui/generated.cs		\
+	$(srcdir)/widgets/HoverImageButton.cs		\
+	$(srcdir)/widgets/SearchEntry.cs		\
 	$(srcdir)/AboutBox.cs				\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/BibliographerChooseColumns.cs		\
-	$(srcdir)/BibliographerHoverImageButton.cs	\
 	$(srcdir)/BibliographerMainWindow.cs		\
 	$(srcdir)/BibliographerSearchEntry.cs		\
 	$(srcdir)/BibtexCustomRecordField.cs		\

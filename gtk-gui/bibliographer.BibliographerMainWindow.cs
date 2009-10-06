@@ -83,8 +83,6 @@ namespace bibliographer {
         
         private Gtk.HBox searchHbox;
         
-        private Gtk.Label searchLabel;
-        
         private Gtk.HPaned hpane;
         
         private Gtk.ScrolledWindow scrolledwindowSidePane;
@@ -261,7 +259,6 @@ namespace bibliographer {
             // Container child vbox1.Gtk.Box+BoxChild
             this.hbox1 = new Gtk.HBox();
             this.hbox1.Name = "hbox1";
-            this.hbox1.Homogeneous = true;
             // Container child hbox1.Gtk.Box+BoxChild
             this.UIManager.AddUiFromString("<ui><toolbar name='toolBar1'><toolitem name='ToolbarNewAction' action='ToolbarNewAction'/><toolitem name='ToolbarOpenAction' action='ToolbarOpenAction'/><toolitem name='ToolbarSaveAction' action='ToolbarSaveAction'/><toolitem name='ToolbarSaveAsAction' action='ToolbarSaveAsAction'/><separator/><toolitem name='ToolbarAddAction' action='ToolbarAddAction'/><toolitem name='ToolbarRemoveAction' action='ToolbarRemoveAction'/></toolbar></ui>");
             this.toolBar1 = ((Gtk.Toolbar)(this.UIManager.GetWidget("/toolBar1")));
@@ -275,24 +272,15 @@ namespace bibliographer {
             // Container child hbox1.Gtk.Box+BoxChild
             this.searchHbox = new Gtk.HBox();
             this.searchHbox.Name = "searchHbox";
-            // Container child searchHbox.Gtk.Box+BoxChild
-            this.searchLabel = new Gtk.Label();
-            this.searchLabel.Name = "searchLabel";
-            this.searchLabel.Xpad = 6;
-            this.searchLabel.Xalign = 1F;
-            this.searchLabel.LabelProp = Mono.Unix.Catalog.GetString("Search:");
-            this.searchLabel.Justify = ((Gtk.Justification)(1));
-            this.searchHbox.Add(this.searchLabel);
-            Gtk.Box.BoxChild w4 = ((Gtk.Box.BoxChild)(this.searchHbox[this.searchLabel]));
-            w4.Position = 0;
             this.hbox1.Add(this.searchHbox);
-            Gtk.Box.BoxChild w5 = ((Gtk.Box.BoxChild)(this.hbox1[this.searchHbox]));
-            w5.Position = 1;
+            Gtk.Box.BoxChild w4 = ((Gtk.Box.BoxChild)(this.hbox1[this.searchHbox]));
+            w4.Position = 1;
+            w4.Expand = false;
             this.vbox1.Add(this.hbox1);
-            Gtk.Box.BoxChild w6 = ((Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
-            w6.Position = 1;
-            w6.Expand = false;
-            w6.Fill = false;
+            Gtk.Box.BoxChild w5 = ((Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+            w5.Position = 1;
+            w5.Expand = false;
+            w5.Fill = false;
             // Container child vbox1.Gtk.Box+BoxChild
             this.hpane = new Gtk.HPaned();
             this.hpane.CanFocus = true;
@@ -311,8 +299,8 @@ namespace bibliographer {
             this.sidePaneTreeView.Name = "sidePaneTreeView";
             this.scrolledwindowSidePane.Add(this.sidePaneTreeView);
             this.hpane.Add(this.scrolledwindowSidePane);
-            Gtk.Paned.PanedChild w8 = ((Gtk.Paned.PanedChild)(this.hpane[this.scrolledwindowSidePane]));
-            w8.Resize = false;
+            Gtk.Paned.PanedChild w7 = ((Gtk.Paned.PanedChild)(this.hpane[this.scrolledwindowSidePane]));
+            w7.Resize = false;
             // Container child hpane.Gtk.Paned+PanedChild
             this.vbox2 = new Gtk.VBox();
             this.vbox2.Name = "vbox2";
@@ -334,8 +322,8 @@ namespace bibliographer {
             this.litTreeView.Name = "litTreeView";
             this.scrolledwindowTreeView.Add(this.litTreeView);
             this.vpane.Add(this.scrolledwindowTreeView);
-            Gtk.Paned.PanedChild w10 = ((Gtk.Paned.PanedChild)(this.vpane[this.scrolledwindowTreeView]));
-            w10.Resize = false;
+            Gtk.Paned.PanedChild w9 = ((Gtk.Paned.PanedChild)(this.vpane[this.scrolledwindowTreeView]));
+            w9.Resize = false;
             // Container child vpane.Gtk.Paned+PanedChild
             this.recordDetailsView = new Gtk.VBox();
             this.recordDetailsView.Name = "recordDetailsView";
@@ -350,10 +338,10 @@ namespace bibliographer {
             this.recordIcon = new Gtk.Image();
             this.recordIcon.Name = "recordIcon";
             this.recordViewHbox.Add(this.recordIcon);
-            Gtk.Box.BoxChild w11 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordIcon]));
-            w11.Position = 0;
-            w11.Expand = false;
-            w11.Fill = false;
+            Gtk.Box.BoxChild w10 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordIcon]));
+            w10.Position = 0;
+            w10.Expand = false;
+            w10.Fill = false;
             // Container child recordViewHbox.Gtk.Box+BoxChild
             this.recordDetails = new Gtk.Label();
             this.recordDetails.Name = "recordDetails";
@@ -363,14 +351,14 @@ namespace bibliographer {
             this.recordDetails.Yalign = 0F;
             this.recordDetails.LabelProp = Mono.Unix.Catalog.GetString("test");
             this.recordViewHbox.Add(this.recordDetails);
-            Gtk.Box.BoxChild w12 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordDetails]));
-            w12.Position = 1;
+            Gtk.Box.BoxChild w11 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordDetails]));
+            w11.Position = 1;
             this.recordView.Add(this.recordViewHbox);
-            Gtk.Box.BoxChild w13 = ((Gtk.Box.BoxChild)(this.recordView[this.recordViewHbox]));
-            w13.Position = 0;
+            Gtk.Box.BoxChild w12 = ((Gtk.Box.BoxChild)(this.recordView[this.recordViewHbox]));
+            w12.Position = 0;
             this.recordDetailsView.Add(this.recordView);
-            Gtk.Box.BoxChild w14 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordView]));
-            w14.Position = 0;
+            Gtk.Box.BoxChild w13 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordView]));
+            w13.Position = 0;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.recordEditor = new Gtk.VBox();
             this.recordEditor.Name = "recordEditor";
@@ -384,25 +372,25 @@ namespace bibliographer {
             this.buttonBibtexKeyGenerate.UseUnderline = true;
             this.buttonBibtexKeyGenerate.Label = Mono.Unix.Catalog.GetString("Generate");
             this.table1.Add(this.buttonBibtexKeyGenerate);
-            Gtk.Table.TableChild w15 = ((Gtk.Table.TableChild)(this.table1[this.buttonBibtexKeyGenerate]));
-            w15.TopAttach = ((uint)(1));
-            w15.BottomAttach = ((uint)(2));
-            w15.LeftAttach = ((uint)(2));
-            w15.RightAttach = ((uint)(3));
-            w15.XPadding = ((uint)(10));
-            w15.YPadding = ((uint)(10));
-            w15.XOptions = ((Gtk.AttachOptions)(0));
-            w15.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w14 = ((Gtk.Table.TableChild)(this.table1[this.buttonBibtexKeyGenerate]));
+            w14.TopAttach = ((uint)(1));
+            w14.BottomAttach = ((uint)(2));
+            w14.LeftAttach = ((uint)(2));
+            w14.RightAttach = ((uint)(3));
+            w14.XPadding = ((uint)(10));
+            w14.YPadding = ((uint)(10));
+            w14.XOptions = ((Gtk.AttachOptions)(0));
+            w14.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.comboRecordType = Gtk.ComboBox.NewText();
             this.comboRecordType.Name = "comboRecordType";
             this.table1.Add(this.comboRecordType);
-            Gtk.Table.TableChild w16 = ((Gtk.Table.TableChild)(this.table1[this.comboRecordType]));
-            w16.LeftAttach = ((uint)(1));
-            w16.RightAttach = ((uint)(3));
-            w16.XPadding = ((uint)(10));
-            w16.YPadding = ((uint)(10));
-            w16.YOptions = ((Gtk.AttachOptions)(4));
+            Gtk.Table.TableChild w15 = ((Gtk.Table.TableChild)(this.table1[this.comboRecordType]));
+            w15.LeftAttach = ((uint)(1));
+            w15.RightAttach = ((uint)(3));
+            w15.XPadding = ((uint)(10));
+            w15.YPadding = ((uint)(10));
+            w15.YOptions = ((Gtk.AttachOptions)(4));
             // Container child table1.Gtk.Table+TableChild
             this.entryReqBibtexKey = new Gtk.Entry();
             this.entryReqBibtexKey.CanFocus = true;
@@ -410,14 +398,14 @@ namespace bibliographer {
             this.entryReqBibtexKey.IsEditable = true;
             this.entryReqBibtexKey.InvisibleChar = '●';
             this.table1.Add(this.entryReqBibtexKey);
-            Gtk.Table.TableChild w17 = ((Gtk.Table.TableChild)(this.table1[this.entryReqBibtexKey]));
-            w17.TopAttach = ((uint)(1));
-            w17.BottomAttach = ((uint)(2));
-            w17.LeftAttach = ((uint)(1));
-            w17.RightAttach = ((uint)(2));
-            w17.XPadding = ((uint)(10));
-            w17.YPadding = ((uint)(10));
-            w17.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w16 = ((Gtk.Table.TableChild)(this.table1[this.entryReqBibtexKey]));
+            w16.TopAttach = ((uint)(1));
+            w16.BottomAttach = ((uint)(2));
+            w16.LeftAttach = ((uint)(1));
+            w16.RightAttach = ((uint)(2));
+            w16.XPadding = ((uint)(10));
+            w16.YPadding = ((uint)(10));
+            w16.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.lblBibtexKey = new Gtk.Label();
             this.lblBibtexKey.Name = "lblBibtexKey";
@@ -426,13 +414,13 @@ namespace bibliographer {
             this.lblBibtexKey.LabelProp = Mono.Unix.Catalog.GetString("BibTeX Key");
             this.lblBibtexKey.Justify = ((Gtk.Justification)(1));
             this.table1.Add(this.lblBibtexKey);
-            Gtk.Table.TableChild w18 = ((Gtk.Table.TableChild)(this.table1[this.lblBibtexKey]));
-            w18.TopAttach = ((uint)(1));
-            w18.BottomAttach = ((uint)(2));
-            w18.XPadding = ((uint)(10));
-            w18.YPadding = ((uint)(10));
-            w18.XOptions = ((Gtk.AttachOptions)(4));
-            w18.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w17 = ((Gtk.Table.TableChild)(this.table1[this.lblBibtexKey]));
+            w17.TopAttach = ((uint)(1));
+            w17.BottomAttach = ((uint)(2));
+            w17.XPadding = ((uint)(10));
+            w17.YPadding = ((uint)(10));
+            w17.XOptions = ((Gtk.AttachOptions)(4));
+            w17.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.lblRecordType = new Gtk.Label();
             this.lblRecordType.Name = "lblRecordType";
@@ -441,15 +429,15 @@ namespace bibliographer {
             this.lblRecordType.LabelProp = Mono.Unix.Catalog.GetString("Record Type");
             this.lblRecordType.Justify = ((Gtk.Justification)(1));
             this.table1.Add(this.lblRecordType);
-            Gtk.Table.TableChild w19 = ((Gtk.Table.TableChild)(this.table1[this.lblRecordType]));
-            w19.XPadding = ((uint)(10));
-            w19.YPadding = ((uint)(10));
-            w19.XOptions = ((Gtk.AttachOptions)(4));
-            w19.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w18 = ((Gtk.Table.TableChild)(this.table1[this.lblRecordType]));
+            w18.XPadding = ((uint)(10));
+            w18.YPadding = ((uint)(10));
+            w18.XOptions = ((Gtk.AttachOptions)(4));
+            w18.YOptions = ((Gtk.AttachOptions)(0));
             this.recordEditor.Add(this.table1);
-            Gtk.Box.BoxChild w20 = ((Gtk.Box.BoxChild)(this.recordEditor[this.table1]));
-            w20.Position = 0;
-            w20.Expand = false;
+            Gtk.Box.BoxChild w19 = ((Gtk.Box.BoxChild)(this.recordEditor[this.table1]));
+            w19.Position = 0;
+            w19.Expand = false;
             // Container child recordEditor.Gtk.Box+BoxChild
             this.notebookFields = new Gtk.Notebook();
             this.notebookFields.CanFocus = true;
@@ -475,8 +463,8 @@ namespace bibliographer {
             this.scrolledwindowOptional.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowOptional.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowOptional);
-            Gtk.Notebook.NotebookChild w22 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOptional]));
-            w22.Position = 1;
+            Gtk.Notebook.NotebookChild w21 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOptional]));
+            w21.Position = 1;
             // Notebook tab
             this.lblNtbkOptional = new Gtk.Label();
             this.lblNtbkOptional.Name = "lblNtbkOptional";
@@ -490,8 +478,8 @@ namespace bibliographer {
             this.scrolledwindowOther.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowOther.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowOther);
-            Gtk.Notebook.NotebookChild w23 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOther]));
-            w23.Position = 2;
+            Gtk.Notebook.NotebookChild w22 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOther]));
+            w22.Position = 2;
             // Notebook tab
             this.lblNtbkOther = new Gtk.Label();
             this.lblNtbkOther.Name = "lblNtbkOther";
@@ -505,8 +493,8 @@ namespace bibliographer {
             this.scrolledwindowBibliographerData.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowBibliographerData.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowBibliographerData);
-            Gtk.Notebook.NotebookChild w24 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowBibliographerData]));
-            w24.Position = 3;
+            Gtk.Notebook.NotebookChild w23 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowBibliographerData]));
+            w23.Position = 3;
             // Notebook tab
             this.lblNtbkBibliographerData = new Gtk.Label();
             this.lblNtbkBibliographerData.Name = "lblNtbkBibliographerData";
@@ -514,14 +502,13 @@ namespace bibliographer {
             this.notebookFields.SetTabLabel(this.scrolledwindowBibliographerData, this.lblNtbkBibliographerData);
             this.lblNtbkBibliographerData.ShowAll();
             this.recordEditor.Add(this.notebookFields);
-            Gtk.Box.BoxChild w25 = ((Gtk.Box.BoxChild)(this.recordEditor[this.notebookFields]));
-            w25.Position = 1;
+            Gtk.Box.BoxChild w24 = ((Gtk.Box.BoxChild)(this.recordEditor[this.notebookFields]));
+            w24.Position = 1;
             this.recordDetailsView.Add(this.recordEditor);
-            Gtk.Box.BoxChild w26 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordEditor]));
-            w26.Position = 1;
+            Gtk.Box.BoxChild w25 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordEditor]));
+            w25.Position = 1;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.hbuttonbox1 = new Gtk.HButtonBox();
-            this.hbuttonbox1.Name = "hbuttonbox1";
             this.hbuttonbox1.LayoutStyle = ((Gtk.ButtonBoxStyle)(4));
             // Container child hbuttonbox1.Gtk.ButtonBox+ButtonBoxChild
             this.toggleEditRecords = new Gtk.ToggleButton();
@@ -531,40 +518,40 @@ namespace bibliographer {
             this.toggleEditRecords.Active = true;
             this.toggleEditRecords.Label = Mono.Unix.Catalog.GetString("E_dit Records");
             this.hbuttonbox1.Add(this.toggleEditRecords);
-            Gtk.ButtonBox.ButtonBoxChild w27 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox1[this.toggleEditRecords]));
+            Gtk.ButtonBox.ButtonBoxChild w26 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox1[this.toggleEditRecords]));
+            w26.Expand = false;
+            w26.Fill = false;
+            this.recordDetailsView.Add(this.hbuttonbox1);
+            Gtk.Box.BoxChild w27 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.hbuttonbox1]));
+            w27.Position = 2;
             w27.Expand = false;
             w27.Fill = false;
-            this.recordDetailsView.Add(this.hbuttonbox1);
-            Gtk.Box.BoxChild w28 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.hbuttonbox1]));
-            w28.Position = 2;
-            w28.Expand = false;
-            w28.Fill = false;
-            w28.Padding = ((uint)(2));
+            w27.Padding = ((uint)(2));
             this.vpane.Add(this.recordDetailsView);
             this.vbox2.Add(this.vpane);
-            Gtk.Box.BoxChild w30 = ((Gtk.Box.BoxChild)(this.vbox2[this.vpane]));
-            w30.Position = 0;
+            Gtk.Box.BoxChild w29 = ((Gtk.Box.BoxChild)(this.vbox2[this.vpane]));
+            w29.Position = 0;
             this.hpane.Add(this.vbox2);
             this.vbox1.Add(this.hpane);
-            Gtk.Box.BoxChild w32 = ((Gtk.Box.BoxChild)(this.vbox1[this.hpane]));
-            w32.Position = 2;
+            Gtk.Box.BoxChild w31 = ((Gtk.Box.BoxChild)(this.vbox1[this.hpane]));
+            w31.Position = 2;
             // Container child vbox1.Gtk.Box+BoxChild
             this.statusbar = new Gtk.Statusbar();
             this.statusbar.Name = "statusbar";
             this.statusbar.Spacing = 2;
             this.vbox1.Add(this.statusbar);
-            Gtk.Box.BoxChild w33 = ((Gtk.Box.BoxChild)(this.vbox1[this.statusbar]));
-            w33.Position = 3;
-            w33.Expand = false;
-            w33.Fill = false;
+            Gtk.Box.BoxChild w32 = ((Gtk.Box.BoxChild)(this.vbox1[this.statusbar]));
+            w32.Position = 3;
+            w32.Expand = false;
+            w32.Fill = false;
             this.Add(this.vbox1);
             if ((this.Child != null)) {
                 this.Child.ShowAll();
             }
             this.Hide();
-            this.DeleteEvent += new Gtk.DeleteEventHandler(this.OnWindowDeleteEvent);
             this.SizeAllocated += new Gtk.SizeAllocatedHandler(this.OnWindowSizeAllocated);
             this.WindowStateEvent += new Gtk.WindowStateEventHandler(this.OnWindowStateChanged);
+            this.DeleteEvent += new Gtk.DeleteEventHandler(this.OnWindowDeleteEvent);
             this.FileNewAction.Activated += new System.EventHandler(this.OnFileNewActivated);
             this.FileOpenAction.Activated += new System.EventHandler(this.OnFileOpenActivated);
             this.SaveAction.Activated += new System.EventHandler(this.OnFileSaveActivated);

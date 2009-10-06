@@ -30,7 +30,7 @@ namespace bibliographer
         private Gtk.Viewport viewportOther;
         private Gtk.Viewport viewportBibliographerData;
         
-        private SearchEntry sexySearchEntry;
+        private bibliographer.SearchEntry searchEntry;
         
         private BibtexRecords bibtexRecords;
         private SidePaneTreeStore sidePaneStore;
@@ -286,14 +286,10 @@ namespace bibliographer
                               Gdk.DragAction.Copy);
 
             // Search entry
-            sexySearchEntry = new SearchEntry();
-            searchHbox.Add(sexySearchEntry);
-            sexySearchEntry.BorderWidth = 6;
-            
-            sexySearchEntry.InnerEntry.Changed += OnFilterEntryChanged;
-            sexySearchEntry.Show();
+            searchEntry = new bibliographer.SearchEntry();
+            searchEntry.Changed += OnFilterEntryChanged;
+            searchHbox.Add(searchEntry);
 
-            
             UpdateMenuFileHistory();
     
             // Activate new file
@@ -441,21 +437,32 @@ namespace bibliographer
                 }
             }
     
-            //if (record.searchField(
             return true;
         }
     
         private bool ModelFilterListStore(Gtk.TreeModel model, Gtk.TreeIter iter)
         {
+            BibtexSearchField sfield;
+            sfield = BibtexSearchField.All;
+
+            Gtk.Menu searchMenu = searchEntry.Menu;
+
+            foreach (Gtk.RadioMenuItem menuItem in searchMenu.AllChildren)
+            {
+                if (menuItem.Active)
+                {
+                    sfield = (BibtexSearchField) menuItem.Data["searchField"];
+                }
+            }
             
-            if (sexySearchEntry.InnerEntry.Text == "" || sexySearchEntry.InnerEntry.Text == null)
+            if (searchEntry.InnerEntry.Text == "" || searchEntry.InnerEntry.Text == null)
                 return true;
     
             BibtexRecord record = (BibtexRecord) model.GetValue (iter, 0);
     
             if (record != null)
             {
-                if (record.SearchRecord(sexySearchEntry.InnerEntry.Text) == true)
+                if (record.SearchRecord(searchEntry.InnerEntry.Text, sfield) == true)
                     return true;
                 else
                     return false;
@@ -1079,7 +1086,7 @@ namespace bibliographer
                                     // Workaround for clearing history - check if history item is not an empty string
                                     if (history[i] != "")
                                     {
-                                        string label = string.Format("{0} ", i + 1) + (string) history[i];
+                                        string label = string.Format("_{0} ", i + 1) + (string) history[i];
                                         Gtk.MenuItem item = new Gtk.MenuItem(label);
                                         item.Activated += OnFileHistoryActivate;
                                         item.Data.Add("i", (System.IntPtr)i);
@@ -1141,7 +1148,7 @@ namespace bibliographer
                 if (!ProcessModifiedData())
                     return;
             }
-    
+            
             Gtk.Application.Quit ();
         }
         
@@ -1158,7 +1165,7 @@ namespace bibliographer
             dialog.AddButton("No", Gtk.ResponseType.No);
             dialog.AddButton("Cancel", Gtk.ResponseType.Cancel);
             Gtk.ResponseType msg_result = (Gtk.ResponseType) dialog.Run();
-            dialog.Hide();
+            dialog.Destroy();
 
             if (msg_result == Gtk.ResponseType.Yes)
             {
@@ -1705,6 +1712,7 @@ namespace bibliographer
 
         protected virtual void OnWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
         {
+            args.RetVal = true;
             Quit();
         }
 
@@ -1898,10 +1906,11 @@ namespace bibliographer
                 Config.SetInt("window_height", a.Allocation.Height);
             }
         }
-    
+            
         private void OnWindowStateChanged(object o, Gtk.WindowStateEventArgs a)
         {
-            Gdk.EventWindowState gdk_event = a.Event; 
+            Gdk.EventWindowState gdk_event = a.Event;
+
             if (gdk_event.NewWindowState == Gdk.WindowState.Maximized)
             {
                 Debug.WriteLine(10, "window has been maximized");

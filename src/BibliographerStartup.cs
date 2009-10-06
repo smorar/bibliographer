@@ -84,9 +84,9 @@ namespace bibliographer
             
             Config.Initialise();
             Cache.Initialise();
-            
+
             BibliographerMainWindow window = new BibliographerMainWindow();
-            
+
             if (filename != "")
             window.FileOpen(filename);
             

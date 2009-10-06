@@ -21,7 +21,7 @@ namespace bibliographer
             if (RecordAdded != null)
                 RecordAdded(o, e);
         }
-    
+
         protected virtual void OnRecordDeleted(object o, EventArgs e)
         {
     		this.OnRecordsModified(new EventArgs());
@@ -50,7 +50,7 @@ namespace bibliographer
             set { List[index] = value; }
     		
         }
-    
+        
         public int Add(BibtexRecord record)
         {
             //System.Console.WriteLine("Record Added");

@@ -218,9 +218,9 @@
     <property name="WindowPosition">CenterOnParent</property>
     <property name="DefaultWidth">640</property>
     <property name="DefaultHeight">480</property>
-    <signal name="DeleteEvent" handler="OnWindowDeleteEvent" />
     <signal name="SizeAllocated" handler="OnWindowSizeAllocated" />
     <signal name="WindowStateEvent" handler="OnWindowStateChanged" />
+    <signal name="DeleteEvent" handler="OnWindowDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
         <property name="MemberName" />
@@ -274,7 +274,6 @@
         <child>
           <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
-            <property name="Homogeneous">True</property>
             <child>
               <widget class="Gtk.Toolbar" id="toolBar1">
                 <property name="MemberName" />
@@ -300,28 +299,19 @@
               <widget class="Gtk.HBox" id="searchHbox">
                 <property name="MemberName" />
                 <child>
-                  <widget class="Gtk.Label" id="searchLabel">
-                    <property name="MemberName" />
-                    <property name="Xpad">6</property>
-                    <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Search:</property>
-                    <property name="Justify">Right</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
               </widget>
               <packing>
                 <property name="Position">1</property>
                 <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
               </packing>
             </child>
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
