@@ -95,8 +95,6 @@ namespace bibliographer {
         
         private Gtk.ScrolledWindow scrolledwindowTreeView;
         
-        private Gtk.TreeView litTreeView;
-        
         private Gtk.VBox recordDetailsView;
         
         private Gtk.VBox recordView;
@@ -316,14 +314,9 @@ namespace bibliographer {
             this.scrolledwindowTreeView.Name = "scrolledwindowTreeView";
             this.scrolledwindowTreeView.ShadowType = ((Gtk.ShadowType)(1));
             this.scrolledwindowTreeView.BorderWidth = ((uint)(2));
-            // Container child scrolledwindowTreeView.Gtk.Container+ContainerChild
-            this.litTreeView = new Gtk.TreeView();
-            this.litTreeView.CanFocus = true;
-            this.litTreeView.Name = "litTreeView";
-            this.scrolledwindowTreeView.Add(this.litTreeView);
             this.vpane.Add(this.scrolledwindowTreeView);
-            Gtk.Paned.PanedChild w9 = ((Gtk.Paned.PanedChild)(this.vpane[this.scrolledwindowTreeView]));
-            w9.Resize = false;
+            Gtk.Paned.PanedChild w8 = ((Gtk.Paned.PanedChild)(this.vpane[this.scrolledwindowTreeView]));
+            w8.Resize = false;
             // Container child vpane.Gtk.Paned+PanedChild
             this.recordDetailsView = new Gtk.VBox();
             this.recordDetailsView.Name = "recordDetailsView";
@@ -338,10 +331,10 @@ namespace bibliographer {
             this.recordIcon = new Gtk.Image();
             this.recordIcon.Name = "recordIcon";
             this.recordViewHbox.Add(this.recordIcon);
-            Gtk.Box.BoxChild w10 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordIcon]));
-            w10.Position = 0;
-            w10.Expand = false;
-            w10.Fill = false;
+            Gtk.Box.BoxChild w9 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordIcon]));
+            w9.Position = 0;
+            w9.Expand = false;
+            w9.Fill = false;
             // Container child recordViewHbox.Gtk.Box+BoxChild
             this.recordDetails = new Gtk.Label();
             this.recordDetails.Name = "recordDetails";
@@ -351,14 +344,14 @@ namespace bibliographer {
             this.recordDetails.Yalign = 0F;
             this.recordDetails.LabelProp = Mono.Unix.Catalog.GetString("test");
             this.recordViewHbox.Add(this.recordDetails);
-            Gtk.Box.BoxChild w11 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordDetails]));
-            w11.Position = 1;
+            Gtk.Box.BoxChild w10 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordDetails]));
+            w10.Position = 1;
             this.recordView.Add(this.recordViewHbox);
-            Gtk.Box.BoxChild w12 = ((Gtk.Box.BoxChild)(this.recordView[this.recordViewHbox]));
-            w12.Position = 0;
+            Gtk.Box.BoxChild w11 = ((Gtk.Box.BoxChild)(this.recordView[this.recordViewHbox]));
+            w11.Position = 0;
             this.recordDetailsView.Add(this.recordView);
-            Gtk.Box.BoxChild w13 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordView]));
-            w13.Position = 0;
+            Gtk.Box.BoxChild w12 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordView]));
+            w12.Position = 0;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.recordEditor = new Gtk.VBox();
             this.recordEditor.Name = "recordEditor";
@@ -372,25 +365,25 @@ namespace bibliographer {
             this.buttonBibtexKeyGenerate.UseUnderline = true;
             this.buttonBibtexKeyGenerate.Label = Mono.Unix.Catalog.GetString("Generate");
             this.table1.Add(this.buttonBibtexKeyGenerate);
-            Gtk.Table.TableChild w14 = ((Gtk.Table.TableChild)(this.table1[this.buttonBibtexKeyGenerate]));
-            w14.TopAttach = ((uint)(1));
-            w14.BottomAttach = ((uint)(2));
-            w14.LeftAttach = ((uint)(2));
-            w14.RightAttach = ((uint)(3));
-            w14.XPadding = ((uint)(10));
-            w14.YPadding = ((uint)(10));
-            w14.XOptions = ((Gtk.AttachOptions)(0));
-            w14.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w13 = ((Gtk.Table.TableChild)(this.table1[this.buttonBibtexKeyGenerate]));
+            w13.TopAttach = ((uint)(1));
+            w13.BottomAttach = ((uint)(2));
+            w13.LeftAttach = ((uint)(2));
+            w13.RightAttach = ((uint)(3));
+            w13.XPadding = ((uint)(10));
+            w13.YPadding = ((uint)(10));
+            w13.XOptions = ((Gtk.AttachOptions)(0));
+            w13.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.comboRecordType = Gtk.ComboBox.NewText();
             this.comboRecordType.Name = "comboRecordType";
             this.table1.Add(this.comboRecordType);
-            Gtk.Table.TableChild w15 = ((Gtk.Table.TableChild)(this.table1[this.comboRecordType]));
-            w15.LeftAttach = ((uint)(1));
-            w15.RightAttach = ((uint)(3));
-            w15.XPadding = ((uint)(10));
-            w15.YPadding = ((uint)(10));
-            w15.YOptions = ((Gtk.AttachOptions)(4));
+            Gtk.Table.TableChild w14 = ((Gtk.Table.TableChild)(this.table1[this.comboRecordType]));
+            w14.LeftAttach = ((uint)(1));
+            w14.RightAttach = ((uint)(3));
+            w14.XPadding = ((uint)(10));
+            w14.YPadding = ((uint)(10));
+            w14.YOptions = ((Gtk.AttachOptions)(4));
             // Container child table1.Gtk.Table+TableChild
             this.entryReqBibtexKey = new Gtk.Entry();
             this.entryReqBibtexKey.CanFocus = true;
@@ -398,14 +391,14 @@ namespace bibliographer {
             this.entryReqBibtexKey.IsEditable = true;
             this.entryReqBibtexKey.InvisibleChar = '●';
             this.table1.Add(this.entryReqBibtexKey);
-            Gtk.Table.TableChild w16 = ((Gtk.Table.TableChild)(this.table1[this.entryReqBibtexKey]));
-            w16.TopAttach = ((uint)(1));
-            w16.BottomAttach = ((uint)(2));
-            w16.LeftAttach = ((uint)(1));
-            w16.RightAttach = ((uint)(2));
-            w16.XPadding = ((uint)(10));
-            w16.YPadding = ((uint)(10));
-            w16.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w15 = ((Gtk.Table.TableChild)(this.table1[this.entryReqBibtexKey]));
+            w15.TopAttach = ((uint)(1));
+            w15.BottomAttach = ((uint)(2));
+            w15.LeftAttach = ((uint)(1));
+            w15.RightAttach = ((uint)(2));
+            w15.XPadding = ((uint)(10));
+            w15.YPadding = ((uint)(10));
+            w15.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.lblBibtexKey = new Gtk.Label();
             this.lblBibtexKey.Name = "lblBibtexKey";
@@ -414,13 +407,13 @@ namespace bibliographer {
             this.lblBibtexKey.LabelProp = Mono.Unix.Catalog.GetString("BibTeX Key");
             this.lblBibtexKey.Justify = ((Gtk.Justification)(1));
             this.table1.Add(this.lblBibtexKey);
-            Gtk.Table.TableChild w17 = ((Gtk.Table.TableChild)(this.table1[this.lblBibtexKey]));
-            w17.TopAttach = ((uint)(1));
-            w17.BottomAttach = ((uint)(2));
-            w17.XPadding = ((uint)(10));
-            w17.YPadding = ((uint)(10));
-            w17.XOptions = ((Gtk.AttachOptions)(4));
-            w17.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w16 = ((Gtk.Table.TableChild)(this.table1[this.lblBibtexKey]));
+            w16.TopAttach = ((uint)(1));
+            w16.BottomAttach = ((uint)(2));
+            w16.XPadding = ((uint)(10));
+            w16.YPadding = ((uint)(10));
+            w16.XOptions = ((Gtk.AttachOptions)(4));
+            w16.YOptions = ((Gtk.AttachOptions)(0));
             // Container child table1.Gtk.Table+TableChild
             this.lblRecordType = new Gtk.Label();
             this.lblRecordType.Name = "lblRecordType";
@@ -429,15 +422,15 @@ namespace bibliographer {
             this.lblRecordType.LabelProp = Mono.Unix.Catalog.GetString("Record Type");
             this.lblRecordType.Justify = ((Gtk.Justification)(1));
             this.table1.Add(this.lblRecordType);
-            Gtk.Table.TableChild w18 = ((Gtk.Table.TableChild)(this.table1[this.lblRecordType]));
-            w18.XPadding = ((uint)(10));
-            w18.YPadding = ((uint)(10));
-            w18.XOptions = ((Gtk.AttachOptions)(4));
-            w18.YOptions = ((Gtk.AttachOptions)(0));
+            Gtk.Table.TableChild w17 = ((Gtk.Table.TableChild)(this.table1[this.lblRecordType]));
+            w17.XPadding = ((uint)(10));
+            w17.YPadding = ((uint)(10));
+            w17.XOptions = ((Gtk.AttachOptions)(4));
+            w17.YOptions = ((Gtk.AttachOptions)(0));
             this.recordEditor.Add(this.table1);
-            Gtk.Box.BoxChild w19 = ((Gtk.Box.BoxChild)(this.recordEditor[this.table1]));
-            w19.Position = 0;
-            w19.Expand = false;
+            Gtk.Box.BoxChild w18 = ((Gtk.Box.BoxChild)(this.recordEditor[this.table1]));
+            w18.Position = 0;
+            w18.Expand = false;
             // Container child recordEditor.Gtk.Box+BoxChild
             this.notebookFields = new Gtk.Notebook();
             this.notebookFields.CanFocus = true;
@@ -463,8 +456,8 @@ namespace bibliographer {
             this.scrolledwindowOptional.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowOptional.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowOptional);
-            Gtk.Notebook.NotebookChild w21 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOptional]));
-            w21.Position = 1;
+            Gtk.Notebook.NotebookChild w20 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOptional]));
+            w20.Position = 1;
             // Notebook tab
             this.lblNtbkOptional = new Gtk.Label();
             this.lblNtbkOptional.Name = "lblNtbkOptional";
@@ -478,8 +471,8 @@ namespace bibliographer {
             this.scrolledwindowOther.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowOther.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowOther);
-            Gtk.Notebook.NotebookChild w22 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOther]));
-            w22.Position = 2;
+            Gtk.Notebook.NotebookChild w21 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowOther]));
+            w21.Position = 2;
             // Notebook tab
             this.lblNtbkOther = new Gtk.Label();
             this.lblNtbkOther.Name = "lblNtbkOther";
@@ -493,8 +486,8 @@ namespace bibliographer {
             this.scrolledwindowBibliographerData.HscrollbarPolicy = ((Gtk.PolicyType)(2));
             this.scrolledwindowBibliographerData.ShadowType = ((Gtk.ShadowType)(1));
             this.notebookFields.Add(this.scrolledwindowBibliographerData);
-            Gtk.Notebook.NotebookChild w23 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowBibliographerData]));
-            w23.Position = 3;
+            Gtk.Notebook.NotebookChild w22 = ((Gtk.Notebook.NotebookChild)(this.notebookFields[this.scrolledwindowBibliographerData]));
+            w22.Position = 3;
             // Notebook tab
             this.lblNtbkBibliographerData = new Gtk.Label();
             this.lblNtbkBibliographerData.Name = "lblNtbkBibliographerData";
@@ -502,13 +495,14 @@ namespace bibliographer {
             this.notebookFields.SetTabLabel(this.scrolledwindowBibliographerData, this.lblNtbkBibliographerData);
             this.lblNtbkBibliographerData.ShowAll();
             this.recordEditor.Add(this.notebookFields);
-            Gtk.Box.BoxChild w24 = ((Gtk.Box.BoxChild)(this.recordEditor[this.notebookFields]));
-            w24.Position = 1;
+            Gtk.Box.BoxChild w23 = ((Gtk.Box.BoxChild)(this.recordEditor[this.notebookFields]));
+            w23.Position = 1;
             this.recordDetailsView.Add(this.recordEditor);
-            Gtk.Box.BoxChild w25 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordEditor]));
-            w25.Position = 1;
+            Gtk.Box.BoxChild w24 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.recordEditor]));
+            w24.Position = 1;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.hbuttonbox1 = new Gtk.HButtonBox();
+            this.hbuttonbox1.Name = "hbuttonbox1";
             this.hbuttonbox1.LayoutStyle = ((Gtk.ButtonBoxStyle)(4));
             // Container child hbuttonbox1.Gtk.ButtonBox+ButtonBoxChild
             this.toggleEditRecords = new Gtk.ToggleButton();
@@ -518,32 +512,32 @@ namespace bibliographer {
             this.toggleEditRecords.Active = true;
             this.toggleEditRecords.Label = Mono.Unix.Catalog.GetString("E_dit Records");
             this.hbuttonbox1.Add(this.toggleEditRecords);
-            Gtk.ButtonBox.ButtonBoxChild w26 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox1[this.toggleEditRecords]));
+            Gtk.ButtonBox.ButtonBoxChild w25 = ((Gtk.ButtonBox.ButtonBoxChild)(this.hbuttonbox1[this.toggleEditRecords]));
+            w25.Expand = false;
+            w25.Fill = false;
+            this.recordDetailsView.Add(this.hbuttonbox1);
+            Gtk.Box.BoxChild w26 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.hbuttonbox1]));
+            w26.Position = 2;
             w26.Expand = false;
             w26.Fill = false;
-            this.recordDetailsView.Add(this.hbuttonbox1);
-            Gtk.Box.BoxChild w27 = ((Gtk.Box.BoxChild)(this.recordDetailsView[this.hbuttonbox1]));
-            w27.Position = 2;
-            w27.Expand = false;
-            w27.Fill = false;
-            w27.Padding = ((uint)(2));
+            w26.Padding = ((uint)(2));
             this.vpane.Add(this.recordDetailsView);
             this.vbox2.Add(this.vpane);
-            Gtk.Box.BoxChild w29 = ((Gtk.Box.BoxChild)(this.vbox2[this.vpane]));
-            w29.Position = 0;
+            Gtk.Box.BoxChild w28 = ((Gtk.Box.BoxChild)(this.vbox2[this.vpane]));
+            w28.Position = 0;
             this.hpane.Add(this.vbox2);
             this.vbox1.Add(this.hpane);
-            Gtk.Box.BoxChild w31 = ((Gtk.Box.BoxChild)(this.vbox1[this.hpane]));
-            w31.Position = 2;
+            Gtk.Box.BoxChild w30 = ((Gtk.Box.BoxChild)(this.vbox1[this.hpane]));
+            w30.Position = 2;
             // Container child vbox1.Gtk.Box+BoxChild
             this.statusbar = new Gtk.Statusbar();
             this.statusbar.Name = "statusbar";
             this.statusbar.Spacing = 2;
             this.vbox1.Add(this.statusbar);
-            Gtk.Box.BoxChild w32 = ((Gtk.Box.BoxChild)(this.vbox1[this.statusbar]));
-            w32.Position = 3;
-            w32.Expand = false;
-            w32.Fill = false;
+            Gtk.Box.BoxChild w31 = ((Gtk.Box.BoxChild)(this.vbox1[this.statusbar]));
+            w31.Position = 3;
+            w31.Expand = false;
+            w31.Fill = false;
             this.Add(this.vbox1);
             if ((this.Child != null)) {
                 this.Child.ShowAll();
@@ -575,10 +569,6 @@ namespace bibliographer {
             this.ToolbarRemoveAction.Activated += new System.EventHandler(this.OnRemoveRecordActivated);
             this.ViewRecordsAction.Activated += new System.EventHandler(this.OnRadioViewRecordsActivated);
             this.EditRecordsAction.Activated += new System.EventHandler(this.OnRadioEditRecordsActivated);
-            this.litTreeView.DragDataReceived += new Gtk.DragDataReceivedHandler(this.OnLitTreeViewDragDataReceived);
-            this.litTreeView.DragMotion += new Gtk.DragMotionHandler(this.OnLitTreeViewDragMotion);
-            this.litTreeView.DragLeave += new Gtk.DragLeaveHandler(this.OnLitTreeViewDragLeave);
-            this.litTreeView.RowActivated += new Gtk.RowActivatedHandler(this.OnLitTreeViewRowActivated);
             this.entryReqBibtexKey.Changed += new System.EventHandler(this.OnEntryReqBibtexKeyChanged);
             this.comboRecordType.Changed += new System.EventHandler(this.OnComboRecordTypeChanged);
             this.buttonBibtexKeyGenerate.Clicked += new System.EventHandler(this.OnButtonBibtexKeyGenerateClicked);

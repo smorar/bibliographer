@@ -355,13 +355,12 @@
                         <property name="ShadowType">In</property>
                         <property name="BorderWidth">2</property>
                         <child>
-                          <widget class="Gtk.TreeView" id="litTreeView">
+                          <widget class="Gtk.Viewport" id="GtkViewport">
                             <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <signal name="DragDataReceived" handler="OnLitTreeViewDragDataReceived" />
-                            <signal name="DragMotion" handler="OnLitTreeViewDragMotion" />
-                            <signal name="DragLeave" handler="OnLitTreeViewDragLeave" />
-                            <signal name="RowActivated" handler="OnLitTreeViewRowActivated" />
+                            <property name="ShadowType">None</property>
+                            <child>
+                              <placeholder />
+                            </child>
                           </widget>
                         </child>
                       </widget>

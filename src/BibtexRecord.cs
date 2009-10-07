@@ -233,7 +233,7 @@ namespace bibliographer
         {
             if (!HasField("bibliographer_uri"))
                 return null;
-            String uriString = GetField("bibliographer_uri");
+            String uriString = GetField("bibliographer_uri").Replace('\n',' ').Trim();
             if (uriString == null || uriString == "")
                 return null;
             else
@@ -870,7 +870,7 @@ namespace bibliographer
     
     	public bool HasURI()
     	{
-    		if ((this.GetURI() != null) || (this.GetURI() != ""))
+    		if ((this.GetURI() != null) && (this.GetURI() != ""))
     			return true;
     		return false;
     	}
@@ -878,7 +878,9 @@ namespace bibliographer
         public Gdk.Pixbuf GetSmallThumbnail()
         {
             Debug.Write(5, "getSmallThumbnail: ");
-            if (this.smallThumbnail == null)
+            string uriString = this.GetURI();
+            
+            if ((this.smallThumbnail == null) && (this.HasURI()))
             {
                 if (Cache.IsCached("small_thumb", cacheKey))
                 {
@@ -887,25 +889,14 @@ namespace bibliographer
                     return this.smallThumbnail;
                 }
                 else
+                {
                     Debug.WriteLine(5, "not cached... let's go!");
-                string uriString = this.GetURI();
     
-                // No URI, so just exit
-                if (uriString == null || uriString == "")
-                {
-                    //Console.WriteLine("Selected record does not have a URI field");
-                    // Render a blank pixbuf;
-                    //	Console.WriteLine("Has no URI, so no thumbnail");
-                    Debug.WriteLine(5, "messed up URI");
-                    return this.smallThumbnail;
-                }
-                // URI found, generate thumbnail, and cache
-                else
-                {
                     Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
                     if (!uri.Exists) {
                         // file doesn't exist
                         // FIXME: set an error thumbnail or some such
+                        System.Console.WriteLine(uriString);
                         Debug.WriteLine(5, "Non-existent URI");
                         this.smallThumbnail = (new Gdk.Pixbuf(null, "error.png")).ScaleSimple(20, 20, Gdk.InterpType.Bilinear);
                         return this.smallThumbnail;
@@ -922,9 +913,16 @@ namespace bibliographer
                         Debug.WriteLine(5, "genSmallThumbnail returned null :-(");
                 }
             }
-            else
-                Debug.WriteLine(5, "non-null thumbnail for '{0}'", GetField("bibliographer_last_uri"));
-    
+            else if ((this.smallThumbnail == null) && (!this.HasURI()))
+            {
+                Debug.WriteLine(5, "No URI, generating transparent thumbnail");
+                // Generate a transparent pixbuf for 
+                Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, 20, 20);
+                pixbuf.Fill(0);
+                pixbuf.AddAlpha(true,0,0,0);
+                this.smallThumbnail = pixbuf;
+            }
+            
             return this.smallThumbnail;
         }
     
