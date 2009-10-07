@@ -871,24 +871,8 @@ namespace bibliographer
         
         private void Quit()
         {
-            // Save column states
-            int i = 0;
-            foreach (Gtk.TreeViewColumn column in litTreeView.Columns)
-            {
-                Config.SetBool("Columns/"+column.Title+"/visible", column.Visible);
-                Config.SetInt("Columns/"+column.Title+"/order", i);
-                // Prevent columns from persisting with a width less than 10 pixels
-                if (column.Width >= 40)
-                {
-                    Config.SetInt("Columns/"+column.Title+"/width", column.Width);
-                }
-                else
-                {
-                    Config.SetInt("Columns/"+column.Title+"/width", 40);
-                }
-                i = i + 1;
-            }
-    
+            litTreeView.SaveColumnsState();
+            
             // Save sidebar visibility
             Config.SetBool("SideBar/visible", scrolledwindowSidePane.Visible);
             Gtk.HPaned hpane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
@@ -1186,8 +1170,15 @@ namespace bibliographer
         {
             Debug.WriteLine(5, "Adding a new record");
             //Debug.WriteLine(5, "Prev rec count: {0}", bibtexRecords.Count);
-            Gtk.TreeIter iter;
+            Gtk.TreeIter litTreeViewIter, sidePaneIter;
     
+            // Unfilter
+            sidePaneStore.GetIterFirst(out sidePaneIter);
+            sidePaneTreeView.SetCursor(sidePaneTreeView.Model.GetPath(sidePaneIter), sidePaneTreeView.GetColumn(0), false);
+            
+            // Clear search
+            searchEntry.Clear();
+            
             if (bibtexRecords == null)
             {
                 bibtexRecords = new BibtexRecords();
@@ -1197,12 +1188,8 @@ namespace bibliographer
             BibtexRecord record = new BibtexRecord();
             bibtexRecords.Add(record);
     
-            iter = litStore.GetIter(record);
-
-            // TODO: Unfilter
-            // TODO: Remove search
-            // TODO: Unsort and then resort
-            litTreeView.SetCursor(litStore.GetPath(iter),litTreeView.GetColumn(0),false);
+            litTreeViewIter = litStore.GetIter(record);
+            litTreeView.SetCursor(litTreeView.Model.GetPath(litTreeViewIter),litTreeView.GetColumn(0),false);
             
             BibtexGenerateKeySetStatus();
     

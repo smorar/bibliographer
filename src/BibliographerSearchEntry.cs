@@ -52,6 +52,11 @@ namespace bibliographer
 
             this.Show();
         }
+
+        public void Clear()
+        {
+            this.InnerEntry.Text = "";
+        }
         
         protected virtual void OnSearchEntryChanged (object sender, System.EventArgs e)
         {

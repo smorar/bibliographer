@@ -36,7 +36,13 @@ namespace bibliographer
             Gtk.TreeViewColumn [] columnarray;
             columnarray = new Gtk.TreeViewColumn[8];
     
-            if (Config.KeyExists("Columns/Author/order") && Config.KeyExists("Columns/Title/order") && Config.KeyExists("Columns/Year/order") && Config.KeyExists("Columns/Journal/order") && Config.KeyExists("Columns/Bibtex Key/order") && Config.KeyExists("Columns/Volume/order") && Config.KeyExists("Columns/Pages/order"))
+            if (Config.KeyExists("Columns/Author/order") && 
+                Config.KeyExists("Columns/Title/order") &&
+                Config.KeyExists("Columns/Year/order") && 
+                Config.KeyExists("Columns/Journal/order") && 
+                Config.KeyExists("Columns/Bibtex Key/order") && 
+                Config.KeyExists("Columns/Volume/order") && 
+                Config.KeyExists("Columns/Pages/order"))
             {
                 columnarray[Config.GetInt("Columns/Icon/order")] = new Gtk.TreeViewColumn("Icon", new Gtk.CellRendererPixbuf(), "image");
                 columnarray[Config.GetInt("Columns/Author/order")] = new Gtk.TreeViewColumn("Author", new Gtk.CellRendererText(), "text");
@@ -289,6 +295,31 @@ namespace bibliographer
             Debug.WriteLine(10, "Comparing {1} and {2}", A, B); 
             return String.Compare(A, B);
         }
+        
+        public void SaveColumnsState()
+        {
+            // Save column states
+            int i = 0;
+            foreach (Gtk.TreeViewColumn column in this.Columns)
+            {
+                Config.SetBool("Columns/"+column.Title+"/visible", column.Visible);
+                Config.SetInt("Columns/"+column.Title+"/order", i);
+                // Prevent columns from persisting with a width less than 10 pixels
+                if (column.Width >= 40)
+                {
+                    Config.SetInt("Columns/"+column.Title+"/width", column.Width);
+                }
+                else
+                {
+                    Config.SetInt("Columns/"+column.Title+"/width", 40);
+                }
+                i = i + 1;
+            }
+        }
+        
+        /* ----------------------------------------------------------------- */
+        /* CALLBACKS                                                         */
+        /* ----------------------------------------------------------------- */
         
         protected virtual void OnColumnSort(object o, EventArgs a)
         {
