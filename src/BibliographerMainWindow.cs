@@ -128,11 +128,8 @@ namespace bibliographer
             litTreeView = new LitTreeView(fieldFilter);
             scrolledwindowTreeView.Add(litTreeView);
             // LitTreeView callbacks
-            litTreeView.Selection.Changed += OnTreeViewSelectionChanged;
+            litTreeView.Selection.Changed += OnLitTreeViewSelectionChanged;
             litTreeView.DragDataReceived += OnLitTreeViewDragDataReceived;
-            litTreeView.DragMotion += OnLitTreeViewDragMotion;
-            litTreeView.DragLeave += OnLitTreeViewDragLeave;
-            litTreeView.RowActivated += OnLitTreeViewRowActivated;
             
             // Side Pane tree model
             sidePaneStore = new SidePaneTreeStore(bibtexRecords);
@@ -1404,7 +1401,7 @@ namespace bibliographer
             chooseColumnsDialog.Destroy();
         }
         
-        protected virtual void OnTreeViewSelectionChanged (object o, EventArgs a)
+        protected virtual void OnLitTreeViewSelectionChanged (object o, EventArgs a)
         {
             //Console.WriteLine("Selection changed");
             Gtk.TreeIter iter;
@@ -1574,67 +1571,6 @@ namespace bibliographer
             ReconstructDetails();
         }
 
-        protected virtual void OnLitTreeViewDragMotion (object o, Gtk.DragMotionArgs args)
-        {
-            // FIXME: how do we check from here if that drag has data that we want?
-    
-            Gtk.TreePath path;
-            Gtk.TreeViewDropPosition drop_position;
-            if (litTreeView.GetDestRowAtPos(args.X, args.Y, out path, out drop_position)) {
-                litTreeView.SetDragDestRow(path, Gtk.TreeViewDropPosition.IntoOrAfter);
-            }
-            else
-                litTreeView.UnsetRowsDragDest();
-        }
-
-        protected virtual void OnLitTreeViewDragLeave (object o, Gtk.DragLeaveArgs args)
-        {
-            litTreeView.UnsetRowsDragDest();
-        }
-
-        protected virtual void OnLitTreeViewRowActivated (object o, Gtk.RowActivatedArgs args)
-        {
-            Debug.WriteLine(5, "Row activated");
-    
-            Gtk.TreeIter iter;
-            BibtexRecord record;
-    
-            if (!litTreeView.Model.GetIter(out iter, args.Path))
-            {
-                Debug.WriteLine(5, "Failed to open record because of GetIter faliure");
-                return;
-            }
-            record = (BibtexRecord) litTreeView.Model.GetValue(iter, 0);
-            string uriString = record.GetURI();
-            if (uriString == null || uriString == "")
-            {
-                Debug.WriteLine(5, "Selected record does not have a URI field");
-                return;
-            }
-            Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
-    
-            GLib.List list = new GLib.List(typeof(String));
-            list.Append(uriString);
-            if (System.IO.File.Exists(Gnome.Vfs.Uri.GetLocalPathFromUri(uriString)))
-            {
-                Gnome.Vfs.MimeApplication app = Gnome.Vfs.Mime.GetDefaultApplication(uri.MimeType.Name);
-                if (app != null)
-                    app.Launch(list);
-                return;
-            }
-            else
-            {
-                Gtk.MessageDialog md = new Gtk.MessageDialog (this,
-                                                          Gtk.DialogFlags.DestroyWithParent,
-                                                          Gtk.MessageType.Error,
-                                                          Gtk.ButtonsType.Close, "Error loading associated file:\n" + Gnome.Vfs.Uri.GetLocalPathFromUri(uriString));
-                //int result = md.Run ();
-                md.Run();
-                md.Destroy();
-                Debug.WriteLine(0, "Error loading associated file:\n{0}", Gnome.Vfs.Uri.GetLocalPathFromUri(uriString));
-            }
-        }
-        
         private void OnWindowSizeAllocated(object o, Gtk.SizeAllocatedArgs a)
         {
             if (Config.GetBool("window_maximized") == false)

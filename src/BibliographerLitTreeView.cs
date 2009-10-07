@@ -139,7 +139,12 @@ namespace bibliographer
                 }
                 id++;
             }
-    
+
+            // Callbacks for the LitTreeView
+            this.DragMotion += OnDragMotion;
+            this.RowActivated += OnRowActivated;
+            this.DragLeave += OnDragLeave;
+            
             this.Show();
         }
         
@@ -302,5 +307,67 @@ namespace bibliographer
                 sorter.SetSortColumnId(col.SortColumnId, col.SortOrder);
             }
         }
+        protected virtual void OnRowActivated (object o, Gtk.RowActivatedArgs args)
+        {
+            Debug.WriteLine(5, "Row activated");
+    
+            Gtk.TreeIter iter;
+            BibtexRecord record;
+    
+            if (!this.Model.GetIter(out iter, args.Path))
+            {
+                Debug.WriteLine(5, "Failed to open record because of GetIter faliure");
+                return;
+            }
+            record = (BibtexRecord) this.Model.GetValue(iter, 0);
+            string uriString = record.GetURI();
+            if (uriString == null || uriString == "")
+            {
+                Debug.WriteLine(5, "Selected record does not have a URI field");
+                return;
+            }
+            Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
+    
+            GLib.List list = new GLib.List(typeof(String));
+            list.Append(uriString);
+            if (System.IO.File.Exists(Gnome.Vfs.Uri.GetLocalPathFromUri(uriString)))
+            {
+                Gnome.Vfs.MimeApplication app = Gnome.Vfs.Mime.GetDefaultApplication(uri.MimeType.Name);
+                if (app != null)
+                    app.Launch(list);
+                return;
+            }
+            else
+            {
+                Gtk.MessageDialog md = new Gtk.MessageDialog ((Gtk.Window) this.Toplevel,
+                                                          Gtk.DialogFlags.DestroyWithParent,
+                                                          Gtk.MessageType.Error,
+                                                          Gtk.ButtonsType.Close, "Error loading associated file:\n" + Gnome.Vfs.Uri.GetLocalPathFromUri(uriString));
+                //int result = md.Run ();
+                md.Run();
+                md.Destroy();
+                Debug.WriteLine(0, "Error loading associated file:\n{0}", Gnome.Vfs.Uri.GetLocalPathFromUri(uriString));
+            }
+        }
+        
+        protected virtual void OnDragLeave (object o, Gtk.DragLeaveArgs args)
+        {
+            this.UnsetRowsDragDest();
+        }
+        
+        protected virtual void OnDragMotion (object o, Gtk.DragMotionArgs args)
+        {
+            // FIXME: how do we check from here if that drag has data that we want?
+    
+            Gtk.TreePath path;
+            Gtk.TreeViewDropPosition drop_position;
+            if (this.GetDestRowAtPos(args.X, args.Y, out path, out drop_position)) {
+                this.SetDragDestRow(path, Gtk.TreeViewDropPosition.IntoOrAfter);
+            }
+            else
+                this.UnsetRowsDragDest();
+        }
+
+
     }
 }
