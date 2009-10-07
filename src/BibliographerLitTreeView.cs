@@ -95,7 +95,7 @@ namespace bibliographer
                 }
                 if (column.Title == "Icon")
                 {
-                    column.Title = "";
+                    column.Title = "Icon";
                     column.SetCellDataFunc(column.CellRenderers[0], pixmapDataFunc);
                     column.Sizing = Gtk.TreeViewColumnSizing.Fixed;
                     column.Expand = false;

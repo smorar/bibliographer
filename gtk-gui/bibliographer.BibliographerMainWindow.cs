@@ -329,6 +329,8 @@ namespace bibliographer {
             this.recordViewHbox.Name = "recordViewHbox";
             // Container child recordViewHbox.Gtk.Box+BoxChild
             this.recordIcon = new Gtk.Image();
+            this.recordIcon.WidthRequest = 96;
+            this.recordIcon.HeightRequest = 128;
             this.recordIcon.Name = "recordIcon";
             this.recordViewHbox.Add(this.recordIcon);
             Gtk.Box.BoxChild w9 = ((Gtk.Box.BoxChild)(this.recordViewHbox[this.recordIcon]));

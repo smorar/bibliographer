@@ -31,11 +31,11 @@ namespace bibliographer
         private Gtk.Viewport viewportBibliographerData;
         
         private bibliographer.SearchEntry searchEntry;
+        private bibliographer.LitTreeView litTreeView;
         
         private BibtexRecords bibtexRecords;
         private SidePaneTreeStore sidePaneStore;
         private LitListStore litStore;
-        private bibliographer.LitTreeView litTreeView;
         private Gtk.TreeModelFilter modelFilter;
         private Gtk.TreeModelFilter fieldFilter;
 
@@ -124,7 +124,8 @@ namespace bibliographer
     
             modelFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (ModelFilterListStore);
             fieldFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FieldFilterListStore);
-    
+
+            // Setup and add the LitTreeView     
             litTreeView = new LitTreeView(fieldFilter);
             scrolledwindowTreeView.Add(litTreeView);
             // LitTreeView callbacks

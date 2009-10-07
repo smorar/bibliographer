@@ -15,7 +15,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 658">
+  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 686">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -381,6 +381,8 @@
                                 <child>
                                   <widget class="Gtk.Image" id="recordIcon">
                                     <property name="MemberName" />
+                                    <property name="WidthRequest">96</property>
+                                    <property name="HeightRequest">128</property>
                                   </widget>
                                   <packing>
                                     <property name="Position">0</property>

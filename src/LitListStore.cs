@@ -26,7 +26,7 @@ public class LitListStore : Gtk.ListStore
             this.bibtexRecords = new BibtexRecords();
         else
             this.bibtexRecords = btRecords;
-
+        
         this.bibtexRecords.RecordAdded += this.OnRecordAdded;
         this.bibtexRecords.RecordDeleted += this.OnRecordDeleted;
     }

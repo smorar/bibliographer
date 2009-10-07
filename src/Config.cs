@@ -35,6 +35,7 @@ namespace bibliographer
 				client.Set(APP_PATH + keyName, keyValue);
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "setting value: {0} to key: {1}", keyValue, keyName);
 			}
 		}
 		
@@ -47,6 +48,7 @@ namespace bibliographer
 				return "";
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "getting value from key: {0}", keyName);
 				return "";
 			}
 		}
@@ -58,6 +60,7 @@ namespace bibliographer
 				client.Set(APP_PATH + keyName, keyValue);
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "setting value: {0} to key: {1}", keyValue, keyName);
 			}
 		}
 		
@@ -70,6 +73,7 @@ namespace bibliographer
 				return 0;
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "getting value from key: {0}", keyName);
 				return 0;
 			}
 		}
@@ -81,6 +85,7 @@ namespace bibliographer
 				client.Set(APP_PATH + keyName, keyValue);
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "setting value: {0} to key: {1}", keyValue, keyName);
 			}
 			
 		}
@@ -94,6 +99,7 @@ namespace bibliographer
 		        return false;
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "getting value from key: {0}", keyName);
 				return false;
 			}
 		}
@@ -110,6 +116,7 @@ namespace bibliographer
 				return false;
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "checking that key {0} exists", keyName);
 				return false;
 			}
 		}
@@ -121,6 +128,7 @@ namespace bibliographer
 				client.Set(APP_PATH + keyName, o);
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "setting value: {0} to key: {1}", o.ToString(), keyName);
 			}
 		}
 		
@@ -133,6 +141,7 @@ namespace bibliographer
 				return null;
 			} catch (System.Exception){
 				Debug.WriteLine(1, "Unhandled exception with gconf");
+                Debug.WriteLine(1, "getting value from key: {0}", keyName);
 				return null;
 			}
 		}

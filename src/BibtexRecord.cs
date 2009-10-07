@@ -99,8 +99,12 @@ namespace bibliographer
     
         public void SetKey(string key)
         {
-            this.recordKey = key;
-            this.OnRecordModified(new EventArgs());
+            if (this.recordKey != key)
+            {
+                Debug.WriteLine(5, "Key set: {0}", key);
+                this.recordKey = key;
+                this.OnRecordModified(new EventArgs());
+            }
         }
     
         public string GetKey()
@@ -110,12 +114,14 @@ namespace bibliographer
     
         protected virtual void OnRecordModified(EventArgs e)
         {
+            Debug.WriteLine(5, "Record Modified");
             if (RecordModified != null)
                 RecordModified(this, e);
         }
     
         protected virtual void OnFieldAdded(EventArgs e)
         {
+            Debug.WriteLine(5, "Field Added");
         	this.OnRecordModified(new EventArgs());
             if (FieldAdded != null)
                 FieldAdded(this, e);
@@ -123,6 +129,7 @@ namespace bibliographer
     
         protected virtual void OnFieldDeleted(EventArgs e)
         {
+            Debug.WriteLine(5, "Field Deleted");
         	this.OnRecordModified(new EventArgs());
             if (FieldDeleted != null)
                 FieldDeleted(this, e);
@@ -130,6 +137,7 @@ namespace bibliographer
     
         protected virtual void OnUriAdded(EventArgs e)
         {
+            Debug.WriteLine(5, "Uri Added");
         	this.OnRecordModified(new EventArgs());
             if (UriAdded != null)
                 UriAdded(this, e);
@@ -137,6 +145,7 @@ namespace bibliographer
     
         protected virtual void OnUriUpdated(EventArgs e)
         {
+            Debug.WriteLine(5, "Uri Updated");
         	this.OnRecordModified(new EventArgs());
             if (UriUpdated != null)
                 UriUpdated(this, e);
@@ -884,9 +893,19 @@ namespace bibliographer
             {
                 if (Cache.IsCached("small_thumb", cacheKey))
                 {
-                    this.smallThumbnail = new Gdk.Pixbuf(Cache.CachedFile("small_thumb", cacheKey));
-                    Debug.WriteLine(5, "Retrieved small thumb for key '{0}'", cacheKey);
-                    return this.smallThumbnail;
+                    try
+                    {
+                        this.smallThumbnail = new Gdk.Pixbuf(Cache.CachedFile("small_thumb", cacheKey));
+                        Debug.WriteLine(5, "Retrieved small thumb for key '{0}'", cacheKey);
+                        return this.smallThumbnail;
+                    }
+                    catch (Exception)
+                    {
+                        // probably a corrupt cache file
+                        // delete it and try again :-)
+                        Cache.RemoveFromCache("large_thumb", cacheKey);
+                        return this.largeThumbnail;
+                    }
                 }
                 else
                 {
@@ -1006,7 +1025,9 @@ namespace bibliographer
     
         public Gdk.Pixbuf GetLargeThumbnail()
         {
-            if (this.largeThumbnail == null)
+            string uriString = this.GetURI();
+            
+            if ((this.largeThumbnail == null) && (this.HasURI()))
             {
                 if (Cache.IsCached("large_thumb", cacheKey))
                 {
@@ -1024,35 +1045,42 @@ namespace bibliographer
                         return this.largeThumbnail;
                     }
                 }
-    
-                string uriString = this.GetURI();
-    
-                // No URI, so just exit
-                if (uriString == null || uriString == "")
-                {
-                    //Console.WriteLine("Selected record does not have a URI field");
-                    // Render a blank pixbuf;
-                    //	Console.WriteLine("Has no URI, so no thumbnail");
-    
-                    return this.largeThumbnail;
-                }
-                // URI found, generate thumbnail, and cache
                 else
                 {
+                    Debug.WriteLine(5, "not cached... let's go!");
+                    
+                    Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
+                    if (!uri.Exists) {
+                        // file doesn't exist
+                        // FIXME: set an error thumbnail or some such
+                        System.Console.WriteLine(uriString);
+                        Debug.WriteLine(5, "Non-existent URI");
+                        
+                        this.largeThumbnail = (new Gdk.Pixbuf(null, "error.png")).ScaleSimple(96, 128, Gdk.InterpType.Bilinear);
+                        return this.largeThumbnail;
+                    }
                     this.largeThumbnail = this.GenLargeThumbnail();
+                    
                     if (this.largeThumbnail != null)
                     {
                         string filename = Cache.AddToCache("large_thumb", cacheKey);
                         Debug.WriteLine(5, "Large thumbnail added to cache for key '{0}'", cacheKey);
                         this.largeThumbnail.Save(filename, "png");
                     }
-                    return this.largeThumbnail;
+                    else
+                        Debug.WriteLine(5, "genLargeThumbnail returned null :-(");
                 }
             }
-            else
+            else if ((this.largeThumbnail == null) && (!this.HasURI()))
             {
-                return this.largeThumbnail;
+                Debug.WriteLine(5, "No URI, generating transparent thumbnail");
+                // Generate a transparent pixbuf for 
+                Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(Gdk.Colorspace.Rgb, true, 8, 96, 128);
+                pixbuf.Fill(0);
+                pixbuf.AddAlpha(true,0,0,0);
+                this.largeThumbnail = pixbuf;
             }
+            return this.largeThumbnail;
         }
     
         private Gdk.Pixbuf GenLargeThumbnail()
