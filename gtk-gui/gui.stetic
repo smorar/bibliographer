@@ -15,7 +15,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 686">
+  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 693">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -329,9 +329,12 @@
                 <property name="ShadowType">In</property>
                 <property name="BorderWidth">2</property>
                 <child>
-                  <widget class="Gtk.TreeView" id="sidePaneTreeView">
+                  <widget class="Gtk.Viewport" id="GtkViewport1">
                     <property name="MemberName" />
-                    <property name="CanFocus">True</property>
+                    <property name="ShadowType">None</property>
+                    <child>
+                      <placeholder />
+                    </child>
                   </widget>
                 </child>
               </widget>

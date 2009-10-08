@@ -681,9 +681,17 @@ namespace bibliographer
     	            cacheKey = "null data";
     	        if (Cache.IsCached("index_data", cacheKey))
     	        {
-    	            StreamReader istream = new StreamReader(new FileStream(Cache.CachedFile("index_data", cacheKey), FileMode.Open, FileAccess.Read));
-    	            indexData = new Tri(istream.ReadToEnd());
-    	            istream.Close();
+					try
+					{
+	    	            StreamReader istream = new StreamReader(new FileStream(Cache.CachedFile("index_data", cacheKey), FileMode.Open, FileAccess.Read));
+	    	            indexData = new Tri(istream.ReadToEnd());
+	    	            istream.Close();
+					}
+					catch (System.Exception e)
+					{
+						Debug.WriteLine(0, "Unknown exception while indexing file {0} for record {1}", this.GetURI(), this.recordKey);
+						Debug.WriteLine(0, e.Message);
+					}
     	        }
     		}
     		else

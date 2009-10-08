@@ -2,7 +2,7 @@ AC_INIT(src/BibliographerStartup.cs)
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(bibliographer, 0.1.1)
+AM_INIT_AUTOMAKE(bibliographer, 0.1.2)
 
 AM_MAINTAINER_MODE
 

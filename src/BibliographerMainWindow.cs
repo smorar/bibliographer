@@ -32,6 +32,7 @@ namespace bibliographer
         
         private bibliographer.SearchEntry searchEntry;
         private bibliographer.LitTreeView litTreeView;
+		private bibliographer.SidePaneTreeView sidePaneTreeView;
         
         private BibtexRecords bibtexRecords;
         private SidePaneTreeStore sidePaneStore;
@@ -125,7 +126,7 @@ namespace bibliographer
             modelFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (ModelFilterListStore);
             fieldFilter.VisibleFunc = new Gtk.TreeModelFilterVisibleFunc (FieldFilterListStore);
 
-            // Setup and add the LitTreeView     
+            // Setup and add the LitTreeView
             litTreeView = new LitTreeView(fieldFilter);
             scrolledwindowTreeView.Add(litTreeView);
             // LitTreeView callbacks
@@ -136,18 +137,11 @@ namespace bibliographer
             sidePaneStore = new SidePaneTreeStore(bibtexRecords);
             sidePaneStore.SetSortColumnId(0, Gtk.SortType.Ascending);
     
-            sidePaneTreeView.Model = sidePaneStore;
-    
-            Gtk.TreeCellDataFunc filterTextDataFunc = new Gtk.TreeCellDataFunc(RenderFilterColumnTextFromBibtexRecords);
-            Gtk.TreeViewColumn col = new Gtk.TreeViewColumn("Filter", new Gtk.CellRendererText(), "text");
-    
-            col.SetCellDataFunc(col.CellRenderers[0], filterTextDataFunc);
-            col.Sizing = Gtk.TreeViewColumnSizing.Autosize;
-    
-            sidePaneTreeView.AppendColumn(col);
-    
+			sidePaneTreeView = new SidePaneTreeView(sidePaneStore);
+			scrolledwindowSidePane.Add(sidePaneTreeView);
+			// SidePaneTreeView callbacks
             sidePaneTreeView.Selection.Changed += OnSidePaneTreeSelectionChanged;
-    
+			
             if (Config.KeyExists("SideBar/visible"))
             {
                 // Can't figure out how to get or set MenuItem viewSideBar's bool state, so
@@ -164,10 +158,7 @@ namespace bibliographer
                 Gtk.HPaned hpane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
                 hpane.Position = Config.GetInt("SideBar/width");
             }
-    
-            Gtk.TreePath path = sidePaneStore.GetPathAll();
-            sidePaneTreeView.SetCursor(path, col, false);
-    
+			
             // Set up comboRecordType items
             for (int i = 0; i < BibtexRecordTypeLibrary.Count(); i++)
                 comboRecordType.InsertText(i, BibtexRecordTypeLibrary.GetWithIndex(i).name);
@@ -613,14 +604,6 @@ namespace bibliographer
     
             viewportBibliographerData.Add(bData);
             viewportBibliographerData.ShowAll();
-        }
-        
-        private void RenderFilterColumnTextFromBibtexRecords(Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
-        {
-            //System.Console.WriteLine("Rendering cell");
-            string val = (string) model.GetValue(iter,0);
-            //System.Console.WriteLine("Value = " + val);
-            (cell as Gtk.CellRendererText).Text = val;
         }
         
         private void FileUnmodified()

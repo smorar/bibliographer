@@ -19,6 +19,7 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(srcdir)/BibliographerLitTreeView.cs		\
 	$(srcdir)/BibliographerMainWindow.cs		\
 	$(srcdir)/BibliographerSearchEntry.cs		\
+	$(srcdir)/BibliographerSidePaneTreeView.cs	\
 	$(srcdir)/BibtexCustomRecordField.cs		\
 	$(srcdir)/BibtexEntryDialog.cs			\
 	$(srcdir)/BibtexRecord.cs			\
