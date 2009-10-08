@@ -1,3 +1,21 @@
+bibliographer (0.1.3-0ubuntu1~ppa0~karmic) karmic; urgency=low
+
+  * Brownpaper release - fix a bug with an infinite while loop
+
+ -- Sameer Morar <smorar@gmail.com>  Fri, 09 Oct 2009 00:50:59 +0200
+
+bibliographer (0.1.2-0ubuntu1~ppa0~karmic) karmic; urgency=low
+
+  * Split sidepane tree view out of the main window and subclass
+  * Split the lit tree view out of the main window and subclass
+  * Replace the search entry widget with a custom widget taken from Banshee
+  * Move search entry widget into it's own file
+  * Fix bug where a bibtex record modified event was called when nothing changed
+  * Fix bug where the icon column resized to a width of zero
+  * Fix bug where phantom icons were being created
+
+ -- Sameer Morar <smorar@gmail.com>  Thu, 08 Oct 2009 19:22:41 +0200
+
 bibliographer (0.1.1-0ubuntu1~ppa4.karmic) karmic; urgency=low
 
   * Aargh!! I forgot to run autoconf to regenerate configure
@@ -32,7 +50,7 @@ bibliographer (0.1.1~ppa1.karmic) karmic; urgency=low
 bibliographer (0.1.1~ppa0.jaunty) jaunty; urgency=low
 
   * Import bibliographer to launchpad
-  * Fix crasher bug where null object was added to a string array list. 
+  * Fix crasher bug where null object was added to a string array list.
     Insert empty string instead.
   * Fix a warning - AboutBox.Name changed to AboutBox.ProgramName
   * Replace deprecated use of Object.SetData and Object.GetData
@@ -40,7 +58,7 @@ bibliographer (0.1.1~ppa0.jaunty) jaunty; urgency=low
   * Fix bug where activating recent file menu item caused a crash
   * Fix error with invalidating iters on adding and removing records
   * Fix bug where newly added record should be selected
-  * Fix bug where the selection moves to the next record when a record is 
+  * Fix bug where the selection moves to the next record when a record is
     deleted, or the previous record in the case of th elast record
   * Fix bugs with the side pane where the wrong iter was being iterated over
 
