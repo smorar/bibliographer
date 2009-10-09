@@ -5,7 +5,7 @@ build-stamp
 bibliographer.pidb
 bibliographer.userprefs
 bibliographer.usertasks
-bibliographer-0.1.1.tar.gz
+bibliographer-*.tar.gz
 bin
 debian/bibliographer
 debian/bibliographer.debhelper.log
