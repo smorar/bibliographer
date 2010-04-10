@@ -48,11 +48,11 @@ namespace bibliographer
 		}
 		
 		private static string Filename() {
-			return System.Environment.GetEnvironmentVariable("HOME") + "/.bibliographer/bibliographer_records";
+			return System.Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/bibliographer_records";
 		}
 		
 		private static string Directory() {
-		  return System.Environment.GetEnvironmentVariable("HOME") + "/.bibliographer";
+		  return System.Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer";
 		}
 		
 		public static void Save()
@@ -67,7 +67,7 @@ namespace bibliographer
 				}
 			} catch (System.IO.DirectoryNotFoundException e) {
 		        Debug.WriteLine(10, e.Message);
-				Debug.WriteLine(1, "Directory ~/.bibliographer/ not found!");
+				Debug.WriteLine(1, "Directory ~/.config/bibliographer/ not found!");
 				// TODO: Create directory
 			} // catch some other exception if file can't be opened due to permission problems or something
 
@@ -110,11 +110,11 @@ namespace bibliographer
 				  break;
 			  } catch (System.IO.DirectoryNotFoundException e) {
 		  Debug.WriteLine(10, e.Message);
-          Debug.WriteLine(1, "Directory ~/.bibliographer/ not found! Creating it...");
+          Debug.WriteLine(1, "Directory ~/.config/bibliographer/ not found! Creating it...");
           System.IO.Directory.CreateDirectory(Directory());          
         } catch (System.IO.FileNotFoundException e) {
 		          Debug.WriteLine(10, e.Message);
-				  Debug.WriteLine(1, "File ~/.bibliographer/bibliographer_records not found! Instantiating it...");
+				  Debug.WriteLine(1, "File ~/.config/config/bibliographer/bibliographer_records not found! Instantiating it...");
 				  System.IO.Stream recStream = System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream("bibliographer_records");
 				  System.IO.FileStream outRecStream = new FileStream(Filename(), FileMode.CreateNew);
 				  byte[] data = new byte[recStream.Length];

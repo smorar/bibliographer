@@ -25,9 +25,14 @@ namespace bibliographer
 		
 		public static string GetConfigDir()
 		{
-		    return System.Environment.GetEnvironmentVariable("HOME") + "/.bibliographer/";
+		    return System.Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/";
 		}
 		
+        public static string GetDataDir()
+        {
+            return System.Environment.GetEnvironmentVariable("HOME") + "/.local/share/bibliographer/";
+        }
+        
 		public static void SetString(string keyName, string keyValue)
 		{
 		    keyName = ParseKeyName(keyName);

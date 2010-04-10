@@ -81,7 +81,7 @@ namespace bibliographer
             Random random = new System.Random();
             do
             {
-                filename = Config.GetConfigDir() + "cache/";
+                filename = Config.GetDataDir() + "cache/";
                 string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 for (int i = 0; i < 20; i++)
                     filename = filename + chars[random.Next() % chars.Length];
@@ -98,19 +98,19 @@ namespace bibliographer
 		            	
                     try
                     {
-                        System.IO.Directory.CreateDirectory(Config.GetConfigDir());
+                        System.IO.Directory.CreateDirectory(Config.GetDataDir());
                     }
                     catch (Exception e2) {
 		            	Debug.WriteLine(10, e2.Message);
                     }
                     try
                     {
-                        System.IO.Directory.CreateDirectory(Config.GetConfigDir() + "cache");
+                        System.IO.Directory.CreateDirectory(Config.GetDataDir() + "cache");
                     }
                     catch (Exception e2)
                     {
 		            	Debug.WriteLine(10, e2.Message);
-                        Debug.WriteLine(1, "Failed to create directory {0}", Config.GetConfigDir() + "cache");
+                        Debug.WriteLine(1, "Failed to create directory {0}", Config.GetDataDir() + "cache");
                     }
                 }
                 catch (IOException e)
@@ -203,7 +203,7 @@ namespace bibliographer
             StreamReader stream = null;            
             try
             {
-                stream = new StreamReader(new FileStream(Config.GetConfigDir() + "cachedata", FileMode.Open, FileAccess.Read));
+                stream = new StreamReader(new FileStream(Config.GetDataDir() + "cachedata", FileMode.Open, FileAccess.Read));
                 
                 // cache opened! let's read some data...
                 cacheSection curSection = null;
@@ -263,8 +263,8 @@ namespace bibliographer
             catch (System.IO.DirectoryNotFoundException e)
             {
             	Debug.WriteLine(10, e.Message);
-                Debug.WriteLine(1, "Directory ~/.bibliographer/ not found! Creating it...");
-                System.IO.Directory.CreateDirectory(Config.GetConfigDir());         
+                Debug.WriteLine(1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
+                System.IO.Directory.CreateDirectory(Config.GetDataDir());
             }
             catch (System.IO.FileNotFoundException e)
             {
@@ -278,7 +278,7 @@ namespace bibliographer
             try
             {
             	Monitor.Enter(sections);
-                StreamWriter stream = new StreamWriter(new FileStream(Config.GetConfigDir() + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));              
+                StreamWriter stream = new StreamWriter(new FileStream(Config.GetDataDir() + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
                 
                 for (int section = 0; section < sections.Count; section++)
                 {
@@ -295,8 +295,8 @@ namespace bibliographer
             catch (System.IO.DirectoryNotFoundException e)
             {
             	Debug.WriteLine(10, e.Message);
-                Debug.WriteLine(1, "Directory ~/.bibliographer/ not found! Creating it...");
-                System.IO.Directory.CreateDirectory(Config.GetConfigDir());          
+                Debug.WriteLine(1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
+                System.IO.Directory.CreateDirectory(Config.GetDataDir());
             }
             catch (Exception e)
             {
