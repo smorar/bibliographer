@@ -31,7 +31,5 @@ Updated 3 March 2008
   would be good to have a cache in ~/.bibliographer that uses URI and MD5 as
   indices.
 
-* Mangling and demangling of special characters (accents, umlauts etc)
-
 * Get the win32 port actually working :-)
 
