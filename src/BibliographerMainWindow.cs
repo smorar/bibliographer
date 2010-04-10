@@ -170,6 +170,7 @@ namespace bibliographer
             // Search entry
             searchEntry = new bibliographer.SearchEntry();
             searchEntry.Changed += OnFilterEntryChanged;
+			searchEntry.BorderWidth = 12;
             searchHbox.Add(searchEntry);
 
             UpdateMenuFileHistory();
@@ -372,11 +373,11 @@ namespace bibliographer
                 // TODO: sort out some smart way of placing all the details
                 // here
                 text = "<b>";
-                text = text + record.GetField("title");
+                text = text + StringOps.TeXToUnicode(record.GetField("title"));
                 text = text + "</b>\n";
-                text = text + record.GetField("author");
+                text = text + StringOps.TeXToUnicode(record.GetField("author"));
                 text = text + "\n";
-                text = text + record.GetField("year");
+                text = text + StringOps.TeXToUnicode(record.GetField("year"));
                 recordDetails.Markup = text;
             }
         }

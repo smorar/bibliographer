@@ -48,7 +48,7 @@ namespace bibliographer
             //System.Console.WriteLine("Rendering cell");
             string val = (string) model.GetValue(iter,0);
             //System.Console.WriteLine("Value = " + val);
-            (cell as Gtk.CellRendererText).Text = val;
+            (cell as Gtk.CellRendererText).Text = StringOps.TeXToUnicode(val);
         }
         
 	}

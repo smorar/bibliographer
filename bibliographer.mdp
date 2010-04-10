@@ -1,65 +1,65 @@
-<Project name="bibliographer" fileversion="2.0" language="C#" clr-version="Net_1_1" targetFramework="2.0" ctype="DotNetProject">
+<Project name="bibliographer" fileversion="2.0" DefaultNamespace="bibliographer" language="C#" clr-version="Net_1_1" targetFramework="2.0" ctype="DotNetProject">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
       <Output directory="bin/Debug" assembly="bibliographer" />
       <Build debugmode="True" target="Exe" />
-      <Execution runwithwarnings="True" commandlineparameters="--debug=true --debug_level=3" consolepause="True" runtime="MsNet" clr-version="Net_1_1" />
-      <EnvironmentVariables />
+      <Execution consolepause="True" commandlineparameters="--debug=true --debug_level=3" runwithwarnings="True" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Mcs" warninglevel="4" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
     <Configuration name="Release" ctype="DotNetProjectConfiguration">
       <Output directory="bin/Release" assembly="bibliographer" />
       <Build debugmode="False" target="Exe" />
-      <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_1_1" />
+      <Execution consolepause="True" runwithwarnings="True" runtime="MsNet" clr-version="Net_1_1" />
       <CodeGeneration compiler="Mcs" warninglevel="4" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
     </Configuration>
   </Configurations>
   <Contents>
-    <File name="src/AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecordField.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecord.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexCustomRecordField.cs" subtype="Code" buildaction="Compile" />
-    <File name="COPYING" subtype="Code" buildaction="Nothing" />
-    <File name="AUTHORS" subtype="Code" buildaction="Nothing" />
-    <File name="ChangeLog" subtype="Code" buildaction="Nothing" />
-    <File name="NEWS" subtype="Code" buildaction="Nothing" />
-    <File name="README" subtype="Code" buildaction="Nothing" />
-    <File name="TODO" subtype="Code" buildaction="Nothing" />
-    <File name="src/AboutBox.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerStartup.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecordType.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/StringArrayList.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/IntArrayList.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecordFieldType.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecordTypeLibrary.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecordFieldTypeLibrary.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/FileIndexer.cs" subtype="Code" buildaction="Compile" />
-    <File name="resources/bibliographer.png" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="resources/bibliographer_fields" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="resources/bibliographer_records" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="src/Tri.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/Config.cs" subtype="Code" buildaction="Compile" />
-    <File name="resources/error.png" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="src/Cache.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexRecords.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/SidePaneTreeStore.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/Debug.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/LitListStore.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/RunOnMainThread.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/gui.stetic" subtype="Code" buildaction="EmbedAsResource" />
-    <File name="gtk-gui/generated.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/bibliographer.BibliographerMainWindow.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerMainWindow.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/bibliographer.BibtexEntryDialog.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibtexEntryDialog.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerChooseColumns.cs" subtype="Code" buildaction="Compile" />
-    <File name="gtk-gui/bibliographer.BibliographerChooseColumns.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/widgets" subtype="Directory" buildaction="Compile" />
-    <File name="src/widgets/HoverImageButton.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/widgets/SearchEntry.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerSearchEntry.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerLitTreeView.cs" subtype="Code" buildaction="Compile" />
-    <File name="src/BibliographerSidePaneTreeView.cs" subtype="Code" buildaction="Compile" />
+    <File subtype="Code" buildaction="Compile" name="src/AssemblyInfo.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordField.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecord.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexCustomRecordField.cs" />
+    <File subtype="Code" buildaction="Nothing" name="COPYING" />
+    <File subtype="Code" buildaction="Nothing" name="AUTHORS" />
+    <File subtype="Code" buildaction="Nothing" name="ChangeLog" />
+    <File subtype="Code" buildaction="Nothing" name="NEWS" />
+    <File subtype="Code" buildaction="Nothing" name="README" />
+    <File subtype="Code" buildaction="Nothing" name="TODO" />
+    <File subtype="Code" buildaction="Compile" name="src/AboutBox.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerStartup.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordType.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/StringArrayList.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/IntArrayList.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordFieldType.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordTypeLibrary.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordFieldTypeLibrary.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/FileIndexer.cs" />
+    <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer.png" />
+    <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer_fields" />
+    <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer_records" />
+    <File subtype="Code" buildaction="Compile" name="src/Tri.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/Config.cs" />
+    <File subtype="Code" buildaction="EmbedAsResource" name="resources/error.png" />
+    <File subtype="Code" buildaction="Compile" name="src/Cache.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexRecords.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/SidePaneTreeStore.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/Debug.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/LitListStore.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/RunOnMainThread.cs" />
+    <File subtype="Code" buildaction="EmbedAsResource" name="gtk-gui/gui.stetic" />
+    <File subtype="Code" buildaction="Compile" name="gtk-gui/generated.cs" />
+    <File subtype="Code" buildaction="Compile" name="gtk-gui/bibliographer.BibliographerMainWindow.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerMainWindow.cs" />
+    <File subtype="Code" buildaction="Compile" name="gtk-gui/bibliographer.BibtexEntryDialog.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibtexEntryDialog.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerChooseColumns.cs" />
+    <File subtype="Code" buildaction="Compile" name="gtk-gui/bibliographer.BibliographerChooseColumns.cs" />
+    <File subtype="Directory" buildaction="Compile" name="src/widgets" />
+    <File subtype="Code" buildaction="Compile" name="src/widgets/HoverImageButton.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/widgets/SearchEntry.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerSearchEntry.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerLitTreeView.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/BibliographerSidePaneTreeView.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/StringOps.cs" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />

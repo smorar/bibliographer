@@ -638,61 +638,86 @@ namespace bibliographer
     	        // TODO: scan through record library and print a message if we don't
     	        // know what type of record this is?
     
-    	        if (stream.Read() != '{')
-    	            throw new ParseException("Expected '{' after record type '" + recordType + "'");
-    	        recordKey = ConsumeId(stream);
-    
-    	        if (stream.Read() != ',')
-    	            throw new ParseException("Expected ',' after record key '" + recordKey + "'");
-    
-    	        // header has been processed, so now let's process the fields
-    	        ConsumeWhitespace(stream);
-    	        recordFields = new ArrayList();
-    	        while (stream.Peek() != '}') {
-    	            if (stream.Peek() == -1)
-    	                throw new ParseException("End-of-file reached before end of record (expected '}')");
-    
-    	            string fieldName = ConsumeId(stream);
-    
-    	            if (stream.Read() != '=')
-    	                throw new ParseException("Expected '=' after field '" + fieldName + "'");
-    	            string fieldContent = ConsumeUntilFieldEnd(stream);
-    	            fieldContent = fieldContent.Trim();
+				if (recordType.ToLower() == "comment")
+				{
+					// Comment records
+					if (stream.Read() != '{')
+	    	            throw new ParseException("Expected '{' after record type '" + recordType + "'");
+	    	        recordFields = new ArrayList();
+					string fieldName = "comment";
+					string fieldContent = ConsumeUntilFieldEnd(stream);
+					fieldContent = fieldContent.Trim();
     	            while (fieldContent.IndexOf("  ") > 0)
     	                fieldContent = fieldContent.Replace("  ", " ");
     	            while (fieldContent.StartsWith("{") && fieldContent.EndsWith("}"))
     	                fieldContent = fieldContent.Substring(1, fieldContent.Length - 2);
+					
+					recordFields.Add(new BibtexRecordField(fieldName, fieldContent));
+					Debug.WriteLine(0, fieldContent);
+					stream.Read();
+					ConsumeWhitespace(stream);
+				}
+				else
+				{
+	    	        if (stream.Read() != '{')
+	    	            throw new ParseException("Expected '{' after record type '" + recordType + "'");
+	    	        recordKey = ConsumeId(stream);
     
-    	            ConsumeWhitespace(stream);
+					// Non-comment records
+	    	        if (stream.Read() != ',')
+	    	            throw new ParseException("Expected ',' after record key '" + recordKey + "'");
+					
     
-    	            // TODO: scan through field library and print out a message if
-    	            // we don't know what type of field this is?
-    
-    	            Debug.WriteLine(5, "Parsed field '{0}' with content '{1}'", fieldName, fieldContent);
-    	            recordFields.Add(new BibtexRecordField(fieldName, fieldContent));
-    	        }
-    	        stream.Read();
-    	        ConsumeWhitespace(stream);
-    	        if (stream.Peek() == ',')  // absorb the tailing comma if there is one
-    	            stream.Read();
-    	        if (HasField("bibliographer_last_uri") && HasField("bibliographer_last_md5"))
-    	            cacheKey = GetField("bibliographer_last_uri") + "<" + GetField("bibliographer_last_md5") + ">";
-    	        else
-    	            cacheKey = "null data";
-    	        if (Cache.IsCached("index_data", cacheKey))
-    	        {
-					try
-					{
-	    	            StreamReader istream = new StreamReader(new FileStream(Cache.CachedFile("index_data", cacheKey), FileMode.Open, FileAccess.Read));
-	    	            indexData = new Tri(istream.ReadToEnd());
-	    	            istream.Close();
-					}
-					catch (System.Exception e)
-					{
-						Debug.WriteLine(0, "Unknown exception while indexing file {0} for record {1}", this.GetURI(), this.recordKey);
-						Debug.WriteLine(0, e.Message);
-					}
-    	        }
+	    	        // header has been processed, so now let's process the fields
+	    	        ConsumeWhitespace(stream);
+	    	        recordFields = new ArrayList();
+	    	        while (stream.Peek() != '}') {
+	    	            if (stream.Peek() == -1)
+	    	                throw new ParseException("End-of-file reached before end of record (expected '}')");
+	    
+	    	            string fieldName = ConsumeId(stream);
+	    
+	    	            if (stream.Read() != '=')
+	    	                throw new ParseException("Expected '=' after field '" + fieldName + "'");
+	    	            string fieldContent = ConsumeUntilFieldEnd(stream);
+	    	            fieldContent = fieldContent.Trim();
+	    	            while (fieldContent.IndexOf("  ") > 0)
+	    	                fieldContent = fieldContent.Replace("  ", " ");
+	    	            while (fieldContent.StartsWith("{") && fieldContent.EndsWith("}"))
+	    	                fieldContent = fieldContent.Substring(1, fieldContent.Length - 2);
+	    
+	    	            ConsumeWhitespace(stream);
+	    
+	    	            // TODO: scan through field library and print out a message if
+	    	            // we don't know what type of field this is?
+	    
+	    	            Debug.WriteLine(5, "Parsed field '{0}' with content '{1}'", fieldName, fieldContent);
+	    	            recordFields.Add(new BibtexRecordField(fieldName, fieldContent));
+	    	        }
+	    	        stream.Read();
+	    	        ConsumeWhitespace(stream);
+	    	        if (stream.Peek() == ',')  // absorb the tailing comma if there is one
+	    	            stream.Read();
+	    	        if (HasField("bibliographer_last_uri") && HasField("bibliographer_last_md5"))
+	    	            cacheKey = GetField("bibliographer_last_uri") + "<" + GetField("bibliographer_last_md5") + ">";
+	    	        else
+	    	            cacheKey = "null data";
+	    	        if (Cache.IsCached("index_data", cacheKey))
+	    	        {
+						try
+						{
+		    	            StreamReader istream = new StreamReader(new FileStream(Cache.CachedFile("index_data", cacheKey), FileMode.Open, FileAccess.Read));
+		    	            indexData = new Tri(istream.ReadToEnd());
+		    	            istream.Close();
+						}
+						catch (System.Exception e)
+						{
+							Debug.WriteLine(0, "Unknown exception while indexing file {0} for record {1}", this.GetURI(), this.recordKey);
+							Debug.WriteLine(0, e.Message);
+							Debug.WriteLine(1, e.StackTrace);
+						}
+	    	        }
+				}
     		}
     		else
     		{
@@ -715,16 +740,30 @@ namespace bibliographer
     		{
     	        bibtexString.Append('@');
     	        bibtexString.Append(this.recordType);
-    	        bibtexString.Append('{');
-    	        // bibtexkey
-    	        bibtexString.Append(this.recordKey);
-    	        bibtexString.Append(",\n");
-    	        IEnumerator iter = this.recordFields.GetEnumerator();
-    	        while(iter.MoveNext())
-    	        {
-    	            bibtexString.Append(((BibtexRecordField)iter.Current).ToBibtexString());
-    	        }
-    	        bibtexString.Append("}\n");
+				if (this.recordType == "comment")
+				{
+					bibtexString.Append('{');
+	    	        IEnumerator iter = this.recordFields.GetEnumerator();
+	    	        while(iter.MoveNext())
+	    	        {
+						BibtexRecordField field = (BibtexRecordField) iter.Current;
+						bibtexString.Append(field.fieldValue);
+	    	        }
+	    	        bibtexString.Append("}\n");
+				}
+				else
+				{
+	    	        bibtexString.Append('{');
+	    	        // bibtexkey
+	    	        bibtexString.Append(this.recordKey);
+	    	        bibtexString.Append(",\n");
+	    	        IEnumerator iter = this.recordFields.GetEnumerator();
+	    	        while(iter.MoveNext())
+	    	        {
+	    	            bibtexString.Append(((BibtexRecordField)iter.Current).ToBibtexString());
+	    	        }
+	    	        bibtexString.Append("}\n");
+				}
     		}
             return bibtexString.ToString();
         }

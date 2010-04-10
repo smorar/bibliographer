@@ -184,7 +184,7 @@ namespace bibliographer
                 {
                     if (record.HasField(column.Title) && column.Title != "Author")
                     {
-                        (cell as Gtk.CellRendererText).Text = record.GetField(column.Title);
+                        (cell as Gtk.CellRendererText).Text = StringOps.TeXToUnicode(record.GetField(column.Title));
                         (cell as Gtk.CellRendererText).Background = "white";
                         (cell as Gtk.CellRendererText).Ellipsize = Pango.EllipsizeMode.End;
                     }
@@ -199,7 +199,7 @@ namespace bibliographer
                             else
                                 author_string = String.Concat(author_string,"; " , author);
                         }
-                        (cell as Gtk.CellRendererText).Text = author_string;
+                        (cell as Gtk.CellRendererText).Text = StringOps.TeXToUnicode(author_string);
                         (cell as Gtk.CellRendererText).Background = "white";
                         (cell as Gtk.CellRendererText).Ellipsize = Pango.EllipsizeMode.End;
                     }
@@ -219,7 +219,7 @@ namespace bibliographer
                 }
             }
         }
-        
+		
         public int StringCompare(Gtk.TreeModel model, Gtk.TreeIter tia, Gtk.TreeIter tib)
         {
             BibtexRecord a = (BibtexRecord) model.GetValue(tia, 0);

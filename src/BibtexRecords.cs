@@ -180,6 +180,7 @@ namespace bibliographer
                 } catch (ParseException e) {
                     if (e.GetReason() != "EOF")
                         Debug.WriteLine(1, String.Format("Error while parsing record {0:000} in file!\nError was: {1:000}\n", count, e.GetReason()));
+						Debug.WriteLine(1, e.StackTrace);
                     break;
                 }
                 bibtexRecords.Add(record);
