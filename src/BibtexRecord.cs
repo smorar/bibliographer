@@ -622,6 +622,13 @@ namespace bibliographer
     			this.comment += "\n";
     			ConsumeWhitespace(stream);
     		}
+			
+    		while (stream.Peek() == '#')
+    		{
+    			this.comment += ConsumeComment(stream);
+    			this.comment += "\n";
+    			ConsumeWhitespace(stream);
+    		}
     		
             ConsumeWhitespace(stream);
             //if (stream.Peek() == -1)
@@ -653,7 +660,6 @@ namespace bibliographer
     	                fieldContent = fieldContent.Substring(1, fieldContent.Length - 2);
 					
 					recordFields.Add(new BibtexRecordField(fieldName, fieldContent));
-					Debug.WriteLine(0, fieldContent);
 					stream.Read();
 					ConsumeWhitespace(stream);
 				}
