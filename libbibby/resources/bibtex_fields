@@ -14,6 +14,10 @@ booktitle
 Title of a book, part of which is being cited.
 1
 
+comment
+A comment in the file
+1
+
 chapter
 A chapter number.
 1

@@ -809,6 +809,15 @@ namespace bibliographer
                     //((int)bType).ToString());
                     
                     ((BibtexRecord)model.GetValue (iter, 0)).RecordType = bType;
+                    if (bType == "comment") {
+                        lblBibtexKey.Text = "Comment";
+                        notebookFields.Visible = false;
+                        buttonBibtexKeyGenerate.Visible = false;
+                    } else {
+                        lblBibtexKey.Text = "BibTeX Key";
+                        notebookFields.Visible = true;
+                        buttonBibtexKeyGenerate.Visible = true;
+                    }
                 }
                 // Sort out the behaviour of the Required and Optional fields
                 // for each type of record
@@ -986,7 +995,7 @@ namespace bibliographer
             FileSaveAs ();
         }
 
-        private void OnFileHistoryActivate (object o, EventArgs a)
+        protected virtual void OnFileHistoryActivate (object o, EventArgs a)
         {
             Gtk.MenuItem item = (Gtk.MenuItem)o;
             int index = (int)System.Convert.ToUInt16 ((string)item.Data["i"].ToString ());
@@ -1226,11 +1235,22 @@ namespace bibliographer
                 buttonBibtexKeyGenerate.Sensitive = false;
                 new_selected_record = false;
                 
+                if (recordType == "comment") {
+                    lblBibtexKey.Text = "Comment";
+                    notebookFields.Visible = false;
+                    buttonBibtexKeyGenerate.Visible = false;
+                } else {
+                    lblBibtexKey.Text = "BibTeX Key";
+                    notebookFields.Visible = true;
+                    buttonBibtexKeyGenerate.Visible = true;
+                }
+                
                 // Interrogate ListStore for values
                 // TODO: fix!
             } else {
                 buttonBibtexKeyGenerate.Sensitive = false;
             }
+            
             ReconstructTabs ();
             ReconstructDetails ();
         }
@@ -1357,7 +1377,7 @@ namespace bibliographer
             ReconstructDetails ();
         }
 
-        private void OnWindowSizeAllocated (object o, Gtk.SizeAllocatedArgs a)
+        protected virtual void OnWindowSizeAllocated (object o, Gtk.SizeAllocatedArgs a)
         {
             if (Config.GetBool ("window_maximized") == false) {
                 Config.SetInt ("window_width", a.Allocation.Width);
@@ -1365,7 +1385,7 @@ namespace bibliographer
             }
         }
 
-        private void OnWindowStateChanged (object o, Gtk.WindowStateEventArgs a)
+        protected virtual void OnWindowStateChanged (object o, Gtk.WindowStateEventArgs a)
         {
             Gdk.EventWindowState gdk_event = a.Event;
             

@@ -16,6 +16,12 @@ A work that is printed and bound, but without a named publisher or sponsoring in
 title,author,howpublished,address,month,year,note
 1,0,0,0,0,0,0
 
+comment
+A comment.
+1
+
+0,0,0,0,0,0,0
+
 conference
 An article in the proceedings of a conference.
 1

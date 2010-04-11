@@ -15,7 +15,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 693">
+  <widget class="Gtk.Window" id="bibliographer.BibliographerMainWindow" design-size="646 706">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -559,7 +559,7 @@
                               <widget class="Gtk.Notebook" id="notebookFields">
                                 <property name="MemberName" />
                                 <property name="CanFocus">True</property>
-                                <property name="CurrentPage">0</property>
+                                <property name="CurrentPage">1</property>
                                 <child>
                                   <widget class="Gtk.ScrolledWindow" id="scrolledwindowRqdFields">
                                     <property name="MemberName" />

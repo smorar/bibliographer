@@ -413,7 +413,6 @@ namespace libbibby
                     // Comment records
                     if (stream.Read () != '{')
                         throw new ParseException ("Expected '{' after record type '" + recordType + "'");
-                    recordFields = new ArrayList ();
                     string fieldName = "comment";
                     string fieldContent = ConsumeUntilFieldEnd (stream);
                     fieldContent = fieldContent.Trim ();
@@ -421,8 +420,8 @@ namespace libbibby
                         fieldContent = fieldContent.Replace ("  ", " ");
                     while (fieldContent.StartsWith ("{") && fieldContent.EndsWith ("}"))
                         fieldContent = fieldContent.Substring (1, fieldContent.Length - 2);
-                    
-                    recordFields.Add (new BibtexRecordField (fieldName, fieldContent));
+                    recordKey = fieldContent;
+                    recordFields = new ArrayList ();
                     stream.Read ();
                     ConsumeWhitespace (stream);
                 } else {
@@ -484,13 +483,7 @@ namespace libbibby
                 bibtexString.Append ('@');
                 bibtexString.Append (this.recordType);
                 if (this.recordType == "comment") {
-                    bibtexString.Append ('{');
-                    IEnumerator iter = this.recordFields.GetEnumerator ();
-                    while (iter.MoveNext ()) {
-                        BibtexRecordField field = (BibtexRecordField)iter.Current;
-                        bibtexString.Append (field.fieldValue);
-                    }
-                    bibtexString.Append ("}\n");
+                    bibtexString.Append ("{" + this.recordKey + "}\n");
                 } else {
                     bibtexString.Append ('{');
                     // bibtexkey
@@ -512,7 +505,11 @@ namespace libbibby
         public bool SearchRecord (string text, BibtexSearchField sField)
         {
             ArrayList results = new ArrayList ();
-            
+
+            if (recordType == "comment")
+            {
+                return false;
+            }
             // pre-process search text
             text = text.ToLower ().Trim ();
             // split text into tokens
