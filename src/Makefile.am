@@ -38,7 +38,8 @@ BIBLIOGRAPHER_RESOURCES =					\
 	-pkg:gnome-sharp-2.0					\
 	-pkg:gtk-sharp-2.0					\
 	-pkg:gtk-dotnet-2.0					\
-	-r:/usr/lib/mono/2.0/Mono.Posix.dll
+	-r:/usr/lib/mono/2.0/Mono.Posix.dll			\
+	-r:$(top_srcdir)/libbibby/libbibby.dll
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g"               \

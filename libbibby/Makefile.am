@@ -1,11 +1,10 @@
-MCS_FLAGS += -nowarn:0169
-MCS_FLAGS += -unsafe+
+ASSEMBLY_NAME = libbibby
+ASSEMBLY = $(ASSEMBLY_NAME).dll
+TARGET = $(ASSEMBLY)
 
-ASSEMBLY = libbibby
-TARGET = library
-LINK = $(REF_LIBBIBBY)
+CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS)
 
-LIBBIBBY_CSFILES = 				\
+SOURCES = 						\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/BibtexCustomData.cs			\
 	$(srcdir)/BibtexCustomDataFields.cs		\
@@ -21,9 +20,19 @@ LIBBIBBY_CSFILES = 				\
 	$(srcdir)/IntArrayList.cs			\
 	$(srcdir)/StringArrayList.cs
 
-LIBBIBBY_RESOURCES =					\
-	-resource:$(top_srcdir)/resources/bibtex_records	\
-	-resource:$(top_srcdir)/resources/bibtex_fields 
+RESOURCES =							\
+	-resource:$(srcdir)/resources/bibtex_records	\
+	-resource:$(srcdir)/resources/bibtex_fields 
 
-MAINTAINERCLEANFILES = \
-	Makefile.in
+$(ASSEMBLY): $(SOURCES)
+	$(CSC) -target:library $(LIBFLAGS) -out:$@ $(SOURCES) -r:System $(RESOURCES)
+
+all: $(ASSEMBLY)
+
+EXTRA_DIST = $(SOURCES)
+
+CLEANFILES = $(ASSEMBLY)
+
+libbibbydir = $(pkglibdir)
+libbibby_DATA = $(TARGET)
+
