@@ -1,4 +1,5 @@
-SUBDIRS = src
+SUBDIRS = src \
+	libbibby
 
 desktopdir = $(datadir)/applications
 desktop_DATA = resources/bibliographer.desktop
@@ -10,8 +11,6 @@ man1_MANS = resources/bibliographer.man
 
 EXTRA_DIST = resources/bibliographer.png \
 	resources/bibliographer.desktop \
-	resources/bibliographer_records \
-	resources/bibliographer_fields \
 	resources/bibliographer.man \
 	resources/error.png
 

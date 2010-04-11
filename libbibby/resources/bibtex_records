@@ -5,7 +5,7 @@ author,title,journal,year,volume,number,pages,month,note
 1,2,3,4,0,0,0,0,0
 
 book
- A book with an explicit publisher.
+A book with an explicit publisher.
 1
 author,editor,title,publisher,year,volume,series,address,edition,month,note
 1,1,2,3,4,0,0,0,0,0,0

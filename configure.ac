@@ -46,4 +46,5 @@ fi
 AC_OUTPUT([
 Makefile
 src/Makefile
+libbibby/Makefile
 ])

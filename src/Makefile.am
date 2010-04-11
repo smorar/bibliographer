@@ -13,37 +13,27 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(srcdir)/widgets/HoverImageButton.cs		\
 	$(srcdir)/widgets/SearchEntry.cs		\
 	$(srcdir)/AboutBox.cs				\
+	$(srcdir)/Alteration.cs				\
 	$(srcdir)/AssemblyInfo.cs			\
-	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/BibliographerChooseColumns.cs		\
 	$(srcdir)/BibliographerLitTreeView.cs		\
 	$(srcdir)/BibliographerMainWindow.cs		\
 	$(srcdir)/BibliographerSearchEntry.cs		\
 	$(srcdir)/BibliographerSidePaneTreeView.cs	\
-	$(srcdir)/BibtexCustomRecordField.cs		\
+	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/BibtexEntryDialog.cs			\
-	$(srcdir)/BibtexRecord.cs			\
-	$(srcdir)/BibtexRecords.cs			\
-	$(srcdir)/BibtexRecordField.cs			\
-	$(srcdir)/IntArrayList.cs			\
-	$(srcdir)/StringArrayList.cs			\
-	$(srcdir)/BibtexRecordType.cs			\
-	$(srcdir)/RunOnMainThread.cs			\
-	$(srcdir)/BibtexRecordFieldType.cs		\
-	$(srcdir)/BibtexRecordTypeLibrary.cs		\
-	$(srcdir)/BibtexRecordFieldTypeLibrary.cs	\
-	$(srcdir)/SidePaneTreeStore.cs			\
-	$(srcdir)/LitListStore.cs			\
-	$(srcdir)/FileIndexer.cs			\
-	$(srcdir)/Tri.cs                                \
-	$(srcdir)/Config.cs				\
 	$(srcdir)/Cache.cs				\
-  $(srcdir)/Debug.cs
+	$(srcdir)/Config.cs				\
+  	$(srcdir)/Debug.cs				\
+	$(srcdir)/FileIndexer.cs			\
+	$(srcdir)/LitListStore.cs			\
+	$(srcdir)/LookupRecordData.cs			\
+	$(srcdir)/SidePaneTreeStore.cs			\
+	$(srcdir)/StringOps.cs				\
+	$(srcdir)/Tri.cs 
 
 BIBLIOGRAPHER_RESOURCES =					\
 	-resource:$(top_srcdir)/resources/bibliographer.png	\
-	-resource:$(top_srcdir)/resources/bibliographer_records	\
-	-resource:$(top_srcdir)/resources/bibliographer_fields  \
 	-resource:$(top_srcdir)/resources/error.png		\
 	-pkg:gnome-sharp-2.0					\
 	-pkg:gtk-sharp-2.0					\

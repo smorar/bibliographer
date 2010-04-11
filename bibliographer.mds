@@ -1,16 +1,27 @@
 <Combine fileversion="2.0" name="bibliographer">
+  <Policies>
+    <DotNetNamingPolicy DirectoryNamespaceAssociation="None" ResourceNamePolicy="FileFormatDefault" />
+    <VersionControlPolicy inheritsSet="Mono" />
+    <ChangeLogPolicy UpdateMode="None" inheritsSet="Mono">
+      <MessageStyle LineAlign="0" />
+    </ChangeLogPolicy>
+  </Policies>
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="CombineConfiguration">
       <Entry build="True" name="bibliographer" configuration="Debug" />
+      <Entry build="True" name="libbibby" configuration="Debug" />
     </Configuration>
     <Configuration name="Release" ctype="CombineConfiguration">
       <Entry build="True" name="bibliographer" configuration="Release" />
+      <Entry build="True" name="libbibby" configuration="Release" />
     </Configuration>
   </Configurations>
   <StartMode startupentry="bibliographer" single="True">
     <Execute type="None" entry="bibliographer" />
+    <Execute type="None" entry="libbibby" />
   </StartMode>
   <Entries>
     <Entry filename="bibliographer.mdp" />
+    <Entry filename="libbibby.mdp" />
   </Entries>
 </Combine>

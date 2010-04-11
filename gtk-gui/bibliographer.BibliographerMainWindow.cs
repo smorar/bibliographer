@@ -497,7 +497,6 @@ namespace bibliographer {
             w23.Position = 1;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.hbuttonbox1 = new Gtk.HButtonBox();
-            this.hbuttonbox1.Name = "hbuttonbox1";
             this.hbuttonbox1.LayoutStyle = ((Gtk.ButtonBoxStyle)(4));
             // Container child hbuttonbox1.Gtk.ButtonBox+ButtonBoxChild
             this.toggleEditRecords = new Gtk.ToggleButton();

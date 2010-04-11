@@ -15,9 +15,6 @@
   </Configurations>
   <Contents>
     <File subtype="Code" buildaction="Compile" name="src/AssemblyInfo.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordField.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecord.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexCustomRecordField.cs" />
     <File subtype="Code" buildaction="Nothing" name="COPYING" />
     <File subtype="Code" buildaction="Nothing" name="AUTHORS" />
     <File subtype="Code" buildaction="Nothing" name="ChangeLog" />
@@ -26,25 +23,11 @@
     <File subtype="Code" buildaction="Nothing" name="TODO" />
     <File subtype="Code" buildaction="Compile" name="src/AboutBox.cs" />
     <File subtype="Code" buildaction="Compile" name="src/BibliographerStartup.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordType.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/StringArrayList.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/IntArrayList.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordFieldType.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordTypeLibrary.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecordFieldTypeLibrary.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/FileIndexer.cs" />
     <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer.png" />
-    <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer_fields" />
-    <File subtype="Code" buildaction="EmbedAsResource" name="resources/bibliographer_records" />
-    <File subtype="Code" buildaction="Compile" name="src/Tri.cs" />
     <File subtype="Code" buildaction="Compile" name="src/Config.cs" />
-    <File subtype="Code" buildaction="EmbedAsResource" name="resources/error.png" />
-    <File subtype="Code" buildaction="Compile" name="src/Cache.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/BibtexRecords.cs" />
     <File subtype="Code" buildaction="Compile" name="src/SidePaneTreeStore.cs" />
     <File subtype="Code" buildaction="Compile" name="src/Debug.cs" />
     <File subtype="Code" buildaction="Compile" name="src/LitListStore.cs" />
-    <File subtype="Code" buildaction="Compile" name="src/RunOnMainThread.cs" />
     <File subtype="Code" buildaction="EmbedAsResource" name="gtk-gui/gui.stetic" />
     <File subtype="Code" buildaction="Compile" name="gtk-gui/generated.cs" />
     <File subtype="Code" buildaction="Compile" name="gtk-gui/bibliographer.BibliographerMainWindow.cs" />
@@ -60,6 +43,12 @@
     <File subtype="Code" buildaction="Compile" name="src/BibliographerLitTreeView.cs" />
     <File subtype="Code" buildaction="Compile" name="src/BibliographerSidePaneTreeView.cs" />
     <File subtype="Code" buildaction="Compile" name="src/StringOps.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/Alteration.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/LookupRecordData.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/Tri.cs" />
+    <File subtype="Code" buildaction="Nothing" name="resources/error.png" />
+    <File subtype="Code" buildaction="Compile" name="src/FileIndexer.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/Cache.cs" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -73,6 +62,7 @@
     <ProjectReference type="Gac" localcopy="True" refto="gconf-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="gnome-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <ProjectReference type="Gac" localcopy="True" refto="gnome-vfs-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <ProjectReference type="Project" localcopy="True" refto="libbibby" />
   </References>
   <DeploymentInformation strategy="File" />
 </Project>

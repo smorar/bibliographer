@@ -22,16 +22,14 @@ Updated 3 March 2008
 
 * Fix paste BibTeX from clipboard functionality
 
-* Store some general stuff (options, history etc) in ~/.bibliographer
+* Store some general stuff (options, history etc) in ~/.config/bibliographer
 
 * When loading an average sized .bib that has many URI associations with its
   entries, there's a big delay as thumbnails are computed -- this is because
   these are done on the GUI thread (running on a background thread was causing
   crashes). It would be good to find a way of backgrounding this, but also
-  would be good to have a cache in ~/.bibliographer that uses URI and MD5 as
-  indices.
-
-* Mangling and demangling of special characters (accents, umlauts etc)
+  would be good to have a cache in ~/.local/share/bibliographer that uses URI
+  and MD5 as indices.
 
 * Get the win32 port actually working :-)
 

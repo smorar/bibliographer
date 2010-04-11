@@ -5,8 +5,8 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../bin/Debug/bibliographer.exe" internal="true" />
     <widget-library name="gnome-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../bin/Debug/bibliographer.exe" internal="true" />
   </import>
   <icon-factory>
     <icon-set id="bibliographer_icon">
@@ -280,7 +280,7 @@
                 <property name="ShowArrow">False</property>
                 <property name="ButtonStyle">Icons</property>
                 <property name="IconSize">LargeToolbar</property>
-                <node name="toolBar" type="Toolbar">
+                <node name="toolBar1" type="Toolbar">
                   <node type="Toolitem" action="ToolbarNewAction" />
                   <node type="Toolitem" action="ToolbarOpenAction" />
                   <node type="Toolitem" action="ToolbarSaveAction" />
@@ -757,7 +757,6 @@
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">2</property>
     <property name="HelpButton">False</property>
-    <property name="HasSeparator">False</property>
     <child internal-child="VBox">
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
@@ -853,7 +852,6 @@
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Buttons">1</property>
     <property name="HelpButton">False</property>
-    <property name="HasSeparator">False</property>
     <child internal-child="VBox">
       <widget class="Gtk.VBox" id="dialog1_VBox">
         <property name="MemberName" />
