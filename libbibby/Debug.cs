@@ -4,7 +4,7 @@
 
 using System;
 
-namespace bibliographer
+namespace libbibby
 {
     public class Debug
     {

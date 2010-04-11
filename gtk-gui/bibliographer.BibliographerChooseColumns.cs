@@ -27,7 +27,6 @@ namespace bibliographer {
             this.Name = "bibliographer.BibliographerChooseColumns";
             this.Title = Mono.Unix.Catalog.GetString("Choose Columns");
             this.WindowPosition = ((Gtk.WindowPosition)(4));
-            this.HasSeparator = false;
             // Internal child bibliographer.BibliographerChooseColumns.VBox
             Gtk.VBox w1 = this.VBox;
             w1.Name = "dialog1_VBox";

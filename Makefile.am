@@ -1,4 +1,6 @@
-SUBDIRS = src
+SUBDIRS = 		\
+	libbibby	\
+	src
 
 desktopdir = $(datadir)/applications
 desktop_DATA = resources/bibliographer.desktop
@@ -8,23 +10,21 @@ icons_DATA = resources/bibliographer.png
 
 man1_MANS = resources/bibliographer.man
 
-EXTRA_DIST = resources/bibliographer.png \
-	resources/bibliographer.desktop \
-	resources/bibliographer_records \
-	resources/bibliographer_fields \
-	resources/bibliographer.man \
+EXTRA_DIST = resources/bibliographer.png 	\
+	resources/bibliographer.desktop 	\
+	resources/bibliographer.man 		\
 	resources/error.png
 
-DISTCLEANFILES = \
-	*.bak
-	*~
+DISTCLEANFILES = 	\
+	*.bak		\
+	*~		\
 	*.pidb
 
-MAINTAINERCLEANFILES = \
-	aclocal.m4 \
-	ltmain.sh \
-	Makefile.in \
-	configure \
-	config.sub \
+MAINTAINERCLEANFILES = 	\
+	aclocal.m4 	\
+	ltmain.sh 	\
+	Makefile.in 	\
+	configure 	\
+	config.sub 	\
 	config.guess
 	

@@ -31,7 +31,6 @@ namespace bibliographer {
             this.Name = "bibliographer.BibtexEntryDialog";
             this.Title = Mono.Unix.Catalog.GetString("BiTeX entry");
             this.WindowPosition = ((Gtk.WindowPosition)(4));
-            this.HasSeparator = false;
             // Internal child bibliographer.BibtexEntryDialog.VBox
             Gtk.VBox w1 = this.VBox;
             w1.Name = "dialog1_VBox";
