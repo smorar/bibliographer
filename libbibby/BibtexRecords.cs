@@ -36,16 +36,16 @@ namespace libbibby
                 RecordsModified (this, e);
         }
 
-        protected virtual void OnRecordModified (EventArgs e)
+        protected virtual void OnRecordModified (object o, EventArgs e)
         {
             if (RecordModified != null)
-                RecordModified (this, e);
+                RecordModified (o, e);
         }
 
-        protected virtual void OnRecordURIModified (EventArgs e)
+        protected virtual void OnRecordURIModified (object o, EventArgs e)
         {
             if (RecordURIModified != null)
-                RecordURIModified (this, e);
+                RecordURIModified (o, e);
         }
 
         public BibtexRecord this[int index] {
@@ -55,6 +55,8 @@ namespace libbibby
 
         public int Add (BibtexRecord record)
         {
+            record.UriUpdated += OnRecordURIModified;
+
             int ret = List.Add (record);
             
             //System.Console.WriteLine ("RecordAdded event emitted: Add {0}", record.GetKey ());
@@ -67,6 +69,8 @@ namespace libbibby
 
         public void Insert (int index, BibtexRecord record)
         {
+            record.UriUpdated += OnRecordURIModified;
+
             List.Insert (index, record);
             //System.Console.WriteLine ("RecordAdded event emitted: Insert");
             this.OnRecordAdded (record, new EventArgs ());

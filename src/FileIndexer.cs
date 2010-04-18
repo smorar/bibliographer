@@ -168,8 +168,7 @@ namespace bibliographer
                 }
                 //System.Console.WriteLine("\n---");
             } else
-                System.Console.WriteLine ("Got null back for index data :-(");
-            Debug.WriteLine (5, "Got null back for index data :-(");
+                Debug.WriteLine (5, "Got null back for index data :-(");
             
             return index;
         }

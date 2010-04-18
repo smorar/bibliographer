@@ -20,7 +20,7 @@ namespace bibliographer
             BibtexRecord record = (BibtexRecord)o;
             
             Debug.WriteLine (1, "Uri updated");
-            string URI = record.GetField ("bibliographer_uri");
+            string URI = record.GetField (BibtexRecord.BibtexFieldName.URI);
             
             Debug.WriteLine (5, "Uri: {0} added to record", URI);
             // Determine doi number from the uri, and lookup info.

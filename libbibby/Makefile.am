@@ -16,18 +16,23 @@ SOURCES = 						\
 	$(srcdir)/BibtexRecords.cs			\
 	$(srcdir)/BibtexRecordType.cs			\
 	$(srcdir)/BibtexRecordTypeLibrary.cs		\
-  	$(srcdir)/Debug.cs				\
+	$(srcdir)/Debug.cs				\
 	$(srcdir)/IntArrayList.cs			\
 	$(srcdir)/StringArrayList.cs
 
 RESOURCES =							\
 	-resource:$(srcdir)/resources/bibtex_records	\
-	-resource:$(srcdir)/resources/bibtex_fields 
+	-resource:$(srcdir)/resources/bibtex_fields
 
 $(ASSEMBLY): $(SOURCES)
 	$(CSC) -target:library $(LIBFLAGS) -out:$@ $(SOURCES) -r:System $(RESOURCES)
 
 all: $(ASSEMBLY)
+
+check-syntax:
+	$(MAKE) syntax-target SYNTAX="-fsyntax-only"
+
+syntax-target: $(ASSEMBLY)
 
 EXTRA_DIST = $(SOURCES)
 

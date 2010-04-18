@@ -34,6 +34,25 @@ namespace libbibby
 
     public class BibtexRecord
     {
+        public static class BibtexFieldName
+        {
+            public static string Author
+            {
+                get {return "author";}
+            }
+
+            public static string Title
+            {
+                get {return "title";}
+            }
+
+            public static string URI
+            {
+                get {return "bibliographer_uri";}
+            }
+
+        }
+
         private string recordType;
 
         public event System.EventHandler RecordModified;
@@ -181,13 +200,16 @@ namespace libbibby
         {
             if (recordFields != null) {
                 for (int i = 0; i < recordFields.Count; i++) {
+                    if ((HasURI() == false) && (field == BibtexRecord.BibtexFieldName.URI))
+                        this.OnUriAdded (new EventArgs());
                     if (String.Compare (((BibtexRecordField)recordFields[i]).fieldName, field, true) == 0) {
                         // Check if the field has _actually_ changed
                         if (content != ((BibtexRecordField)recordFields[i]).fieldValue) {
+                            System.Console.WriteLine("Field: {0} updated with content: {1}", field, content);
                             Debug.WriteLine (5, "Field: {0} updated with content: {1}", field, content);
                             ((BibtexRecordField)recordFields[i]).fieldValue = content;
-                            if (field == "bibliographer_uri") {
-                                //System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
+                            if (field == BibtexRecord.BibtexFieldName.URI) {
+                                System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
                                 this.OnUriUpdated (new EventArgs ());
                             }
                             //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
@@ -196,17 +218,17 @@ namespace libbibby
                         return;
                     }
                 }
-                
+
                 // Field doesn't exist, so add it
                 Debug.WriteLine (5, "Field: {0} added with content: {1}", field, content);
-                
+
                 recordFields.Add (new BibtexRecordField (field, content));
                 //System.Console.WriteLine ("OnFieldAdded event emitted: SetField {0}", field);
                 this.OnFieldAdded (new EventArgs ());
                 //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
                 this.OnRecordModified (new EventArgs ());
-                
-                if (field == "bibliographer_uri") {
+
+                if (field == BibtexRecord.BibtexFieldName.URI) {
                     //System.Console.WriteLine ("OnUriAdded event emitted: SetField {0}", field);
                     this.OnUriAdded (new EventArgs ());
                 }
@@ -231,9 +253,9 @@ namespace libbibby
 
         public string GetURI ()
         {
-            if (!HasField ("bibliographer_uri"))
+            if (!HasField (BibtexRecord.BibtexFieldName.URI))
                 return null;
-            String uriString = GetField ("bibliographer_uri").Replace ('\n', ' ').Trim ();
+            String uriString = GetField (BibtexRecord.BibtexFieldName.URI).Replace ('\n', ' ').Trim ();
             if (uriString == null || uriString == "")
                 return null;
             else
@@ -261,7 +283,7 @@ namespace libbibby
         {
             ConsumeWhitespace (stream);
             StringBuilder result = new StringBuilder ();
-            
+
             do {
                 int next = stream.Read ();
                 if (next != '\n') {
@@ -270,7 +292,7 @@ namespace libbibby
                     break;
                 }
             } while (true);
-            
+
             ConsumeWhitespace (stream);
             return result.ToString ();
         }
@@ -280,7 +302,7 @@ namespace libbibby
             // munch whitespace before and after identifier
             ConsumeWhitespace (stream);
             StringBuilder result = new StringBuilder ();
-            
+
             do {
                 int next = stream.Peek ();
                 if (((next >= 'a') && (next <= 'z')) || ((next >= 'A') && (next <= 'Z')) || ((next >= '0') && (next <= '9')) || (next == '_') || (next == '-') || (next == '.')) {
@@ -306,14 +328,14 @@ namespace libbibby
             // bail if we hit a closing bracket when
             // our bracket count is 0, since the comma
             // is optional on the last field
-            
+
             // UPDATED to also keep a double-quote count,
             // and to check for preceding \'s
-            
+
             ConsumeWhitespace (stream);
-            
+
             StringBuilder result = new StringBuilder ();
-            
+
             int bracketCount = 0;
             bool usingQuotes = false;
             bool usingBrackets = false;
@@ -380,7 +402,7 @@ namespace libbibby
             // reads in a BibTeX record from the given
             // stream, throwing an exception if there's
             // any kind of problem
-            
+
             // tex comments in bibtex files above current record to current record
             this.comment = "";
             while (stream.Peek () == '%') {
@@ -388,32 +410,32 @@ namespace libbibby
                 this.comment += "\n";
                 ConsumeWhitespace (stream);
             }
-            
+
             while (stream.Peek () == '#') {
                 this.comment += ConsumeComment (stream);
                 this.comment += "\n";
                 ConsumeWhitespace (stream);
             }
-            
+
             ConsumeWhitespace (stream);
             //if (stream.Peek() == -1)
             //    throw new ParseException("EOF");
-            
+
             // header part of entry
             //if (stream.Read() != '@')
             //    throw new ParseException("BibTeX record does not start with @");
             //recordType = ConsumeId(stream);
             if (stream.Read () == '@') {
                 recordType = ConsumeId (stream);
-                
+
                 // TODO: scan through record library and print a message if we don't
                 // know what type of record this is?
-                
+
                 if (recordType.ToLower () == "comment") {
                     // Comment records
                     if (stream.Read () != '{')
                         throw new ParseException ("Expected '{' after record type '" + recordType + "'");
-                    string fieldName = "comment";
+                    //string fieldName = "comment";
                     string fieldContent = ConsumeUntilFieldEnd (stream);
                     fieldContent = fieldContent.Trim ();
                     while (fieldContent.IndexOf ("  ") > 0)
@@ -428,20 +450,20 @@ namespace libbibby
                     if (stream.Read () != '{')
                         throw new ParseException ("Expected '{' after record type '" + recordType + "'");
                     recordKey = ConsumeId (stream);
-                    
+
                     // Non-comment records
                     if (stream.Read () != ',')
                         throw new ParseException ("Expected ',' after record key '" + recordKey + "'");
-                    
+
                     // header has been processed, so now let's process the fields
                     ConsumeWhitespace (stream);
                     recordFields = new ArrayList ();
                     while (stream.Peek () != '}') {
                         if (stream.Peek () == -1)
                             throw new ParseException ("End-of-file reached before end of record (expected '}')");
-                        
+
                         string fieldName = ConsumeId (stream);
-                        
+
                         if (stream.Read () != '=')
                             throw new ParseException ("Expected '=' after field '" + fieldName + "'");
                         string fieldContent = ConsumeUntilFieldEnd (stream);
@@ -450,12 +472,12 @@ namespace libbibby
                             fieldContent = fieldContent.Replace ("  ", " ");
                         while (fieldContent.StartsWith ("{") && fieldContent.EndsWith ("}"))
                             fieldContent = fieldContent.Substring (1, fieldContent.Length - 2);
-                        
+
                         ConsumeWhitespace (stream);
-                        
+
                         // TODO: scan through field library and print out a message if
                         // we don't know what type of field this is?
-                        
+
                         Debug.WriteLine (5, "Parsed field '{0}' with content '{1}'", fieldName, fieldContent);
                         recordFields.Add (new BibtexRecordField (fieldName, fieldContent));
                     }
@@ -475,7 +497,7 @@ namespace libbibby
         public string ToBibtexString ()
         {
             StringBuilder bibtexString = new StringBuilder ();
-            
+
             if (this.comment != null) {
                 bibtexString.Append (this.comment);
             }
@@ -499,7 +521,7 @@ namespace libbibby
             return bibtexString.ToString ();
         }
 
-        // Searches the record for contained text in BibtexSearchField 
+        // Searches the record for contained text in BibtexSearchField
         // Text is split into single words by spaces and made case insensitive
         // If the text is found, returns true, else returns false
         public bool SearchRecord (string text, BibtexSearchField sField)
@@ -514,15 +536,15 @@ namespace libbibby
             text = text.ToLower ().Trim ();
             // split text into tokens
             string[] tokens = text.Split (' ');
-            
+
             for (int j = 0; j < tokens.Length; j++) {
                 string textitem = (string)tokens[j];
                 bool result = false;
-                
+
                 // Checking if the record contains the search string
                 for (int i = 0; i < recordFields.Count; i++) {
                     BibtexRecordField recordField = (BibtexRecordField)recordFields[i];
-                    
+
                     if ((sField == BibtexSearchField.All) || ((recordField.fieldName.ToLower () == "author") && (sField == BibtexSearchField.Author)) || ((recordField.fieldName.ToLower () == "title") && (sField == BibtexSearchField.Title))) {
                         if ((recordField.fieldName.ToLower ().IndexOf ("bibliographer") < 0) && (recordField.fieldValue != null)) {
                             if (recordField.fieldValue.ToLower ().IndexOf (textitem) > -1)
@@ -530,13 +552,13 @@ namespace libbibby
                         }
                     }
                 }
-                
+
                 if (result)
                     results.Add (true);
                 else
                     results.Add (false);
             }
-            
+
             if ((results.Contains (false)) || (results.Count < 1))
                 return false;
             else
@@ -567,7 +589,7 @@ namespace libbibby
                         string authorString = ((BibtexRecordField)recordFields[i]).fieldValue;
                         authorString = authorString.Trim ();
                         //System.Console.WriteLine(authorString);
-                        
+
                         string delim = " and ";
                         int j = 0;
                         int next;
@@ -640,7 +662,7 @@ namespace libbibby
 
         public bool HasURI (string uri)
         {
-            if (this.GetField ("bibliographer_uri") == uri)
+            if (this.GetField (BibtexRecord.BibtexFieldName.URI) == uri)
                 return true;
             return false;
         }

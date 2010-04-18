@@ -24,13 +24,14 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(srcdir)/BibtexEntryDialog.cs			\
 	$(srcdir)/Cache.cs				\
 	$(srcdir)/Config.cs				\
-  	$(srcdir)/Debug.cs				\
+        $(srcdir)/Debug.cs				\
 	$(srcdir)/FileIndexer.cs			\
 	$(srcdir)/LitListStore.cs			\
 	$(srcdir)/LookupRecordData.cs			\
 	$(srcdir)/SidePaneTreeStore.cs			\
 	$(srcdir)/StringOps.cs				\
-	$(srcdir)/Tri.cs 
+	$(srcdir)/ThumbGen.cs				\
+	$(srcdir)/Tri.cs
 
 BIBLIOGRAPHER_RESOURCES =					\
 	-resource:$(top_srcdir)/resources/bibliographer.png	\
@@ -57,6 +58,11 @@ $(TARGET): $(BIBLIOGRAPHER_CSFILES)
 	$(CSC) -out:$@ $(BIBLIOGRAPHER_CSFILES) $(BIBLIOGRAPHER_RESOURCES) $(GTKSHARP_LIBS)
 
 all: $(TARGET)
+
+check-syntax:
+	$(MAKE) syntax-target SYNTAX="-fsyntax-only"
+
+syntax-target: $(TARGET)
 
 bibliographerdir = $(pkglibdir)
 bibliographer_DATA = $(TARGET) $(TARGET).config
