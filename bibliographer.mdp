@@ -49,6 +49,7 @@
     <File subtype="Code" buildaction="Nothing" name="resources/error.png" />
     <File subtype="Code" buildaction="Compile" name="src/FileIndexer.cs" />
     <File subtype="Code" buildaction="Compile" name="src/Cache.cs" />
+    <File subtype="Code" buildaction="Compile" name="src/ThumbGen.cs" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
