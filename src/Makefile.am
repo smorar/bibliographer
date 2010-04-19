@@ -1,11 +1,19 @@
 MCS_FLAGS += -nowarn:0169
 MCS_FLAGS += -unsafe+
-CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS)
 
-TARGET = bibliographer.exe
-WRAPPER = bibliographer
+CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS) $(GTKSHARP_LIBS) 
 
-BIBLIOGRAPHER_CSFILES = 				\
+ASSEMBLY_NAME = bibliographer
+ASSEMBLY = $(ASSEMBLY_NAME).exe
+WRAPPER = $(ASSEMBLY_NAME)
+
+#if ENABLE_TESTS
+#ASSEMBLY_TEST = $(ASSEMBLY_NAME).test.exe
+
+#TESTSOURCES = 
+#endif
+
+SOURCES = 								\
 	$(top_srcdir)/gtk-gui/bibliographer.BibliographerMainWindow.cs 	\
 	$(top_srcdir)/gtk-gui/bibliographer.BibliographerChooseColumns.cs \
 	$(top_srcdir)/gtk-gui/bibliographer.BibtexEntryDialog.cs 	\
@@ -33,7 +41,7 @@ BIBLIOGRAPHER_CSFILES = 				\
 	$(srcdir)/ThumbGen.cs				\
 	$(srcdir)/Tri.cs
 
-BIBLIOGRAPHER_RESOURCES =					\
+RESOURCES =					\
 	-resource:$(top_srcdir)/resources/bibliographer.png	\
 	-resource:$(top_srcdir)/resources/error.png		\
 	-pkg:gnome-sharp-2.0					\
@@ -45,38 +53,63 @@ BIBLIOGRAPHER_RESOURCES =					\
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g"               \
 	    -e "s|\@pkglibdir\@|$(pkglibdir)|g"         \
-	    -e "s|\@target\@|$(TARGET)|g"               \
+	    -e "s|\@target\@|$(ASSEMBLY)|g"               \
 	    -e "s|\@mono\@|$(MONO)|g"                   \
 	    -e "s|\@mono_flags\@|$(MONO_FLAGS)|g"       \
 	    < $^ > $@
 
-$(TARGET).config: $(srcdir)/$(TARGET).config.in
+$(ASSEMBLY).config: $(srcdir)/$(ASSEMBLY).config.in
 	sed -e "s|\@pkglibdir\@|$(pkglibdir)|" \
 	< $^ > $@
 
-$(TARGET): $(BIBLIOGRAPHER_CSFILES)
-	$(CSC) -out:$@ $(BIBLIOGRAPHER_CSFILES) $(BIBLIOGRAPHER_RESOURCES) $(GTKSHARP_LIBS)
+$(ASSEMBLY): $(SOURCES)
+	$(CSC) -out:$@ $(SOURCES) $(RESOURCES)
 
-all: $(TARGET)
+#if ENABLE_TESTS
 
-check-syntax:
-	$(MAKE) syntax-target SYNTAX="-fsyntax-only"
+#$(ASSEMBLY_TEST): $(SOURCES_TEST)
+#        $(CSC) -out:$@ $(SOURCES_TEST) $(RESOURCES) $(NUNIT_LIBS)
 
-syntax-target: $(TARGET)
+#all: $(ASSEMBLY) $(ASSEMBLY_TEST)
 
-bibliographerdir = $(pkglibdir)
-bibliographer_DATA = $(TARGET) $(TARGET).config
+#test: all
+#        $(NUNIT) $(ASSEMBLY_TEST)
 
-bin_SCRIPTS = $(WRAPPER)
+#EXTRA_DIST = $(SOURCES) 			\
+#	$(SOURCES_TEST)				\
+#	$(top_srcdir)/gtk-gui/gui.stetic 	\
+#	bibliographer.in bibliographer.exe.config.in
 
-EXTRA_DIST = $(BIBLIOGRAPHER_CSFILES) \
+#CLEANFILES = 					\
+#	$(ASSEMBLY)				\
+#	$(ASSEMBLY).config			\
+#	$(ASSEMBLY_TEST)			\
+#	$(WRAPPER)
+
+#else
+
+all: $(ASSEMBLY)
+
+EXTRA_DIST = $(SOURCES) \
 	$(top_srcdir)/gtk-gui/gui.stetic \
 	bibliographer.in bibliographer.exe.config.in
 
 CLEANFILES = 					\
-	$(TARGET)				\
-	$(TARGET).config			\
+	$(ASSEMBLY)				\
+	$(ASSEMBLY).config			\
 	$(WRAPPER)
+
+#endif
+
+check-syntax:
+	$(MAKE) syntax-target SYNTAX="-fsyntax-only"
+
+syntax-target: $(ASSEMBLY)
+
+bibliographerdir = $(pkglibdir)
+bibliographer_DATA = $(ASSEMBLY) $(ASSEMBLY).config
+
+bin_SCRIPTS = $(WRAPPER)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

@@ -182,8 +182,8 @@ namespace bibliographer
             if (record.HasCustomDataField ("cacheKey") == false) {
                 // No cacheKey - so generate it and index
                 
-                if (record.HasField ("bibliographer_last_uri") && record.HasField ("bibliographer_last_md5")) {
-                    cacheKey = record.GetField ("bibliographer_last_uri") + "<" + record.GetField ("bibliographer_last_md5") + ">";
+                if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
+                    cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                     record.SetCustomDataField ("cacheKey", cacheKey);
                     
                     index = Index (record.GetURI ().ToString ());
@@ -206,59 +206,6 @@ namespace bibliographer
                     record.SetCustomDataField ("indexData", index);
                 }
             }
-            
-            
-//            if (record.HasCustomDataField("cacheKey"))
-//            {
-//                cacheKey = (string) record.GetCustomDataField("cacheKey");
-//                System.Console.WriteLine("Has cacheKey: " + cacheKey);
-//
-//                Debug.WriteLine(5, "Indexing \"" + record.GetURI() + "\"");
-//                index = FileIndexer.Index(record.GetURI());
-//                StreamWriter stream = new StreamWriter(new FileStream(Cache.Filename("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
-//                stream.WriteLine(index.ToString());
-//                stream.Close();
-//
-//                record.AddCustomDataField("indexData", index);
-//            }
-//            else
-//            {
-//                System.Console.WriteLine("No cacheKey");
-//                System.Console.WriteLine("bibliographer_last_uri: {0}", record.GetField("bibliographer_last_uri"));
-//                System.Console.WriteLine("bibliographer_last_md5: {0}", record.GetField("bibliographer_last_md5"));
-//
-//                if (record.HasField("bibliographer_last_uri") && record.HasField("bibliographer_last_md5"))
-//                {
-//                    cacheKey = record.GetField("bibliographer_last_uri") + "<" + record.GetField("bibliographer_last_md5") + ">";
-//                    record.AddCustomDataField("cacheKey", cacheKey);
-//
-//                    if (Cache.IsCached("index_data", cacheKey))
-//                    {
-//                        try
-//                        {
-//                            StreamReader istream = new StreamReader(new FileStream(Cache.CachedFile("index_data", cacheKey), FileMode.Open, FileAccess.Read));
-//                            index = new Tri(istream.ReadToEnd());
-//                            istream.Close();
-//
-//                            record.AddCustomDataField("indexData", index);
-//
-//                        }
-//                        catch (System.Exception e)
-//                        {
-//                            Debug.WriteLine(0, "Unknown exception while indexing file {0} for record {1}", record.GetURI(), record.GetKey());
-//                            Debug.WriteLine(0, e.Message);
-//                            Debug.WriteLine(1, e.StackTrace);
-//                        }
-//                    }
-//                    else
-//                    {
-//                        index = Index(record.GetURI().ToString());
-//
-//                        record.AddCustomDataField("indexData", index);
-//                   }
-//                }
-//
-//            }
         }
 
         public bool IndexContains (BibtexRecord record, String s)

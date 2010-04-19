@@ -94,6 +94,7 @@ namespace bibliographer
             // Main bibtex view list model
             bibtexRecords = new BibtexRecords ();
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
+            bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
             bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
             litStore = new LitListStore (bibtexRecords);
 
@@ -518,6 +519,7 @@ namespace bibliographer
         {
             bibtexRecords = BibtexRecords.Open (file_name);
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
+            bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
             bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
 
             litStore.SetBibtexRecords (bibtexRecords);
@@ -592,8 +594,10 @@ namespace bibliographer
                 if (bibtexRecords.HasURI (uri) == false) {
                     Debug.WriteLine (5, "Adding new record with URI: {0}", uri);
                     BibtexRecord record = new BibtexRecord ();
-                    record.SetField (BibtexRecord.BibtexFieldName.URI, uri);
                     bibtexRecords.Add (record);
+
+                    // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
+                    record.SetField (BibtexRecord.BibtexFieldName.URI, uri);
                 }
             }
         }
@@ -778,6 +782,15 @@ namespace bibliographer
            CALLBACKS
            ----------------------------------------------------------------- */
 
+        protected virtual void OnBibtexRecordURIAdded (object o, EventArgs a)
+        {
+            BibtexRecord record = (BibtexRecord)o;
+            if (am.Altered (record)) {
+                System.Console.WriteLine("Record altered");
+                // Add record to get re-indexed
+                am.SubscribeRecord (record);
+            }
+        }
         protected virtual void OnBibtexRecordURIModified (object o, EventArgs a)
         {
             BibtexRecord record = (BibtexRecord)o;
@@ -896,6 +909,7 @@ namespace bibliographer
 
             bibtexRecords = new BibtexRecords ();
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
+            bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
             bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
 
             litStore.SetBibtexRecords (bibtexRecords);
@@ -1025,6 +1039,7 @@ namespace bibliographer
             if (bibtexRecords == null) {
                 bibtexRecords = new BibtexRecords ();
                 bibtexRecords.RecordsModified += OnBibtexRecordsModified;
+                bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
                 bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
             }
 

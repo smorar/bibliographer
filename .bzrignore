@@ -20,5 +20,9 @@ stamp-h1
 src/bibliographer
 src/bibliographer.exe
 src/bibliographer.exe.config
-libbibby/libbibby.dll
+src/TestResult.xml
+src/%temp%
+libbibby/*.dll
+libbibby/TestResult.xml
+libbibby/%temp%
 test-results

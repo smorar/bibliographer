@@ -2,7 +2,14 @@ ASSEMBLY_NAME = libbibby
 ASSEMBLY = $(ASSEMBLY_NAME).dll
 TARGET = $(ASSEMBLY)
 
-CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS)
+CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS) $(NUNIT_LIBS)
+
+if ENABLE_TESTS
+ASSEMBLY_TEST = $(ASSEMBLY_NAME).test.dll
+
+SOURCES_TEST = 					\
+	$(srcdir)/tests/BibtexRecordTest.cs
+endif
 
 SOURCES = 						\
 	$(srcdir)/AssemblyInfo.cs			\
@@ -27,16 +34,34 @@ RESOURCES =							\
 $(ASSEMBLY): $(SOURCES)
 	$(CSC) -target:library $(LIBFLAGS) -out:$@ $(SOURCES) -r:System $(RESOURCES)
 
+if ENABLE_TESTS
+
+$(ASSEMBLY_TEST): $(SOURCES_TEST)
+	$(CSC) -target:library $(LIBFLAGS) -out:$@ $(SOURCES_TEST) -r:System -r:$(ASSEMBLY) $(RESOURCES) $(NUNIT_LIBS)
+
+all: $(ASSEMBLY) $(ASSEMBLY_TEST)
+
+test: all
+	$(NUNIT) $(ASSEMBLY_TEST)
+
+EXTRA_DIST = $(SOURCES) $(SOURCES_TEST)
+
+CLEANFILES = $(ASSEMBLY) $(ASSEMBLY_TEST)
+
+else
+
 all: $(ASSEMBLY)
+
+EXTRA_DIST = $(SOURCES)
+
+CLEANFILES = $(ASSEMBLY)
+
+endif
 
 check-syntax:
 	$(MAKE) syntax-target SYNTAX="-fsyntax-only"
 
 syntax-target: $(ASSEMBLY)
-
-EXTRA_DIST = $(SOURCES)
-
-CLEANFILES = $(ASSEMBLY)
 
 libbibbydir = $(pkglibdir)
 libbibby_DATA = $(TARGET)

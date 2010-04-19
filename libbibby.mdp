@@ -33,6 +33,7 @@
     <File subtype="Code" buildaction="Compile" name="libbibby/StringArrayList.cs" />
     <File subtype="Directory" buildaction="Compile" name="libbibby/tests" />
     <File subtype="Code" buildaction="Compile" name="libbibby/tests/BibtexRecordTest.cs" />
+    <File subtype="Code" buildaction="Compile" name="libbibby/tests/BibtexRecordsTest.cs" />
   </Contents>
   <References>
     <ProjectReference type="Gac" localcopy="True" refto="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />

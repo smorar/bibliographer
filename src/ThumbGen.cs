@@ -61,8 +61,8 @@ namespace bibliographer
             if ((record.HasCustomDataField ("smallThumbnail") == false) || (record.HasCustomDataField ("largeThumbnail") == false)) {
                 // No thumbnail - so generate it and index
 
-                if (record.HasField ("bibliographer_last_uri") && record.HasField ("bibliographer_last_md5")) {
-                    cacheKey = record.GetField ("bibliographer_last_uri") + "<" + record.GetField ("bibliographer_last_md5") + ">";
+                if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
+                    cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                     record.SetCustomDataField ("cacheKey", cacheKey);
 
                     largeThumbnail = Gen (record.GetURI ().ToString ());

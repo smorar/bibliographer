@@ -48,7 +48,7 @@ namespace libbibby
 
             public static string URI
             {
-                get {return "bibliographer_uri";}
+                get {return "filename";}
             }
 
         }
@@ -156,7 +156,7 @@ namespace libbibby
 
         protected virtual void OnUriUpdated (EventArgs e)
         {
-            Debug.WriteLine (1, "Uri Updated");
+            Debug.WriteLine (5, "Uri Updated");
             //this.OnRecordModified(new EventArgs());
             if (UriUpdated != null)
                 UriUpdated (this, e);
@@ -200,17 +200,20 @@ namespace libbibby
         {
             if (recordFields != null) {
                 for (int i = 0; i < recordFields.Count; i++) {
-                    if ((HasURI() == false) && (field == BibtexRecord.BibtexFieldName.URI))
-                        this.OnUriAdded (new EventArgs());
+                    //if ((HasURI() == false) && (field == BibtexRecord.BibtexFieldName.URI))
+                    //    this.OnUriAdded (new EventArgs());
                     if (String.Compare (((BibtexRecordField)recordFields[i]).fieldName, field, true) == 0) {
                         // Check if the field has _actually_ changed
                         if (content != ((BibtexRecordField)recordFields[i]).fieldValue) {
-                            System.Console.WriteLine("Field: {0} updated with content: {1}", field, content);
+                            //System.Console.WriteLine("Field: {0} updated with content: {1}", field, content);
                             Debug.WriteLine (5, "Field: {0} updated with content: {1}", field, content);
                             ((BibtexRecordField)recordFields[i]).fieldValue = content;
                             if (field == BibtexRecord.BibtexFieldName.URI) {
-                                System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
-                                this.OnUriUpdated (new EventArgs ());
+                                //System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
+                                if (HasURI() == true)
+                                    this.OnUriUpdated (new EventArgs ());
+                                else
+                                    this.OnUriAdded (new EventArgs());
                             }
                             //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
                             this.OnRecordModified (new EventArgs ());
@@ -694,5 +697,19 @@ namespace libbibby
             if (present == false)
                 customData.Add (new BibtexCustomData (field, data));
         }
+
+        public void RemoveCustomDataField(string field)
+        {
+            BibtexCustomData removeField = null;
+
+            foreach (BibtexCustomData customDataField in customData) {
+                if (customDataField.GetFieldName () == field) {
+                    removeField = customDataField;
+                }
+            }
+            if (removeField != null)
+                customData.Remove(removeField);
+        }
+
     }
 }

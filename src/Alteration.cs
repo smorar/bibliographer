@@ -33,23 +33,23 @@ namespace bibliographer
 
         public bool Altered (BibtexRecord record)
         {
-            System.Console.WriteLine("Checking that record is altered: " + record.GetKey());
+            //System.Console.WriteLine("Checking that record is altered: " + record.GetKey());
             DateTime lastCheck = DateTime.MinValue;
             
             string cacheKey;
             
             String uriString = record.GetURI ();
-            String indexedUriString = record.GetField ("bibliographer_last_uri");
+            String indexedUriString = (string) record.GetCustomDataField ("bibliographer_last_uri");
             
             if (indexedUriString == null || indexedUriString != uriString || indexedUriString == "") {
                 // URI has changed, so make all existing data obsolete
-                record.RemoveField ("bibliographer_last_size");
-                record.RemoveField ("bibliographer_last_mtime");
-                record.RemoveField ("bibliographer_last_md5");
+                record.RemoveCustomDataField ("bibliographer_last_size");
+                record.RemoveCustomDataField ("bibliographer_last_mtime");
+                record.RemoveCustomDataField ("bibliographer_last_md5");
                 if (uriString != null) {
                     Debug.WriteLine (5, "Setting bibliographer_last_uri to {0}", uriString);
                     
-                    record.SetField ("bibliographer_last_uri", uriString);
+                    record.SetCustomDataField ("bibliographer_last_uri", uriString);
                 }
                 lastCheck = DateTime.MinValue;
                 // force a re-check
@@ -72,24 +72,27 @@ namespace bibliographer
                 checkInterval = new TimeSpan (0, 5, 0);
                 break;
             }
-            checkInterval = new TimeSpan (0, 0, 1);
+            //checkInterval = new TimeSpan (0, 0, 1);
             if (DateTime.Now.Subtract (checkInterval).CompareTo (lastCheck) < 0)
+            {
                 // not enough time has passed for us to check this one
                 // FIXME: should probably move this out to the alteration
                 // monitor queue
+                System.Console.WriteLine("Not enough time has passed to check this record");
                 return false;
+            }
             lastCheck = DateTime.Now;
             if (!uri.Exists) {
                 Debug.WriteLine (5, "URI \"" + uriString + "\" does not seem to exist...");
                 return false;
             }
-            String size = record.GetField ("bibliographer_last_size");
+            String size = (string) record.GetCustomDataField ("bibliographer_last_size");
             if (size == null)
                 size = "";
-            String mtime = record.GetField ("bibliographer_last_mtime");
+            String mtime = (string) record.GetCustomDataField ("bibliographer_last_mtime");
             if (mtime == null)
                 mtime = "";
-            String md5 = record.GetField ("bibliographer_last_md5");
+            String md5 = (string) record.GetCustomDataField ("bibliographer_last_md5");
             String newSize = "";
             ulong intSize = 0;
             String newMtime = "";
@@ -120,9 +123,9 @@ namespace bibliographer
             }
             if ((size != newSize) || (mtime != newMtime) || (md5 == "")) {
                 if (size != newSize)
-                    record.SetField ("bibliographer_last_size", newSize);
+                    record.SetCustomDataField ("bibliographer_last_size", newSize);
                 if (mtime != newMtime)
-                    record.SetField ("bibliographer_last_mtime", newMtime);
+                    record.SetCustomDataField ("bibliographer_last_mtime", newMtime);
                 
                 // something has changed or we don't have a MD5
                 // recalculate the MD5
@@ -142,17 +145,17 @@ namespace bibliographer
                 Debug.WriteLine (5, "\t*MD5: " + newMd5);
                 if (newMd5 != md5) {
                     // definitely something changed
-                    record.SetField ("bibliographer_last_md5", newMd5);
+                    record.SetCustomDataField ("bibliographer_last_md5", newMd5);
                     cacheKey = uriString + "<" + newMd5 + ">";
                 }
                 //System.Console.WriteLine(record.GetKey() + " is altered!! - 2");
 
-                if (record.HasField("indexData"))
-                    record.RemoveField("indexData");
-                if (record.HasField("largeThumbnail"))
-                    record.RemoveField("largeThumbnail");
-                if (record.HasField("smallThumbnail"))
-                    record.RemoveField("smallThumbnail");
+                if (record.HasCustomDataField("indexData"))
+                    record.RemoveCustomDataField("indexData");
+                if (record.HasCustomDataField("largeThumbnail"))
+                    record.RemoveCustomDataField("largeThumbnail");
+                if (record.HasCustomDataField("smallThumbnail"))
+                    record.RemoveCustomDataField("smallThumbnail");
                 
                 return true;
             }
@@ -207,7 +210,7 @@ namespace bibliographer
                         BibtexRecord record = (BibtexRecord)thumbGenQueue.Dequeue ();
 
                         System.Threading.Monitor.Exit (thumbGenQueue);
-                        //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
+                        System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
                             ThumbGen.Gen(record);
                         } catch (Exception e) {
@@ -236,7 +239,7 @@ namespace bibliographer
                         BibtexRecord record = (BibtexRecord)indexerQueue.Dequeue ();
                         
                         System.Threading.Monitor.Exit (indexerQueue);
-                        //System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
+                        System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
                         try {
                             FileIndexer.Index (record);
                         } catch (Exception e) {
@@ -269,7 +272,7 @@ namespace bibliographer
                         // FIXME: if continuous monitoring is enabled, then
                         // the entry should be requeued
                         if (Altered (record)) {
-                            //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
+                            System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
                             System.Threading.Monitor.Enter (indexerQueue);
                             // Enqueue record for re-indexing
                             indexerQueue.Enqueue (record);

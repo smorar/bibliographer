@@ -40,7 +40,7 @@ namespace bibliographer
                         // Strip out "doi:"
                         data = data.Remove (0, 4);
                         Debug.WriteLine (5, "Found doi:{0}", data);
-                        record.SetField ("bibliographer_doi", data);
+                        record.SetCustomDataField ("bibliographer_doi", data);
                         
                         // Start a thread to look up the record's data, so as to not lockup the interface
                         // if the request takes a while, or times out due to no network connectivity.

@@ -14,6 +14,7 @@ namespace libbibby
         public event System.EventHandler RecordDeleted;
         public event System.EventHandler RecordsModified;
         public event System.EventHandler RecordModified;
+        public event System.EventHandler RecordURIAdded;
         public event System.EventHandler RecordURIModified;
 
         protected virtual void OnRecordAdded (object o, EventArgs e)
@@ -48,6 +49,12 @@ namespace libbibby
                 RecordURIModified (o, e);
         }
 
+        protected virtual void OnRecordURIAdded (object o, EventArgs e)
+        {
+            if (RecordURIAdded != null)
+                RecordURIAdded (o, e);
+        }
+
         public BibtexRecord this[int index] {
             get { return ((BibtexRecord)(List[index])); }
             set { List[index] = value; }
@@ -55,7 +62,9 @@ namespace libbibby
 
         public int Add (BibtexRecord record)
         {
+            record.UriAdded += OnRecordURIAdded;
             record.UriUpdated += OnRecordURIModified;
+            record.RecordModified += OnRecordModified;
 
             int ret = List.Add (record);
             
@@ -69,7 +78,9 @@ namespace libbibby
 
         public void Insert (int index, BibtexRecord record)
         {
+            record.UriAdded += OnRecordURIAdded;
             record.UriUpdated += OnRecordURIModified;
+            record.RecordModified += OnRecordModified;
 
             List.Insert (index, record);
             //System.Console.WriteLine ("RecordAdded event emitted: Insert");
