@@ -34,7 +34,7 @@ namespace bibliographer
         private void OnRecordAdded (object o, EventArgs a)
         {
             Debug.WriteLine (5, "Record added in LitListStore");
-            BibtexRecord record = (BibtexRecord)o;
+            //BibtexRecord record = (BibtexRecord) o;
             Gtk.TreeIter iter = this.Append ();
             this.SetValue (iter, 0, o);
         }

@@ -125,6 +125,7 @@ namespace bibliographer
 
         public static StringArrayList GetTextualData (string URI)
         {
+            // TODO: Cache result, and load cache if cache exists!!
             Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri (URI);
             MimeType mimeType = new MimeType (uri);
             

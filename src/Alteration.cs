@@ -36,8 +36,6 @@ namespace bibliographer
             //System.Console.WriteLine("Checking that record is altered: " + record.GetKey());
             DateTime lastCheck = DateTime.MinValue;
             
-            string cacheKey;
-            
             String uriString = record.GetURI ();
             String indexedUriString = (string) record.GetCustomDataField ("bibliographer_last_uri");
             
@@ -146,7 +144,7 @@ namespace bibliographer
                 if (newMd5 != md5) {
                     // definitely something changed
                     record.SetCustomDataField ("bibliographer_last_md5", newMd5);
-                    cacheKey = uriString + "<" + newMd5 + ">";
+                    //cacheKey = uriString + "<" + newMd5 + ">";
                 }
                 //System.Console.WriteLine(record.GetKey() + " is altered!! - 2");
 

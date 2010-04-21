@@ -211,18 +211,18 @@ namespace bibliographer {
             this.AboutAction = new Gtk.Action("AboutAction", Mono.Unix.Catalog.GetString("_About"), null, "gtk-about");
             this.AboutAction.ShortLabel = Mono.Unix.Catalog.GetString("_About");
             w1.Add(this.AboutAction, null);
-            this.ToolbarNewAction = new Gtk.Action("ToolbarNewAction", Mono.Unix.Catalog.GetString("_New"), null, "gtk-new");
+            this.ToolbarNewAction = new Gtk.Action("ToolbarNewAction", Mono.Unix.Catalog.GetString("_New"), Mono.Unix.Catalog.GetString("Create a new file"), "gtk-new");
             this.ToolbarNewAction.ShortLabel = Mono.Unix.Catalog.GetString("_New");
             w1.Add(this.ToolbarNewAction, null);
-            this.ToolbarOpenAction = new Gtk.Action("ToolbarOpenAction", null, null, "gtk-open");
+            this.ToolbarOpenAction = new Gtk.Action("ToolbarOpenAction", null, Mono.Unix.Catalog.GetString("Open file"), "gtk-open");
             w1.Add(this.ToolbarOpenAction, null);
-            this.ToolbarSaveAction = new Gtk.Action("ToolbarSaveAction", null, null, "gtk-save");
+            this.ToolbarSaveAction = new Gtk.Action("ToolbarSaveAction", null, Mono.Unix.Catalog.GetString("Save file"), "gtk-save");
             w1.Add(this.ToolbarSaveAction, null);
-            this.ToolbarSaveAsAction = new Gtk.Action("ToolbarSaveAsAction", null, null, "gtk-save-as");
+            this.ToolbarSaveAsAction = new Gtk.Action("ToolbarSaveAsAction", null, Mono.Unix.Catalog.GetString("Save file as..."), "gtk-save-as");
             w1.Add(this.ToolbarSaveAsAction, null);
-            this.ToolbarAddAction = new Gtk.Action("ToolbarAddAction", null, null, "gtk-add");
+            this.ToolbarAddAction = new Gtk.Action("ToolbarAddAction", null, Mono.Unix.Catalog.GetString("Add a new record"), "gtk-add");
             w1.Add(this.ToolbarAddAction, null);
-            this.ToolbarRemoveAction = new Gtk.Action("ToolbarRemoveAction", null, null, "gtk-remove");
+            this.ToolbarRemoveAction = new Gtk.Action("ToolbarRemoveAction", null, Mono.Unix.Catalog.GetString("Remove selected record"), "gtk-remove");
             w1.Add(this.ToolbarRemoveAction, null);
             this.ViewRecordsAction = new Gtk.RadioAction("ViewRecordsAction", Mono.Unix.Catalog.GetString("View Records"), null, null, 0);
             this.ViewRecordsAction.Group = new GLib.SList(System.IntPtr.Zero);
@@ -239,7 +239,7 @@ namespace bibliographer {
             this.Icon = Gdk.Pixbuf.LoadFromResource("bibliographer.png");
             this.WindowPosition = ((Gtk.WindowPosition)(4));
             this.DefaultWidth = 640;
-            this.DefaultHeight = 480;
+            this.DefaultHeight = 420;
             // Container child bibliographer.BibliographerMainWindow.Gtk.Container+ContainerChild
             this.vbox1 = new Gtk.VBox();
             this.vbox1.Name = "vbox1";
@@ -302,7 +302,7 @@ namespace bibliographer {
             this.vpane.Position = 150;
             // Container child vpane.Gtk.Paned+PanedChild
             this.scrolledwindowTreeView = new Gtk.ScrolledWindow();
-            this.scrolledwindowTreeView.HeightRequest = 200;
+            this.scrolledwindowTreeView.HeightRequest = 150;
             this.scrolledwindowTreeView.CanFocus = true;
             this.scrolledwindowTreeView.Name = "scrolledwindowTreeView";
             this.scrolledwindowTreeView.ShadowType = ((Gtk.ShadowType)(1));
@@ -312,6 +312,7 @@ namespace bibliographer {
             w7.Resize = false;
             // Container child vpane.Gtk.Paned+PanedChild
             this.recordDetailsView = new Gtk.VBox();
+            this.recordDetailsView.HeightRequest = 150;
             this.recordDetailsView.Name = "recordDetailsView";
             this.recordDetailsView.BorderWidth = ((uint)(2));
             // Container child recordDetailsView.Gtk.Box+BoxChild
@@ -349,6 +350,7 @@ namespace bibliographer {
             w11.Position = 0;
             // Container child recordDetailsView.Gtk.Box+BoxChild
             this.recordEditor = new Gtk.VBox();
+            this.recordEditor.HeightRequest = 150;
             this.recordEditor.Name = "recordEditor";
             // Container child recordEditor.Gtk.Box+BoxChild
             this.table1 = new Gtk.Table(((uint)(2)), ((uint)(3)), false);
@@ -430,7 +432,7 @@ namespace bibliographer {
             this.notebookFields = new Gtk.Notebook();
             this.notebookFields.CanFocus = true;
             this.notebookFields.Name = "notebookFields";
-            this.notebookFields.CurrentPage = 1;
+            this.notebookFields.CurrentPage = 0;
             // Container child notebookFields.Gtk.Notebook+NotebookChild
             this.scrolledwindowRqdFields = new Gtk.ScrolledWindow();
             this.scrolledwindowRqdFields.CanFocus = true;

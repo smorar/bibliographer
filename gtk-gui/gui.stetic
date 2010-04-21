@@ -158,36 +158,42 @@
         <property name="Label" translatable="yes">_New</property>
         <property name="ShortLabel" translatable="yes">_New</property>
         <property name="StockId">gtk-new</property>
+        <property name="Tooltip" translatable="yes">Create a new file</property>
         <signal name="Activated" handler="OnFileNewActivated" />
       </action>
       <action id="ToolbarOpenAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-open</property>
+        <property name="Tooltip" translatable="yes">Open file</property>
         <signal name="Activated" handler="OnFileOpenActivated" />
       </action>
       <action id="ToolbarSaveAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-save</property>
+        <property name="Tooltip" translatable="yes">Save file</property>
         <signal name="Activated" handler="OnFileSaveActivated" />
       </action>
       <action id="ToolbarSaveAsAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-save-as</property>
+        <property name="Tooltip" translatable="yes">Save file as...</property>
         <signal name="Activated" handler="OnFileSaveAsActivated" />
       </action>
       <action id="ToolbarAddAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-add</property>
+        <property name="Tooltip" translatable="yes">Add a new record</property>
         <signal name="Activated" handler="OnAddRecordActivated" />
       </action>
       <action id="ToolbarRemoveAction">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes" />
         <property name="StockId">gtk-remove</property>
+        <property name="Tooltip" translatable="yes">Remove selected record</property>
         <signal name="Activated" handler="OnRemoveRecordActivated" />
       </action>
       <action id="ViewRecordsAction">
@@ -217,7 +223,7 @@
     <property name="Icon">resource:bibliographer.png</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="DefaultWidth">640</property>
-    <property name="DefaultHeight">480</property>
+    <property name="DefaultHeight">420</property>
     <signal name="SizeAllocated" handler="OnWindowSizeAllocated" />
     <signal name="WindowStateEvent" handler="OnWindowStateChanged" />
     <signal name="DeleteEvent" handler="OnWindowDeleteEvent" />
@@ -353,7 +359,7 @@
                     <child>
                       <widget class="Gtk.ScrolledWindow" id="scrolledwindowTreeView">
                         <property name="MemberName" />
-                        <property name="HeightRequest">200</property>
+                        <property name="HeightRequest">150</property>
                         <property name="CanFocus">True</property>
                         <property name="ShadowType">In</property>
                         <property name="BorderWidth">2</property>
@@ -374,6 +380,7 @@
                     <child>
                       <widget class="Gtk.VBox" id="recordDetailsView">
                         <property name="MemberName" />
+                        <property name="HeightRequest">150</property>
                         <property name="BorderWidth">2</property>
                         <child>
                           <widget class="Gtk.VBox" id="recordView">
@@ -423,6 +430,7 @@
                         <child>
                           <widget class="Gtk.VBox" id="recordEditor">
                             <property name="MemberName" />
+                            <property name="HeightRequest">150</property>
                             <child>
                               <widget class="Gtk.Table" id="table1">
                                 <property name="MemberName" />
@@ -559,7 +567,7 @@
                               <widget class="Gtk.Notebook" id="notebookFields">
                                 <property name="MemberName" />
                                 <property name="CanFocus">True</property>
-                                <property name="CurrentPage">1</property>
+                                <property name="CurrentPage">0</property>
                                 <child>
                                   <widget class="Gtk.ScrolledWindow" id="scrolledwindowRqdFields">
                                     <property name="MemberName" />

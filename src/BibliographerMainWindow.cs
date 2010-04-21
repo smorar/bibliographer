@@ -57,7 +57,7 @@ namespace bibliographer
 
             // Set up main window defaults
             this.WidthRequest = 600;
-            this.HeightRequest = 600;
+            this.HeightRequest = 420;
 
             int width, height;
 
@@ -68,7 +68,7 @@ namespace bibliographer
             if (Config.KeyExists ("window_height"))
                 height = Config.GetInt ("window_height");
             else
-                height = 600;
+                height = 420;
             this.Resize (width, height);
             if (Config.KeyExists ("window_maximized"))
                 if (Config.GetBool ("window_maximized") == true)

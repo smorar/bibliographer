@@ -45,17 +45,15 @@ namespace bibliographer
                         // Start a thread to look up the record's data, so as to not lockup the interface
                         // if the request takes a while, or times out due to no network connectivity.
                         // TODO: Use a threadpool here - we can do some of these simultaneously.
-                        RunOnMainThread.Run (this, "LookupData", null);
-                        //System.Threading.Thread t = new System.Threading.Thread(this.LookupData);
-                        //t.Start();
+                        //RunOnMainThread.Run (this, "LookupData", null);
                     }
                 }
             }
         }
 
-        private void LookupData ()
-        {
-            // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
+//        private void LookupData ()
+//        {
+//            // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
 //            string url = "http://www.crossref.org/openurl/?id=doi:"+this.GetField("bibliographer_doi")+"&noredirect=true";
 //            Debug.WriteLine(5, "Looking up data for {0} from {1}", this.GetField("bibliographer_doi"), url);
 //            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
@@ -223,7 +221,7 @@ namespace bibliographer
 //            {
 //                Debug.WriteLine(2, e.Message);
 //            }
-        }
+//        }
     }
 
     public class RunOnMainThread
