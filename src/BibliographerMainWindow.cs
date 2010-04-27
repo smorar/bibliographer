@@ -472,8 +472,8 @@ namespace bibliographer
                 Gtk.HBox uriHBox = new Gtk.HBox ();
                 uriHBox.PackStart (new Gtk.Label ("Associated file:"), false, false, 5);
                 FieldEntry uriEntry = new FieldEntry ();
-                if (record.HasField (BibtexRecord.BibtexFieldName.URI))
-                    uriEntry.Text = record.GetField (BibtexRecord.BibtexFieldName.URI);
+                if (record.HasURI())
+                    uriEntry.Text = record.GetURI();
                 uriEntry.field = BibtexRecord.BibtexFieldName.URI;
                 uriEntry.Changed += OnFieldChanged;
                 uriHBox.PackStart (uriEntry, false, false, 5);
