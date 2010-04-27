@@ -244,6 +244,8 @@ namespace bibliographer
 
         private static void SaveCacheData ()
         {
+			cleanup_invalid_dirs();
+			
             try {
                 Monitor.Enter (sections);
                 StreamWriter stream = new StreamWriter (new FileStream (Config.GetDataDir () + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
@@ -265,5 +267,26 @@ namespace bibliographer
                 Debug.WriteLine (1, "Unhandled exception whilst trying to save cache: {0}", e);
             }
         }
+		
+		private static void cleanup_invalid_dirs()
+		{
+			try
+			{
+				if (System.IO.Directory.Exists("~/.bibliographer"))
+				{
+					Debug.WriteLine(1, "Deleting old ~/.bibliohrapher directory");
+					System.IO.Directory.Delete("~/.bibliographer/");
+				}
+			} catch (System.IO.DirectoryNotFoundException e)
+			{
+				Debug.WriteLine (1, "Directory not found exception whilst trying to cleanup old directories: {0}", e);
+			} catch (System.IO.FileNotFoundException e)
+			{
+				Debug.WriteLine (1, "File not found exception whilst trying to cleanup old directories: {0}", e);
+			} catch (Exception e)
+			{
+				Debug.WriteLine (1, "Unhandled exception whilst trying to cleanup old directories: {0}", e);
+			}
+		}
     }
 }
