@@ -157,11 +157,15 @@ namespace bibliographer
                 
                 return true;
             }
-            if (record.GetCustomDataField ("indexData") == null) {
+			// TODO:
+			// This is not the correct place for this... Instead, an item with a URI, 
+			// but without indexData should only attempt to be re-indexed on opening the file again.
+			
+            //if (record.GetCustomDataField ("indexData") == null) {
                 // URI, but null index data. Force a re-index by returning true
                 //System.Console.WriteLine(record.GetKey() + " is altered!! - 1");
-                return true;
-            }
+            //    return true;
+            //}
             return false;
         }
 
