@@ -144,7 +144,6 @@ namespace bibliographer
                 if (newMd5 != md5) {
                     // definitely something changed
                     record.SetCustomDataField ("bibliographer_last_md5", newMd5);
-                    //cacheKey = uriString + "<" + newMd5 + ">";
                 }
                 //System.Console.WriteLine(record.GetKey() + " is altered!! - 2");
 
@@ -212,7 +211,7 @@ namespace bibliographer
                         BibtexRecord record = (BibtexRecord)thumbGenQueue.Dequeue ();
 
                         System.Threading.Monitor.Exit (thumbGenQueue);
-                        System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
+                        //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
                             ThumbGen.Gen(record);
                         } catch (Exception e) {
@@ -241,7 +240,7 @@ namespace bibliographer
                         BibtexRecord record = (BibtexRecord)indexerQueue.Dequeue ();
                         
                         System.Threading.Monitor.Exit (indexerQueue);
-                        System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
+                        //System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
                         try {
                             FileIndexer.Index (record);
                         } catch (Exception e) {
@@ -274,15 +273,33 @@ namespace bibliographer
                         // FIXME: if continuous monitoring is enabled, then
                         // the entry should be requeued
                         if (Altered (record)) {
-                            System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
-                            System.Threading.Monitor.Enter (indexerQueue);
+                            //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
                             // Enqueue record for re-indexing
+                            System.Threading.Monitor.Enter (indexerQueue);
                             indexerQueue.Enqueue (record);
-                            // Enqueue record for regeneration of its thumbnail
-                            thumbGenQueue.Enqueue (record);
                             System.Threading.Monitor.Exit (indexerQueue);
+                            // Enqueue record for regeneration of its thumbnail
+                            System.Threading.Monitor.Enter (thumbGenQueue);
+                            thumbGenQueue.Enqueue (record);
+                            System.Threading.Monitor.Exit (thumbGenQueue);
+                        } else if (
+                                   (record.HasURI()) &&
+                                   ((record.GetKey() == "")   || (record.GetKey() == null))   &&
+                                   ((record.RecordType == "") || (record.RecordType == null)) &&
+                                   (record.HasCustomDataField("largeThumbnail") == false)      &&
+                                   (record.HasCustomDataField("indexData") == false)
+                                   )
+                        {
+                            //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
+                            // Enqueue record for re-indexing
+                            System.Threading.Monitor.Enter (indexerQueue);
+                            indexerQueue.Enqueue (record);
+                            System.Threading.Monitor.Exit (indexerQueue);
+                            // Enqueue record for regeneration of its thumbnail
+                            System.Threading.Monitor.Enter (thumbGenQueue);
+                            thumbGenQueue.Enqueue (record);
+                            System.Threading.Monitor.Exit (thumbGenQueue);
                         }
-                        
                         System.Threading.Thread.Sleep (100);
                         System.Threading.Monitor.Enter (alterationMonitorQueue);
                         // enqueue record if it has a uri

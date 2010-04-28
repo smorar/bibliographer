@@ -21,14 +21,19 @@ namespace bibliographer
             GLib.GType[] coltype = new GLib.GType[1];
             coltype[0] = (GLib.GType)typeof(BibtexRecord);
             this.ColumnTypes = coltype;
-            
+
             if (btRecords == null)
-                this.bibtexRecords = new BibtexRecords ();
-            else
-                this.bibtexRecords = btRecords;
+            {
+                // TODO: Throw a proper exception here!!
+                throw (new Exception());
+            }
+            //if (btRecords == null)
+            //    this.bibtexRecords = new BibtexRecords ();
+            //else
+            //    this.bibtexRecords = btRecords;
             
-            this.bibtexRecords.RecordAdded += this.OnRecordAdded;
-            this.bibtexRecords.RecordDeleted += this.OnRecordDeleted;
+            //this.bibtexRecords.RecordAdded += this.OnRecordAdded;
+            //this.bibtexRecords.RecordDeleted += this.OnRecordDeleted;
         }
 
         private void OnRecordAdded (object o, EventArgs a)

@@ -51,6 +51,11 @@ namespace libbibby
                 get {return "filename";}
             }
 
+            public static string DOI
+            {
+                get {return "doi";}
+            }
+
         }
 
         private string recordType;
@@ -60,6 +65,8 @@ namespace libbibby
         public event System.EventHandler FieldDeleted;
         public event System.EventHandler UriAdded;
         public event System.EventHandler UriUpdated;
+        public event System.EventHandler DoiAdded;
+        public event System.EventHandler DoiUpdated;
 
         private string comment;
         private string recordKey;
@@ -130,8 +137,6 @@ namespace libbibby
         protected virtual void OnFieldAdded (EventArgs e)
         {
             Debug.WriteLine (5, "Field Added");
-            //System.Console.WriteLine("RecordModified event emitted: OnFieldAdded");
-            //this.OnRecordModified(new EventArgs());
             if (FieldAdded != null)
                 FieldAdded (this, e);
         }
@@ -139,8 +144,6 @@ namespace libbibby
         protected virtual void OnFieldDeleted (EventArgs e)
         {
             Debug.WriteLine (5, "Field Deleted");
-            //System.Console.WriteLine("RecordModified event emitted: OnFieldDeleted");
-            //this.OnRecordModified(new EventArgs());
             if (FieldDeleted != null)
                 FieldDeleted (this, e);
         }
@@ -148,8 +151,6 @@ namespace libbibby
         protected virtual void OnUriAdded (EventArgs e)
         {
             Debug.WriteLine (5, "Uri Added");
-            //System.Console.WriteLine("RecordModified event emitted: OnUriAdded");
-            //this.OnRecordModified(new EventArgs());
             if (UriAdded != null)
                 UriAdded (this, e);
         }
@@ -157,9 +158,22 @@ namespace libbibby
         protected virtual void OnUriUpdated (EventArgs e)
         {
             Debug.WriteLine (5, "Uri Updated");
-            //this.OnRecordModified(new EventArgs());
             if (UriUpdated != null)
                 UriUpdated (this, e);
+        }
+
+        protected virtual void OnDoiAdded (EventArgs e)
+        {
+            Debug.WriteLine (5, "Doi Added");
+            if (DoiAdded != null)
+                DoiAdded (this, e);
+        }
+
+        protected virtual void OnDoiUpdated (EventArgs e)
+        {
+            Debug.WriteLine (5, "Doi Updated");
+            if (DoiUpdated != null)
+                DoiUpdated (this, e);
         }
 
         public string RecordType {
@@ -213,7 +227,12 @@ namespace libbibby
                                 if (HasURI() == true)
                                     this.OnUriUpdated (new EventArgs ());
                                 else
-                                    this.OnUriAdded (new EventArgs());
+                                    this.OnUriAdded (new EventArgs ());
+                            } else if (field == BibtexRecord.BibtexFieldName.DOI) {
+                                if (HasDOI() == true)
+                                    this.OnDoiUpdated (new EventArgs ());
+                                else
+                                    this.OnDoiAdded (new EventArgs ());
                             }
                             //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
                             this.OnRecordModified (new EventArgs ());
@@ -236,6 +255,11 @@ namespace libbibby
                     this.OnUriAdded (new EventArgs ());
                 }
             }
+        }
+
+        public void SetURI (string uri)
+        {
+            SetField(BibtexRecord.BibtexFieldName.URI, uri);
         }
 
         public void RemoveField (string field)
@@ -263,6 +287,17 @@ namespace libbibby
                 return null;
             else
                 return uriString;
+        }
+
+        public string GetDOI ()
+        {
+            if (!HasField (BibtexRecord.BibtexFieldName.DOI))
+                return null;
+            String doiString = GetField (BibtexRecord.BibtexFieldName.DOI);
+            if (doiString == null || doiString == "")
+                return null;
+            else
+                return doiString;
         }
 
         private void ConsumeWhitespace (TextReader stream)
@@ -653,6 +688,20 @@ namespace libbibby
                     }
                 }
             return journal;
+        }
+
+        public bool HasDOI()
+        {
+            if ((this.GetDOI () != null) && (this.GetDOI () != ""))
+                return true;
+            return false;
+        }
+
+        public bool HasDOI(string doi)
+        {
+            if (this.GetField (BibtexRecord.BibtexFieldName.DOI) == doi)
+                return true;
+            return false;
         }
 
         public bool HasURI ()

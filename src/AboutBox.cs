@@ -13,7 +13,6 @@ namespace bibliographer
     {
         public AboutBox ()
         {
-            
             System.Reflection.AssemblyTitleAttribute title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
             
             System.Reflection.AssemblyCopyrightAttribute copyright = (System.Reflection.AssemblyCopyrightAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyCopyrightAttribute));

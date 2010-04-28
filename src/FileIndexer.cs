@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Gnome;
 using Gnome.Vfs;
@@ -147,19 +148,16 @@ namespace bibliographer
             return textualData;
         }
 
-        public static Tri Index (String URI)
+        public static Tri Index (StringArrayList textualDataArray)
         {
-            //System.Console.WriteLine("Obtaining index from URI: " + URI);
             Tri index = new Tri ();
             
-            StringArrayList textualData = GetTextualData (URI);
-            
-            if (textualData != null) {
+            if (textualDataArray != null) {
                 //System.Console.WriteLine("Converted textual data is as follows:\n---\n");
-                for (int line = 0; line < textualData.Count; line++) {
-                    while (Gtk.Application.EventsPending ())
-                        Gtk.Application.RunIteration ();
-                    String data = ((String)textualData[line]).ToLower ();
+                for (int line = 0; line < textualDataArray.Count; line++) {
+                    //while (Gtk.Application.EventsPending ())
+                    //    Gtk.Application.RunIteration ();
+                    String data = ((String)textualDataArray[line]).ToLower ();
                     data = Regex.Replace (data, "[^\\w\\.@-]", " ");
                     data = Regex.Replace (data, "[\\d]", " ");
                     //System.Console.WriteLine(data);
@@ -178,32 +176,81 @@ namespace bibliographer
         {
             //System.Console.WriteLine("Indexing " + record.GetKey());
             Tri index;
-            string cacheKey;
+            string cacheKey = "";
             
-            if (record.HasCustomDataField ("cacheKey") == false) {
-                // No cacheKey - so generate it and index
+            if ((record.HasCustomDataField ("cacheKey") == false) ||
+                (Cache.CachedFile ("index_data", (string)record.GetCustomDataField ("cacheKey")).Trim() == ""))
+            {
+                // No cache exists - so generate it and index
                 
                 if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
                     cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                     record.SetCustomDataField ("cacheKey", cacheKey);
-                    
-                    index = Index (record.GetURI ().ToString ());
-                    StreamWriter stream = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
-                    stream.WriteLine (index.ToString ());
-                    stream.Close ();
-                    
-                    record.SetCustomDataField ("indexData", index);
+                }
+                else
+                {
+                    string uriString = record.GetURI();
+                    ulong intSize = 0;
+                    Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
+
+                    try {
+                        Gnome.Vfs.FileInfo info = uri.GetFileInfo ();
+                        if ((info.ValidFields & Gnome.Vfs.FileInfoFields.Size) != 0) {
+                            intSize = (ulong)info.Size;
+                        }
+                    } catch (Exception e) {
+                        Debug.WriteLine (10, e.Message);
+                        Debug.WriteLine (1, "\t*** Whoops! Caught an exception!");
+                    }
+
+                    Gnome.Vfs.Handle handle = Gnome.Vfs.Sync.Open (uriString, Gnome.Vfs.OpenMode.Read);
+                    ulong sizeRead;
+                    byte[] contents = new byte[intSize];
+                    if (Gnome.Vfs.Sync.Read (handle, out contents[0], intSize, out sizeRead) != Gnome.Vfs.Result.Ok) {
+                        // read failed
+                        Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
+                    }
+                    MD5 hasher = MD5.Create ();
+                    byte[] newMd5Array = hasher.ComputeHash (contents);
+                    string newMd5 = BitConverter.ToString(newMd5Array).Replace("-","").ToLower();
+
+                    record.SetCustomDataField ("bibliographer_last_md5", newMd5);
+                    record.SetCustomDataField ("bibliographer_last_uri", uriString);
+                    cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
+                }
+
+                StringArrayList textualDataArray = GetTextualData (record.GetURI().ToString());
+
+                index = Index (textualDataArray);
+                string doi = ExtractDOI(textualDataArray);
+
+
+                StreamWriter stream = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
+                stream.WriteLine (index.ToString ());
+                stream.Close ();
+
+                record.SetCustomDataField ("indexData", index);
+                if (doi != null)
+                {
+                    //System.Console.WriteLine("Setting DOI: {0}", doi);
+                    record.SetField(BibtexRecord.BibtexFieldName.DOI, doi);
                 }
             } else {
                 // cachekey exists - load
+                //System.Console.WriteLine("Loading cached index data for record: {0}", record.GetKey());
+
                 cacheKey = (string)record.GetCustomDataField ("cacheKey");
-                
+
                 // Load cachekey if it hasn't been loaded yet
                 if (record.HasCustomDataField ("indexData") == false) {
-                    StreamReader istream = new StreamReader (new FileStream (Cache.CachedFile ("index_data", cacheKey), FileMode.Open, FileAccess.Read));
+
+                    string cacheFile = Cache.CachedFile ("index_data", cacheKey);
+                    //System.Console.WriteLine(cacheFile);
+
+                    StreamReader istream = new StreamReader (new FileStream (cacheFile , FileMode.Open, FileAccess.Read));
                     index = new Tri (istream.ReadToEnd ());
                     istream.Close ();
-                    
+
                     record.SetCustomDataField ("indexData", index);
                 }
             }
@@ -218,12 +265,36 @@ namespace bibliographer
                 if (o == null) {
                     return false;
                 } else {
-                    Tri index = (Tri)o;
+                    Tri index = (Tri) o;
                     return index.IsSubString (s);
                 }
             }
             return false;
         }
-        
+
+        private static string ExtractDOI(StringArrayList stringDataArray)
+        {
+            //System.Console.WriteLine ("Attempting to extract DOI");
+            if (stringDataArray != null) {
+                for (int line = 0; line < stringDataArray.Count; line++) {
+                    String lineData = ((String)stringDataArray[line]).ToLower ();
+                    if (lineData.IndexOf ("doi:") > 0) {
+                        int idx1 = lineData.IndexOf ("doi:");
+                        lineData = lineData.Substring (idx1);
+                        lineData = lineData.Trim ();
+                        // If there are additional characters on this line, find a space character and chop them off
+                        if (lineData.IndexOf (' ') > 0) {
+                            int idx2 = lineData.IndexOf (' ');
+                            lineData = lineData.Substring (0, lineData.Length - idx2);
+                        }
+                        // Strip out "doi:"
+                        lineData = lineData.Remove (0, 4);
+                        Debug.WriteLine (5, "Found doi:{0}", lineData);
+                        return lineData;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

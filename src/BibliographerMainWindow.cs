@@ -93,9 +93,11 @@ namespace bibliographer
 
             // Main bibtex view list model
             bibtexRecords = new BibtexRecords ();
+
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
             bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
             bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
+
             litStore = new LitListStore (bibtexRecords);
 
             modelFilter = new Gtk.TreeModelFilter (litStore, null);
@@ -597,7 +599,8 @@ namespace bibliographer
                     bibtexRecords.Add (record);
 
                     // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
-                    record.SetField (BibtexRecord.BibtexFieldName.URI, uri);
+                    //System.Console.WriteLine("Setting URI: {0}", uri);
+                    record.SetURI (uri);
                 }
             }
         }
@@ -786,7 +789,7 @@ namespace bibliographer
         {
             BibtexRecord record = (BibtexRecord)o;
             if (am.Altered (record)) {
-                System.Console.WriteLine("Record altered");
+                //System.Console.WriteLine("Record altered: URI added");
                 // Add record to get re-indexed
                 am.SubscribeRecord (record);
             }
@@ -795,7 +798,7 @@ namespace bibliographer
         {
             BibtexRecord record = (BibtexRecord)o;
             if (am.Altered (record)) {
-                System.Console.WriteLine("Record altered");
+                //System.Console.WriteLine("Record altered: URI modified");
                 // Add record to get re-indexed
                 am.SubscribeRecord (record);
             }
@@ -908,6 +911,7 @@ namespace bibliographer
             am.FlushQueues ();
 
             bibtexRecords = new BibtexRecords ();
+
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
             bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
             bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
@@ -1038,6 +1042,7 @@ namespace bibliographer
 
             if (bibtexRecords == null) {
                 bibtexRecords = new BibtexRecords ();
+
                 bibtexRecords.RecordsModified += OnBibtexRecordsModified;
                 bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
                 bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
