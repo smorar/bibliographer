@@ -1,4 +1,4 @@
-<Project name="libbibby" fileversion="2.0" DefaultNamespace="libbibby" language="C#" targetFramework="2.0" ctype="DotNetProject">
+<Project name="libbibby" fileversion="2.0" DefaultNamespace="libbibby" language="C#" targetFramework="4.5" ctype="DotNetProject">
   <Configurations active="Debug">
     <Configuration name="Debug" ctype="DotNetProjectConfiguration">
       <Output directory="bin/Debug" assembly="libbibby" />
@@ -36,7 +36,7 @@
     <File subtype="Code" buildaction="Compile" name="libbibby/tests/BibtexRecordsTest.cs" />
   </Contents>
   <References>
-    <ProjectReference type="Gac" localcopy="True" specificVersion="False" refto="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <ProjectReference type="Gac" localcopy="True" specificVersion="False" refto="nunit.framework" />
+    <ProjectReference type="Package" specificVersion="False" localcopy="True" refto="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <ProjectReference type="Package" specificVersion="False" localcopy="True" refto="nunit.framework" />
   </References>
 </Project>
