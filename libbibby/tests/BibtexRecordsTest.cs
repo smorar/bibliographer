@@ -15,7 +15,7 @@ namespace libbibby
         {
             BibtexRecords records = new BibtexRecords();
 
-            Assert.IsInstanceOfType(typeof(BibtexRecords), records);
+            Assert.IsInstanceOf<BibtexRecords>(records);
             Assert.AreEqual(records.Count, 0);
         }
 

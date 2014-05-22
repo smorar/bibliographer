@@ -13,7 +13,7 @@ namespace libbibby
         {
             BibtexRecord record = new BibtexRecord();
 
-            Assert.IsInstanceOfType(typeof(libbibby.BibtexRecord), record);
+            Assert.IsInstanceOf<libbibby.BibtexRecord>(record);
 
             Assert.AreEqual(record.RecordType, "", "Empty record's RecordType is an empty string");
             Assert.AreEqual(record.GetKey(),"", "Empty record's Key is an empty string");
