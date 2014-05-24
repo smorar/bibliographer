@@ -1,6 +1,21 @@
-The plan, as of 6 September 2005
-Updated 8 January 2006
-Updated 3 March 2008
+The plan, as of September 2005
+Updated January 2006
+Updated March 2008
+Updated May 2014
+
+* Permanent database:
+  All database records to be stored in ~/.cache/bibliographer/database.db file. User option to customise this location.
+   - Should cached data be stored in the database? - Not at first, keep it simple to start with.
+  Store all literature files in a directory tree. User customisable prefix, then in the following folders, based on type:
+    $PREFIX$/Papers, $PREFIX$/Books, $PREFIX$/Thesis, $PREFIX$/Article etc...
+  Files to be renamed in the following format, based upon database entry:
+    YEAR - FIRST AUTHOR - TITLE.ext
+  Changes to database are recorded automatically. Nothing gets loaded or saved.
+  Bibtex + other types of bibliographic database files to be exported by the application.
+  Provide a tagging mechanism to group / classify certain topics together.
+  Create facility to bulk-import files
+   - Need to solve the problem of file name before any database edits have occured
+   - Need to solve the problem of file name conflicts
 
 * Literature indexing:
   Support for Abiword and OpenOffice
@@ -25,4 +40,3 @@ Updated 3 March 2008
 * Store some general stuff (options, history etc) in ~/.config/bibliographer
 
 * Get the win32 port actually working :-)
-
