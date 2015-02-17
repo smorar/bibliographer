@@ -2,7 +2,6 @@
 // This code is licensed under the GPLv2 license. Please see the COPYING file
 // for more information
 
-using System;
 using System.Collections;
 
 namespace libbibby

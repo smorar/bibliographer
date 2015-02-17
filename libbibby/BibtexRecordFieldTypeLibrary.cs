@@ -7,7 +7,7 @@ using System.IO;
 
 namespace libbibby
 {
-    public class BibtexRecordFieldTypeLibrary
+    public static class BibtexRecordFieldTypeLibrary
     {
         private static ArrayList fields;
 

@@ -8,7 +8,7 @@ using System;
 
 namespace libbibby
 {
-    public class BibtexRecordTypeLibrary
+    public static class BibtexRecordTypeLibrary
     {
         private static ArrayList records;
 

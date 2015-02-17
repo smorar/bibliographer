@@ -2,11 +2,10 @@
 // This code is licensed under the GPLv2 license. Please see the COPYING file
 // for more information
 
-using System;
 
 namespace libbibby
 {
-    public class Debug
+    public static class Debug
     {
         // Debug class
         //
