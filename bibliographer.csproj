@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6E33C38D-EB37-4588-9EB5-F076434C7D51}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>bibliographer</RootNamespace>
+    <AssemblyName>bibliographer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Execution>
+      <Execution clr-version="Net_1_1" />
+    </Execution>
+    <Commandlineparameters>--debug=true --debug_level=3</Commandlineparameters>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Execution>
+      <Execution clr-version="Net_1_1" />
+    </Execution>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\AboutBox.cs" />
+    <Compile Include="src\BibliographerStartup.cs" />
+    <Compile Include="src\Config.cs" />
+    <Compile Include="src\SidePaneTreeStore.cs" />
+    <Compile Include="src\Debug.cs" />
+    <Compile Include="src\LitListStore.cs" />
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="src\BibliographerMainWindow.cs" />
+    <Compile Include="gtk-gui\bibliographer.BibtexEntryDialog.cs" />
+    <Compile Include="src\BibtexEntryDialog.cs" />
+    <Compile Include="src\BibliographerChooseColumns.cs" />
+    <Compile Include="gtk-gui\bibliographer.BibliographerMainWindow.cs" />
+    <Compile Include="gtk-gui\bibliographer.BibliographerChooseColumns.cs" />
+    <Compile Include="src\widgets\HoverImageButton.cs" />
+    <Compile Include="src\widgets\SearchEntry.cs" />
+    <Compile Include="src\BibliographerSearchEntry.cs" />
+    <Compile Include="src\BibliographerLitTreeView.cs" />
+    <Compile Include="src\BibliographerSidePaneTreeView.cs" />
+    <Compile Include="src\StringOps.cs" />
+    <Compile Include="src\Alteration.cs" />
+    <Compile Include="src\LookupRecordData.cs" />
+    <Compile Include="src\Tri.cs" />
+    <Compile Include="src\FileIndexer.cs" />
+    <Compile Include="src\Cache.cs" />
+    <Compile Include="src\ThumbGen.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="COPYING" />
+    <None Include="AUTHORS" />
+    <None Include="ChangeLog" />
+    <None Include="NEWS" />
+    <None Include="README" />
+    <None Include="TODO" />
+    <None Include="resources\error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\bibliographer.png">
+      <LogicalName>bibliographer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\widgets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="gconf-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gconf-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="Mono.Posix" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gtk-dotnet, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-dotnet-2.0</Package>
+    </Reference>
+    <Reference Include="gnome-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gnome-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gnome-vfs-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gnome-vfs-sharp-2.0</Package>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="libbibby.csproj">
+      <Project>{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}</Project>
+      <Name>libbibby</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

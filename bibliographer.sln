@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bibliographer", "bibliographer.csproj", "{6E33C38D-EB37-4588-9EB5-F076434C7D51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libbibby", "libbibby.csproj", "{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E33C38D-EB37-4588-9EB5-F076434C7D51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E33C38D-EB37-4588-9EB5-F076434C7D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E33C38D-EB37-4588-9EB5-F076434C7D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E33C38D-EB37-4588-9EB5-F076434C7D51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = bibliographer.csproj
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.VersionControlPolicy = $2
+		$2.inheritsSet = Mono
+		$0.ChangeLogPolicy = $3
+		$3.UpdateMode = None
+		$3.inheritsSet = Mono
+		$3.MessageStyle = $4
+		$4.LineAlign = 0
+		name = bibliographer
+	EndGlobalSection
+EndGlobal
