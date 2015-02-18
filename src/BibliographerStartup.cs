@@ -1,12 +1,30 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  BibliographerStartup.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using Mono.Unix;
 using libbibby;
 
 namespace bibliographer
@@ -15,7 +33,7 @@ namespace bibliographer
     public static class Utilities
     {
         [DllImport("libc")]
-        private static extern int Prctl (int option, byte[] arg2, IntPtr arg3, IntPtr arg4, IntPtr arg5);
+        static extern int Prctl (int option, byte[] arg2, IntPtr arg3, IntPtr arg4, IntPtr arg5);
 
         public static void SetProcessName (string name)
         {
@@ -30,14 +48,15 @@ namespace bibliographer
         public static void Main (string[] args)
         {
             
-            System.Reflection.AssemblyTitleAttribute title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
-            System.Version version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version;
+            var title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
+            var version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version;
             
-            Gnome.Program program = new Gnome.Program (title.ToString ().ToLower (), version.Major.ToString () + "." + version.Minor.ToString (), Gnome.Modules.UI, args);
+            var program = new Gnome.Program (title.ToString ().ToLower (), version.Major + "." + version.Minor, Gnome.Modules.UI, args);
             
             try {
                 Utilities.SetProcessName ("bibliographer");
             } catch {
+				Debug.WriteLine (0, "Cannot set process name");
             }
             
             string filename = "";
@@ -56,7 +75,7 @@ namespace bibliographer
                         }
                     // Modify debug level
                     } else if (str[0] == "debug_level") {
-                        Debug.SetLevel (System.Convert.ToInt16 (str[1]));
+                        Debug.SetLevel (Convert.ToInt16 (str[1]));
                     }
                 } else {
                     if (st != "") {
@@ -68,15 +87,15 @@ namespace bibliographer
             Gtk.Application.Init (program.AppId, ref args);
             Gnome.Vfs.Vfs.Initialize ();
 
-            System.Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", System.Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_records");
+            Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_records");
             BibtexRecordTypeLibrary.Load ();
-            System.Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", System.Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_fields");
+            Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_fields");
             BibtexRecordFieldTypeLibrary.Load ();
             
             Config.Initialise ();
             Cache.Initialise ();
             
-            BibliographerMainWindow window = new BibliographerMainWindow ();
+            var window = new BibliographerMainWindow ();
             
             if (filename != "")
                 window.FileOpen (filename);

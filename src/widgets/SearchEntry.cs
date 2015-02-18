@@ -37,21 +37,20 @@ namespace bibliographer
     {
         public class SearchEntry : EventBox
         {
-            private HBox box;
-            private Entry entry;
-            private HoverImageButton filter_button;
-            private HoverImageButton clear_button;
+            HBox box;
+            Entry entry;
+            HoverImageButton filter_button;
+            HoverImageButton clear_button;
     
-            private Menu menu;
-            private int active_filter_id = -1;
+            Menu menu;
+            int active_filter_id = -1;
     
-            private uint changed_timeout_id = 0;
+            uint changed_timeout_id;
             
-            private string empty_message;
-            private bool ready = false;
+            string empty_message;
     
-            private event EventHandler filter_changed;
-            private event EventHandler entry_changed;
+            event EventHandler filter_changed;
+            event EventHandler entry_changed;
     
             public event EventHandler Changed {
                 add { entry_changed += value; }
@@ -82,12 +81,12 @@ namespace bibliographer
                 NoShowAll = true;
             }
                 
-            private void BuildWidget()
+            void BuildWidget()
             {
                 box = new HBox();
                 entry = new FramelessEntry(this);
-                filter_button = new HoverImageButton(IconSize.Menu, new string [] { "edit-find", Stock.Find });
-                clear_button = new HoverImageButton(IconSize.Menu, new string [] { "edit-clear", Stock.Clear });
+                filter_button = new HoverImageButton(IconSize.Menu, new  [] { "edit-find", Stock.Find });
+                clear_button = new HoverImageButton(IconSize.Menu, new  [] { "edit-clear", Stock.Clear });
     
                 box.PackStart(filter_button, false, false, 0);
                 box.PackStart(entry, true, true, 0);
@@ -115,13 +114,13 @@ namespace bibliographer
                 clear_button.Visible = false;
             }
     
-            private void BuildMenu()
+            void BuildMenu()
             {
                 menu = new Menu();
                 menu.Deactivated += OnMenuDeactivated;
             }
     
-            private void ShowMenu(uint time)
+            void ShowMenu(uint time)
             {
                 if(menu.Children.Length > 0) {
                     menu.Popup(null, null, OnPositionMenu, 0, time);
@@ -129,14 +128,16 @@ namespace bibliographer
                 }
             }
     
-            private void ShowHideButtons()
+            void ShowHideButtons()
             {
                 clear_button.Visible = entry.Text.Length > 0;
                 filter_button.Visible = menu != null && menu.Children.Length > 0;
             }
     
-            private void OnPositionMenu(Menu menu, out int x, out int y, out bool push_in)
+            void OnPositionMenu(object menu, out int x, out int y, out bool push_in)
             {
+				if (menu == null)
+					throw new ArgumentNullException ("menu");
                 int origin_x, origin_y, tmp;
                 
                 filter_button.GdkWindow.GetOrigin(out origin_x, out tmp);
@@ -147,28 +148,29 @@ namespace bibliographer
                 push_in = true;
             }
     
-            private void OnMenuDeactivated(object o, EventArgs args)
+            void OnMenuDeactivated(object o, EventArgs args)
             {
                 filter_button.QueueDraw();
             }
     
-            private bool toggling = false;
+            bool toggling;
     
-            private void OnMenuItemToggled(object o, EventArgs args)
+            void OnMenuItemToggled(object o, EventArgs args)
             {
                 if(toggling || !(o is FilterMenuItem)) {
                     return;
                 }
                 
                 toggling = true;
-                FilterMenuItem item = (FilterMenuItem)o;
+                var item = (FilterMenuItem)o;
                 
                 foreach(MenuItem child_item in menu) {
-                    if(!(child_item is FilterMenuItem)) {
+					var filterMenuItem = child_item as FilterMenuItem;
+                    if(filterMenuItem == null) {
                         continue;
                     }
     
-                    FilterMenuItem filter_child = (FilterMenuItem)child_item;
+                    FilterMenuItem filter_child = filterMenuItem;
                     if(filter_child != item) {
                         filter_child.Active = false;
                     }
@@ -179,7 +181,7 @@ namespace bibliographer
                 toggling = false;
             }
     
-            private void OnInnerEntryChanged(object o, EventArgs args)
+            void OnInnerEntryChanged(object o, EventArgs args)
             {
                 ShowHideButtons();
     
@@ -191,13 +193,13 @@ namespace bibliographer
                     changed_timeout_id = GLib.Timeout.Add(25, OnChangedTimeout);
             }
     
-            private bool OnChangedTimeout()
+            bool OnChangedTimeout()
             {
                 OnChanged();
                 return false;
             }
     
-            private void UpdateStyle ()
+            void UpdateStyle ()
             {
                 Gdk.Color color = entry.Style.Base (entry.State);
                 filter_button.ModifyBg (entry.State, color);
@@ -206,22 +208,22 @@ namespace bibliographer
                 box.BorderWidth = (uint)entry.Style.XThickness;
             }
             
-            private void OnInnerEntryStyleSet (object o, StyleSetArgs args)
+            void OnInnerEntryStyleSet (object o, StyleSetArgs args)
             {
                 UpdateStyle ();
             }
             
-            private void OnInnerEntryStateChanged (object o, EventArgs args)
+            void OnInnerEntryStateChanged (object o, EventArgs args)
             {
                 UpdateStyle ();
             }
             
-            private void OnInnerEntryFocusEvent(object o, EventArgs args)
+            void OnInnerEntryFocusEvent(object o, EventArgs args)
             {
                 QueueDraw();
             }
     
-            private void OnButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+            void OnButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
             {
                 if(args.Event.Button != 1) {
                     return;
@@ -234,7 +236,7 @@ namespace bibliographer
                 }
             }
     
-            private void OnClearButtonClicked(object o, EventArgs args)
+            void OnClearButtonClicked(object o, EventArgs args)
             {
                 active_filter_id = 0;
                 entry.Text = String.Empty;
@@ -295,7 +297,7 @@ namespace bibliographer
                     throw new ArgumentException("id", "must be >= 0");
                 }
     
-                FilterMenuItem item = new FilterMenuItem(id, label);
+                var item = new FilterMenuItem(id, label);
                 item.Toggled += OnMenuItemToggled;
                 menu.Append(item);
     
@@ -327,7 +329,7 @@ namespace bibliographer
                 }
             }
     
-            private FilterMenuItem FindFilterMenuItem(int id)
+            FilterMenuItem FindFilterMenuItem(int id)
             {
                 foreach(MenuItem item in menu) {
                     if(item is FilterMenuItem && ((FilterMenuItem)item).ID == id) {
@@ -341,11 +343,8 @@ namespace bibliographer
             public string GetLabelForFilterID(int id)
             {
                 FilterMenuItem item = FindFilterMenuItem(id);
-                if(item == null) {
-                    return null;
-                }
+                return item == null ? null : item.Label;
     
-                return item.Label;
             }
     
             public void CancelSearch()
@@ -356,7 +355,7 @@ namespace bibliographer
     
             public int ActiveFilterID {
                 get { return active_filter_id; }
-                private set { 
+                set { 
                     if(value == active_filter_id) {
                         return;
                     }
@@ -384,9 +383,9 @@ namespace bibliographer
             }
     
             public bool Ready {
-                get { return ready; }
-                set { ready = value; }
-            }
+				get;
+				set;
+			}
             
             public new bool HasFocus {
                 get { return entry.HasFocus; }
@@ -398,10 +397,10 @@ namespace bibliographer
                 get { return entry; }
             }
     
-            private class FilterMenuItem : MenuItem /*CheckMenuItem*/
+            class FilterMenuItem : MenuItem /*CheckMenuItem*/
             {
-                private int id;
-                private string label;
+                int id;
+                string label;
     
                 public FilterMenuItem(int id, string label) : base(label)
                 {
@@ -419,11 +418,10 @@ namespace bibliographer
                 }
                 
                 // FIXME: Remove when restored to CheckMenuItem
-                private bool active;
                 public bool Active {
-                    get { return active; }
-                    set { active = value; }
-                }
+					get;
+					set;
+				}
                 
                 public new event EventHandler Toggled;
                 protected override void OnActivated ()
@@ -436,15 +434,15 @@ namespace bibliographer
     
             }
     
-            private class FramelessEntry : Entry
+            class FramelessEntry : Entry
             {
-                private Gdk.Window text_window;
-                private SearchEntry parent;
-                private Pango.Layout layout;
-                private Gdk.GC text_gc;
+                Gdk.Window text_window;
+                readonly SearchEntry parent;
+                readonly Pango.Layout layout;
+                Gdk.GC text_gc;
     
-                public FramelessEntry(SearchEntry parent) : base()
-                {
+                public FramelessEntry(SearchEntry parent)
+				{
                     this.parent = parent;
                     HasFrame = false;
                     
@@ -455,13 +453,13 @@ namespace bibliographer
                     WidthChars = 1;
                 }
     
-                private void OnParentStyleSet(object o, EventArgs args)
+                void OnParentStyleSet(object o, EventArgs args)
                 {
                     RefreshGC();
                     QueueDraw();
                 }
     
-                private void RefreshGC()
+                void RefreshGC()
                 {
                     if(text_window == null) {
                         return;

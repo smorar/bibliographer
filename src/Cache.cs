@@ -1,25 +1,44 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  Cache.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using System.Threading;
 using System.IO;
 using System.Collections;
-using Mono.Unix;
 
 namespace bibliographer
 {
-    public class Cache
+    public static class Cache
     {
         public static void Initialise ()
         {
             LoadCacheData ();
         }
 
-        private static cacheSection LookupSection (string section)
+        static cacheSection LookupSection (string section)
         {
-            cacheSection dummySection = new cacheSection (section);
+            var dummySection = new cacheSection (section);
             int index = sections.BinarySearch (dummySection, new sectionCompare ());
             if ((index < 0) || (index >= sections.Count)) {
                 return null;
@@ -27,12 +46,12 @@ namespace bibliographer
             return ((cacheSection)sections[index]);
         }
 
-        private static keySection LookupKey (string section, string key)
+        static keySection LookupKey (string section, string key)
         {
             cacheSection cSection = LookupSection (section);
             if (cSection == null)
                 return null;
-            keySection dummyKey = new keySection (key, "");
+            var dummyKey = new keySection (key, "");
             int index = cSection.keys.BinarySearch (dummyKey, new keyCompare ());
             if ((index < 0) || (index >= cSection.keys.Count)) {
                 return null;
@@ -42,19 +61,13 @@ namespace bibliographer
 
         public static bool IsCached (string section, string key)
         {
-            if (LookupKey (section, key) != null)
-                return true;
-            else
-                return false;
+            return LookupKey (section, key) != null;
         }
 
         public static string CachedFile (string section, string key)
         {
             keySection kSection = LookupKey (section, key);
-            if (kSection == null)
-                return "";
-            else
-                return kSection.filename;
+            return kSection == null ? "" : kSection.filename;
         }
 
         public static string AddToCache (string section, string key)
@@ -74,27 +87,27 @@ namespace bibliographer
                 }
             }
             string filename;
-            Random random = new System.Random ();
+            var random = new Random ();
             do {
                 filename = Config.GetDataDir () + "cache/";
-                string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 for (int i = 0; i < 20; i++)
                     filename = filename + chars[random.Next () % chars.Length];
                 bool ok = false;
                 try {
-                    FileStream stream = new FileStream (filename, FileMode.CreateNew, FileAccess.Write);
+                    var stream = new FileStream (filename, FileMode.CreateNew, FileAccess.Write);
                     stream.Close ();
                     ok = true;
                 } catch (DirectoryNotFoundException e) {
                     Debug.WriteLine (10, e.Message);
                     
                     try {
-                        System.IO.Directory.CreateDirectory (Config.GetDataDir ());
+                        Directory.CreateDirectory (Config.GetDataDir ());
                     } catch (Exception e2) {
                         Debug.WriteLine (10, e2.Message);
                     }
                     try {
-                        System.IO.Directory.CreateDirectory (Config.GetDataDir () + "cache");
+                        Directory.CreateDirectory (Config.GetDataDir () + "cache");
                     } catch (Exception e2) {
                         Debug.WriteLine (10, e2.Message);
                         Debug.WriteLine (1, "Failed to create directory {0}", Config.GetDataDir () + "cache");
@@ -139,7 +152,7 @@ namespace bibliographer
 
         // Private data & functions
 
-        private class keySection
+        class keySection
         {
             public keySection (string _key, string _filename)
             {
@@ -151,7 +164,7 @@ namespace bibliographer
             public string filename;
         }
 
-        private class keyCompare : IComparer
+        class keyCompare : IComparer
         {
             public int Compare (object x, object y)
             {
@@ -159,7 +172,7 @@ namespace bibliographer
             }
         }
 
-        private class cacheSection
+        class cacheSection
         {
             public cacheSection (string _section)
             {
@@ -171,7 +184,7 @@ namespace bibliographer
             public ArrayList keys;
         }
 
-        private class sectionCompare : IComparer
+        class sectionCompare : IComparer
         {
             public int Compare (object x, object y)
             {
@@ -181,10 +194,10 @@ namespace bibliographer
 
         static ArrayList sections;
 
-        private static void LoadCacheData ()
+        static void LoadCacheData ()
         {
             sections = new ArrayList ();
-            StreamReader stream = null;
+			StreamReader stream;
             try {
                 stream = new StreamReader (new FileStream (Config.GetDataDir () + "cachedata", FileMode.Open, FileAccess.Read));
                 
@@ -232,23 +245,23 @@ namespace bibliographer
                     sections.Add (curSection);
                 }
                 sections.Sort (new sectionCompare ());
-            } catch (System.IO.DirectoryNotFoundException e) {
+            } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
-                System.IO.Directory.CreateDirectory (Config.GetDataDir ());
-            } catch (System.IO.FileNotFoundException e) {
+                Directory.CreateDirectory (Config.GetDataDir ());
+            } catch (FileNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 // no cache, no problem-o :-)
             }
         }
 
-        private static void SaveCacheData ()
+        static void SaveCacheData ()
         {
 			cleanup_invalid_dirs();
 			
             try {
                 Monitor.Enter (sections);
-                StreamWriter stream = new StreamWriter (new FileStream (Config.GetDataDir () + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
+                var stream = new StreamWriter (new FileStream (Config.GetDataDir () + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
                 
                 for (int section = 0; section < sections.Count; section++) {
                     stream.WriteLine ("[{0}]", ((cacheSection)sections[section]).section);
@@ -259,28 +272,28 @@ namespace bibliographer
                 
                 stream.Close ();
                 Monitor.Exit (sections);
-            } catch (System.IO.DirectoryNotFoundException e) {
+            } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
-                System.IO.Directory.CreateDirectory (Config.GetDataDir ());
+                Directory.CreateDirectory (Config.GetDataDir ());
             } catch (Exception e) {
                 Debug.WriteLine (1, "Unhandled exception whilst trying to save cache: {0}", e);
             }
         }
 		
-		private static void cleanup_invalid_dirs()
+		static void cleanup_invalid_dirs()
 		{
 			try
 			{
-				if (System.IO.Directory.Exists("~/.bibliographer"))
+				if (Directory.Exists("~/.bibliographer"))
 				{
 					Debug.WriteLine(1, "Deleting old ~/.bibliohrapher directory");
-					System.IO.Directory.Delete("~/.bibliographer/");
+					Directory.Delete("~/.bibliographer/");
 				}
-			} catch (System.IO.DirectoryNotFoundException e)
+			} catch (DirectoryNotFoundException e)
 			{
 				Debug.WriteLine (1, "Directory not found exception whilst trying to cleanup old directories: {0}", e);
-			} catch (System.IO.FileNotFoundException e)
+			} catch (FileNotFoundException e)
 			{
 				Debug.WriteLine (1, "File not found exception whilst trying to cleanup old directories: {0}", e);
 			} catch (Exception e)

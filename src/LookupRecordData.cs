@@ -1,6 +1,26 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  LookupRecordData.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using libbibby;
@@ -9,15 +29,12 @@ namespace bibliographer
 {
     public class LookupRecordData
     {
-        public LookupRecordData ()
-        {
-        }
 
         public void LookupDOI (object o, EventArgs e)
         {
             // TODO: refactor this in terms of a doi record
             // should be a static function
-            BibtexRecord record = (BibtexRecord)o;
+            var record = (BibtexRecord)o;
             
             Debug.WriteLine (1, "Uri updated");
             string URI = record.GetField (BibtexRecord.BibtexFieldName.URI);
@@ -27,7 +44,7 @@ namespace bibliographer
             StringArrayList textualData = FileIndexer.GetTextualData (URI);
             if (textualData != null) {
                 for (int line = 0; line < textualData.Count; line++) {
-                    String data = ((String)textualData[line]).ToLower ();
+                    String data = (textualData[line]).ToLower ();
                     if (data.IndexOf ("doi:") > 0) {
                         int idx1 = data.IndexOf ("doi:");
                         data = data.Substring (idx1);
@@ -226,9 +243,9 @@ namespace bibliographer
 
     public class RunOnMainThread
     {
-        private object methodClass;
-        private string methodName;
-        private object[] arguments;
+        readonly object methodClass;
+        readonly string methodName;
+        readonly object[] arguments;
 
         public RunOnMainThread (object methodClass, string methodName, object[] arguments)
         {
@@ -243,7 +260,7 @@ namespace bibliographer
             new RunOnMainThread (methodClass, methodName, arguments);
         }
 
-        private bool Go ()
+        bool Go ()
         {
             methodClass.GetType ().InvokeMember (methodName, System.Reflection.BindingFlags.Default | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.InvokeMethod, null, methodClass, arguments);
             return false;

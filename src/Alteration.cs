@@ -1,32 +1,51 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  Alteration.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using System.Threading;
 using System.Collections;
-using System.IO;
 using System.Security.Cryptography;
-using System.Text;
-using Gnome.Vfs;
 using libbibby;
 
 namespace bibliographer
 {
     public class AlterationMonitor
     {
-        public System.Threading.Thread indexerThread, alterationMonitorThread, thumbGenThread;
-        private Queue indexerQueue, alterationMonitorQueue, thumbGenQueue;
+		public Thread indexerThread;
+		public Thread alterationMonitorThread;
+		public Thread thumbGenThread;
+        Queue indexerQueue, alterationMonitorQueue, thumbGenQueue;
 
         public AlterationMonitor ()
         {
-            alterationMonitorThread = new System.Threading.Thread (new ThreadStart (AlterationMonitorThread));
+            alterationMonitorThread = new Thread (new ThreadStart (AlterationMonitorThread));
             alterationMonitorQueue = new Queue ();
 
-            indexerThread = new System.Threading.Thread (new ThreadStart (IndexerThread));
+            indexerThread = new Thread (new ThreadStart (IndexerThread));
             indexerQueue = new Queue ();
 
-            thumbGenThread = new System.Threading.Thread (new ThreadStart (ThumbGenThread));
+            thumbGenThread = new Thread (new ThreadStart (ThumbGenThread));
             thumbGenQueue = new Queue ();
 
         }
@@ -52,9 +71,9 @@ namespace bibliographer
                 lastCheck = DateTime.MinValue;
                 // force a re-check
             }
-            if (uriString == null || uriString == "")
-                return false;
-            Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri (uriString);
+			if (string.IsNullOrEmpty (uriString))
+				return false;
+            var uri = new Gnome.Vfs.Uri (uriString);
             TimeSpan checkInterval;
             switch (uri.Scheme) {
             case "http":
@@ -76,20 +95,18 @@ namespace bibliographer
                 // not enough time has passed for us to check this one
                 // FIXME: should probably move this out to the alteration
                 // monitor queue
-                System.Console.WriteLine("Not enough time has passed to check this record");
+                Console.WriteLine("Not enough time has passed to check this record");
                 return false;
             }
-            lastCheck = DateTime.Now;
             if (!uri.Exists) {
                 Debug.WriteLine (5, "URI \"" + uriString + "\" does not seem to exist...");
                 return false;
             }
-            String size = (string) record.GetCustomDataField ("bibliographer_last_size");
-            if (size == null)
-                size = "";
+            String size = (string)record.GetCustomDataField ("bibliographer_last_size") ?? "";
             String mtime = (string) record.GetCustomDataField ("bibliographer_last_mtime");
-            if (mtime == null)
-                mtime = "";
+			if (mtime == null) {
+				mtime = "";
+			}
             String md5 = (string) record.GetCustomDataField ("bibliographer_last_md5");
             String newSize = "";
             ulong intSize = 0;
@@ -130,7 +147,7 @@ namespace bibliographer
                 Debug.WriteLine (5, "\t* Recalculating MD5...");
                 Gnome.Vfs.Handle handle = Gnome.Vfs.Sync.Open (uri, Gnome.Vfs.OpenMode.Read);
                 ulong sizeRead;
-                byte[] contents = new byte[intSize];
+                var contents = new byte[intSize];
                 if (Gnome.Vfs.Sync.Read (handle, out contents[0], intSize, out sizeRead) != Gnome.Vfs.Result.Ok) {
                     // read failed
                     Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
@@ -170,33 +187,33 @@ namespace bibliographer
 
         public void FlushQueues ()
         {
-            System.Threading.Monitor.Enter (alterationMonitorQueue);
+            Monitor.Enter (alterationMonitorQueue);
             alterationMonitorQueue.Clear ();
-            System.Threading.Monitor.Exit (alterationMonitorQueue);
+            Monitor.Exit (alterationMonitorQueue);
             
-            System.Threading.Monitor.Enter (indexerQueue);
+            Monitor.Enter (indexerQueue);
             indexerQueue.Clear ();
-            System.Threading.Monitor.Exit (indexerQueue);
+            Monitor.Exit (indexerQueue);
 
-            System.Threading.Monitor.Enter (thumbGenQueue);
+            Monitor.Enter (thumbGenQueue);
             thumbGenQueue.Clear ();
-            System.Threading.Monitor.Exit (thumbGenQueue);
+            Monitor.Exit (thumbGenQueue);
 
         }
 
         public void SubscribeRecords (BibtexRecords records)
         {
-            System.Threading.Monitor.Enter (alterationMonitorQueue);
+            Monitor.Enter (alterationMonitorQueue);
             foreach (BibtexRecord record in records)
                 alterationMonitorQueue.Enqueue (record);
-            System.Threading.Monitor.Exit (alterationMonitorQueue);
+            Monitor.Exit (alterationMonitorQueue);
         }
 
         public void SubscribeRecord (BibtexRecord record)
         {
-            System.Threading.Monitor.Enter (alterationMonitorQueue);
+            Monitor.Enter (alterationMonitorQueue);
             alterationMonitorQueue.Enqueue (record);
-            System.Threading.Monitor.Exit (alterationMonitorQueue);
+            Monitor.Exit (alterationMonitorQueue);
         }
 
         public void ThumbGenThread ()
@@ -205,24 +222,24 @@ namespace bibliographer
             Debug.WriteLine (5, "ThumbGen thread started");
             try {
                  do{
-                    System.Threading.Monitor.Enter (thumbGenQueue);
+                    Monitor.Enter (thumbGenQueue);
                     while (thumbGenQueue.Count > 0) {
 
-                        BibtexRecord record = (BibtexRecord)thumbGenQueue.Dequeue ();
+                        var record = (BibtexRecord)thumbGenQueue.Dequeue ();
 
-                        System.Threading.Monitor.Exit (thumbGenQueue);
+                        Monitor.Exit (thumbGenQueue);
                         //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
                             ThumbGen.Gen(record);
                         } catch (Exception e) {
-                            System.Console.WriteLine ("Unknown exception caught with thumbGen");
-                            System.Console.WriteLine (e.Message);
-                            System.Console.WriteLine (e.StackTrace);
+                            Console.WriteLine ("Unknown exception caught with thumbGen");
+                            Console.WriteLine (e.Message);
+                            Console.WriteLine (e.StackTrace);
                         }
-                        System.Threading.Monitor.Enter (thumbGenQueue);
+                        Monitor.Enter (thumbGenQueue);
                     }
-                    System.Threading.Monitor.Exit (thumbGenQueue);
-                    System.Threading.Thread.Sleep (100);
+                    Monitor.Exit (thumbGenQueue);
+                    Thread.Sleep (100);
                 } while (true);
             } catch (ThreadAbortException) {
                 Debug.WriteLine (5, "ThumbGen thread terminated");
@@ -234,24 +251,24 @@ namespace bibliographer
             Debug.WriteLine (5, "Indexer thread started");
             try {
                 do {
-                    System.Threading.Monitor.Enter (indexerQueue);
+                    Monitor.Enter (indexerQueue);
                     while (indexerQueue.Count > 0) {
                         
-                        BibtexRecord record = (BibtexRecord)indexerQueue.Dequeue ();
+                        var record = (BibtexRecord)indexerQueue.Dequeue ();
                         
-                        System.Threading.Monitor.Exit (indexerQueue);
+                        Monitor.Exit (indexerQueue);
                         //System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
                         try {
                             FileIndexer.Index (record);
                         } catch (Exception e) {
-                            System.Console.WriteLine ("Unknown exception caught with indexer");
-                            System.Console.WriteLine (e.Message);
-                            System.Console.WriteLine (e.StackTrace);
+                            Console.WriteLine ("Unknown exception caught with indexer");
+                            Console.WriteLine (e.Message);
+                            Console.WriteLine (e.StackTrace);
                         }
-                        System.Threading.Monitor.Enter (indexerQueue);
+                        Monitor.Enter (indexerQueue);
                     }
-                    System.Threading.Monitor.Exit (indexerQueue);
-                    System.Threading.Thread.Sleep (100);
+                    Monitor.Exit (indexerQueue);
+                    Thread.Sleep (100);
                 } while (true);
             } catch (ThreadAbortException) {
                 Debug.WriteLine (5, "Indexer thread terminated");
@@ -263,51 +280,51 @@ namespace bibliographer
             Debug.WriteLine (5, "Alteration monitor thread started");
             try {
                 do {
-                    System.Threading.Monitor.Enter (alterationMonitorQueue);
+                    Monitor.Enter (alterationMonitorQueue);
                     while (alterationMonitorQueue.Count > 0) {
                         
-                        BibtexRecord record = (BibtexRecord)alterationMonitorQueue.Dequeue ();
+                        var record = (BibtexRecord)alterationMonitorQueue.Dequeue ();
                         
-                        System.Threading.Monitor.Exit (alterationMonitorQueue);
+                        Monitor.Exit (alterationMonitorQueue);
                         // FIXME: do the alteration monitoring stuff
                         // FIXME: if continuous monitoring is enabled, then
                         // the entry should be requeued
                         if (Altered (record)) {
-                            //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
+                            //Console.WriteLine("Alteration thread loop processing " + record.GetKey());
                             // Enqueue record for re-indexing
-                            System.Threading.Monitor.Enter (indexerQueue);
+                            Monitor.Enter (indexerQueue);
                             indexerQueue.Enqueue (record);
-                            System.Threading.Monitor.Exit (indexerQueue);
+                            Monitor.Exit (indexerQueue);
                             // Enqueue record for regeneration of its thumbnail
-                            System.Threading.Monitor.Enter (thumbGenQueue);
+                            Monitor.Enter (thumbGenQueue);
                             thumbGenQueue.Enqueue (record);
-                            System.Threading.Monitor.Exit (thumbGenQueue);
+                            Monitor.Exit (thumbGenQueue);
                         } else if (
                                    (record.HasURI()) &&
                                    ((record.GetKey() == "")   || (record.GetKey() == null))   &&
                                    ((record.RecordType == "") || (record.RecordType == null)) &&
-                                   (record.HasCustomDataField("largeThumbnail") == false)      &&
-                                   (record.HasCustomDataField("indexData") == false)
+                                   (!record.HasCustomDataField ("largeThumbnail"))      &&
+							       (!record.HasCustomDataField ("indexData"))
                                    )
                         {
                             //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
                             // Enqueue record for re-indexing
-                            System.Threading.Monitor.Enter (indexerQueue);
+                            Monitor.Enter (indexerQueue);
                             indexerQueue.Enqueue (record);
-                            System.Threading.Monitor.Exit (indexerQueue);
+                            Monitor.Exit (indexerQueue);
                             // Enqueue record for regeneration of its thumbnail
-                            System.Threading.Monitor.Enter (thumbGenQueue);
+                            Monitor.Enter (thumbGenQueue);
                             thumbGenQueue.Enqueue (record);
-                            System.Threading.Monitor.Exit (thumbGenQueue);
+                            Monitor.Exit (thumbGenQueue);
                         }
-                        System.Threading.Thread.Sleep (100);
-                        System.Threading.Monitor.Enter (alterationMonitorQueue);
+                        Thread.Sleep (100);
+                        Monitor.Enter (alterationMonitorQueue);
                         // enqueue record if it has a uri
                         if (record.HasURI())
                             alterationMonitorQueue.Enqueue (record);
                     }
-                    System.Threading.Monitor.Exit (alterationMonitorQueue);
-                    System.Threading.Thread.Sleep (100);
+                    Monitor.Exit (alterationMonitorQueue);
+                    Thread.Sleep (100);
                 } while (true);
             } catch (ThreadAbortException) {
                 Debug.WriteLine (5, "Alteration monitor thread terminated");

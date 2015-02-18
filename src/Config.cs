@@ -1,18 +1,35 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
-
-using GConf;
-using GLib;
+//
+//  Config.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 namespace bibliographer
 {
-    public class Config
+    public static class Config
     {
-        private static GConf.Client client = null;
-        private static string APP_PATH = "/apps/bibliographer/";
+        static GConf.Client client;
+        static readonly string APP_PATH = "/apps/bibliographer/";
 
-        private static string ParseKeyName (string keyName)
+        static string ParseKeyName (string keyName)
         {
             // Replace all spaces in keynames with underscores. spaces are not allowed.
             return keyName.Replace (" ", "_");
@@ -114,10 +131,7 @@ namespace bibliographer
         {
             keyName = ParseKeyName (keyName);
             try {
-                if (client.Get (APP_PATH + keyName) != null)
-                    return true;
-                else
-                    return false;
+                return client.Get (APP_PATH + keyName) != null;
             } catch (GConf.NoSuchKeyException) {
                 return false;
             } catch (System.Exception) {

@@ -1,6 +1,26 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  FileIndexer.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using System.IO;
@@ -8,7 +28,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using Gnome;
 using Gnome.Vfs;
 using libbibby;
 
@@ -16,14 +35,14 @@ namespace bibliographer
 {
     public class FileIndexer
     {
-        private static StringArrayList GetProcessOutput (String command, String args)
+        static StringArrayList GetProcessOutput (String command, String args)
         {
-            StringArrayList result = new StringArrayList ();
+            var result = new StringArrayList ();
             
             //    Console.WriteLine("Command: " + command);
             //    Console.WriteLine("args: " + args);
             
-            System.Diagnostics.Process proc = new Process ();
+            var proc = new Process ();
             proc.EnableRaisingEvents = false;
             proc.StartInfo.FileName = command;
             proc.StartInfo.Arguments = args;
@@ -91,24 +110,24 @@ namespace bibliographer
         }
         */
 
-        private static StringArrayList GetTextualExtractor (MimeType mimeType)
+        static StringArrayList GetTextualExtractor (object mimeType)
         {
-            StringArrayList extractor = new StringArrayList ();
+            var extractor = new StringArrayList ();
             
-            if (Config.KeyExists ("textual_extractor") == false) {
-                ArrayList def_extractors = new ArrayList ();
-                // Set application defaults
-                def_extractors.Add ("application/pdf:pdftotext:{0} -");
-                def_extractors.Add ("application/msword:antiword:{0}");
-                def_extractors.Add ("application/postscript:pstotext:{0}");
-                def_extractors.Add ("text/plain:cat:{0}");
+			if (!Config.KeyExists ("textual_extractor")) {
+				var def_extractors = new ArrayList ();
+				// Set application defaults
+				def_extractors.Add ("application/pdf:pdftotext:{0} -");
+				def_extractors.Add ("application/msword:antiword:{0}");
+				def_extractors.Add ("application/postscript:pstotext:{0}");
+				def_extractors.Add ("text/plain:cat:{0}");
                 
-                Config.Initialise ();
-                Config.SetKey ("textual_extractor", def_extractors.ToArray ());
-            }
+				Config.Initialise ();
+				Config.SetKey ("textual_extractor", def_extractors.ToArray ());
+			}
             
             // TODO Move Config class into a utils library
-            string[] extractors = (string[])Config.GetKey ("textual_extractor");
+            var extractors = (string[])Config.GetKey ("textual_extractor");
             string[] output;
             
             foreach (string entry in extractors) {
@@ -127,8 +146,8 @@ namespace bibliographer
         public static StringArrayList GetTextualData (string URI)
         {
             // TODO: Cache result, and load cache if cache exists!!
-            Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri (URI);
-            MimeType mimeType = new MimeType (uri);
+            var uri = new Gnome.Vfs.Uri (URI);
+            var mimeType = new MimeType (uri);
             
             Debug.WriteLine (5, "Indexing a file of MimeType: " + mimeType.Name);
             
@@ -139,7 +158,7 @@ namespace bibliographer
             
             if (extractor.Count == 2) {
                 Debug.WriteLine (5, "Textual extractor is {0}", extractor[0]);
-                string extractor_options = "";
+				string extractor_options;
                 extractor_options = String.Format (extractor[1], '"' + Gnome.Vfs.Uri.GetLocalPathFromUri (URI) + '"');
                 Debug.WriteLine (5, "extractor options are {0}", extractor_options);
                 textualData = GetProcessOutput (extractor[0], extractor_options);
@@ -150,14 +169,14 @@ namespace bibliographer
 
         public static Tri Index (StringArrayList textualDataArray)
         {
-            Tri index = new Tri ();
+            var index = new Tri ();
             
             if (textualDataArray != null) {
                 //System.Console.WriteLine("Converted textual data is as follows:\n---\n");
                 for (int line = 0; line < textualDataArray.Count; line++) {
                     //while (Gtk.Application.EventsPending ())
                     //    Gtk.Application.RunIteration ();
-                    String data = ((String)textualDataArray[line]).ToLower ();
+                    String data = textualDataArray [line].ToLower ();
                     data = Regex.Replace (data, "[^\\w\\.@-]", " ");
                     data = Regex.Replace (data, "[\\d]", " ");
                     //System.Console.WriteLine(data);
@@ -176,9 +195,9 @@ namespace bibliographer
         {
             //System.Console.WriteLine("Indexing " + record.GetKey());
             Tri index;
-            string cacheKey = "";
+            string cacheKey;
             
-            if ((record.HasCustomDataField ("cacheKey") == false) ||
+            if ((!record.HasCustomDataField ("cacheKey")) ||
                 (Cache.CachedFile ("index_data", (string)record.GetCustomDataField ("cacheKey")).Trim() == ""))
             {
                 // No cache exists - so generate it and index
@@ -191,11 +210,11 @@ namespace bibliographer
                 {
                     string uriString = record.GetURI();
                     ulong intSize = 0;
-                    Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri(uriString);
+                    var uri = new Gnome.Vfs.Uri(uriString);
 
                     try {
                         Gnome.Vfs.FileInfo info = uri.GetFileInfo ();
-                        if ((info.ValidFields & Gnome.Vfs.FileInfoFields.Size) != 0) {
+                        if ((info.ValidFields & FileInfoFields.Size) != 0) {
                             intSize = (ulong)info.Size;
                         }
                     } catch (Exception e) {
@@ -203,10 +222,10 @@ namespace bibliographer
                         Debug.WriteLine (1, "\t*** Whoops! Caught an exception!");
                     }
 
-                    Gnome.Vfs.Handle handle = Gnome.Vfs.Sync.Open (uriString, Gnome.Vfs.OpenMode.Read);
+                    Handle handle = Sync.Open (uriString, OpenMode.Read);
                     ulong sizeRead;
-                    byte[] contents = new byte[intSize];
-                    if (Gnome.Vfs.Sync.Read (handle, out contents[0], intSize, out sizeRead) != Gnome.Vfs.Result.Ok) {
+                    var contents = new byte[intSize];
+                    if (Sync.Read (handle, out contents[0], intSize, out sizeRead) != Result.Ok) {
                         // read failed
                         Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
                     }
@@ -219,14 +238,14 @@ namespace bibliographer
                     cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                 }
 
-                StringArrayList textualDataArray = GetTextualData (record.GetURI().ToString());
+                StringArrayList textualDataArray = GetTextualData (record.GetURI ());
 
                 index = Index (textualDataArray);
                 string doi = ExtractDOI(textualDataArray);
 
 
-                StreamWriter stream = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
-                stream.WriteLine (index.ToString ());
+                var stream = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
+                stream.WriteLine (index);
                 stream.Close ();
 
                 record.SetCustomDataField ("indexData", index);
@@ -242,42 +261,42 @@ namespace bibliographer
                 cacheKey = (string)record.GetCustomDataField ("cacheKey");
 
                 // Load cachekey if it hasn't been loaded yet
-                if (record.HasCustomDataField ("indexData") == false) {
+				if (!record.HasCustomDataField ("indexData")) {
 
-                    string cacheFile = Cache.CachedFile ("index_data", cacheKey);
-                    //System.Console.WriteLine(cacheFile);
+					string cacheFile = Cache.CachedFile ("index_data", cacheKey);
+					//System.Console.WriteLine(cacheFile);
 
-                    StreamReader istream = new StreamReader (new FileStream (cacheFile , FileMode.Open, FileAccess.Read));
-                    index = new Tri (istream.ReadToEnd ());
-                    istream.Close ();
+					var istream = new StreamReader (new FileStream (cacheFile, FileMode.Open, FileAccess.Read));
+					index = new Tri (istream.ReadToEnd ());
+					istream.Close ();
 
-                    record.SetCustomDataField ("indexData", index);
-                }
+					record.SetCustomDataField ("indexData", index);
+				}
             }
         }
 
         public bool IndexContains (BibtexRecord record, String s)
         {
-            if (s == null || s == "")
-                return true;
+			if (string.IsNullOrEmpty (s))
+				return true;
             if (record.HasCustomDataField ("indexData")) {
                 object o = record.GetCustomDataField ("indexData");
                 if (o == null) {
                     return false;
                 } else {
-                    Tri index = (Tri) o;
+                    var index = (Tri) o;
                     return index.IsSubString (s);
                 }
             }
             return false;
         }
 
-        private static string ExtractDOI(StringArrayList stringDataArray)
+        static string ExtractDOI(StringArrayList stringDataArray)
         {
             //System.Console.WriteLine ("Attempting to extract DOI");
             if (stringDataArray != null) {
                 for (int line = 0; line < stringDataArray.Count; line++) {
-                    String lineData = ((String)stringDataArray[line]).ToLower ();
+                    String lineData = stringDataArray [line].ToLower ();
                     if (lineData.IndexOf ("doi:") > 0) {
                         int idx1 = lineData.IndexOf ("doi:");
                         lineData = lineData.Substring (idx1);

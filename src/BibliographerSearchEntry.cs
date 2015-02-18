@@ -1,6 +1,26 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  BibliographerSearchEntry.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using libbibby;
 
@@ -12,15 +32,15 @@ namespace bibliographer
 
         public SearchEntry ()
         {
-            this.BorderWidth = 6;
-            this.WidthRequest = 200;
+            BorderWidth = 6;
+            WidthRequest = 200;
             
-            Gtk.Menu searchMenu = this.Menu;
+            Gtk.Menu searchMenu = Menu;
             
-            Gtk.RadioMenuItem searchMenuItemAll = new Gtk.RadioMenuItem ("All");
-            Gtk.RadioMenuItem searchMenuItemAuthor = new Gtk.RadioMenuItem (searchMenuItemAll, "Author");
-            Gtk.RadioMenuItem searchMenuItemTitle = new Gtk.RadioMenuItem (searchMenuItemAll, "Title");
-            Gtk.RadioMenuItem searchMenuItemArticle = new Gtk.RadioMenuItem (searchMenuItemAll, "Article");
+            var searchMenuItemAll = new Gtk.RadioMenuItem ("All");
+			var searchMenuItemAuthor = new Gtk.RadioMenuItem (searchMenuItemAll, "Author");
+			var searchMenuItemTitle = new Gtk.RadioMenuItem (searchMenuItemAll, "Title");
+			var searchMenuItemArticle = new Gtk.RadioMenuItem (searchMenuItemAll, "Article");
             
             searchMenuItemAll.Data.Add ("searchField", BibtexSearchField.All);
             searchMenuItemAuthor.Data.Add ("searchField", BibtexSearchField.Author);
@@ -36,20 +56,20 @@ namespace bibliographer
             searchMenuItemAuthor.Activated += OnSearchEntryChanged;
             searchMenuItemTitle.Activated += OnSearchEntryChanged;
             searchMenuItemArticle.Activated += OnSearchEntryChanged;
-            this.InnerEntry.Changed += OnSearchEntryChanged;
+            InnerEntry.Changed += OnSearchEntryChanged;
             
-            this.Show ();
+            Show ();
         }
 
         public void Clear ()
         {
-            this.InnerEntry.Text = "";
+            InnerEntry.Text = "";
         }
 
         protected virtual void OnSearchEntryChanged (object sender, System.EventArgs e)
         {
-            if (this.Changed != null)
-                this.Changed (sender, e);
+            if (Changed != null)
+                Changed (sender, e);
         }
     }
 }

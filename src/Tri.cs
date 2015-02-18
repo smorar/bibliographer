@@ -1,6 +1,27 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  Tri.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+
 
 using System;
 using System.Text;
@@ -9,7 +30,7 @@ namespace bibliographer
 {
     public class Tri
     {
-        private class TriNode
+        class TriNode
         {
             public TriNode ()
             {
@@ -60,7 +81,7 @@ namespace bibliographer
             }
         }
 
-        private TriNode root;
+        TriNode root;
 
         public Tri ()
         {
@@ -116,10 +137,7 @@ namespace bibliographer
                     return false;
                 curNode = curNode.children[c];
             }
-            if (curNode.hitCount != 0)
-                return true;
-            else
-                return false;
+            return curNode.hitCount != 0;
         }
 
         public bool IsSubString (String s)
@@ -147,10 +165,10 @@ namespace bibliographer
             return Compress (root.ToString ());
         }
 
-        private String Compress (String s)
+        String Compress (String s)
         {
             String[] toks = s.Split (',');
-            StringBuilder result = new StringBuilder ();
+            var result = new StringBuilder ();
             int pos = 0;
             while (pos < toks.Length) {
                 if (toks[pos] != "") {
@@ -177,9 +195,9 @@ namespace bibliographer
             return result.ToString ();
         }
 
-        private String Decompress (String s)
+        String Decompress (String s)
         {
-            StringBuilder wsRemoved = new StringBuilder ();
+            var wsRemoved = new StringBuilder ();
             for (int i = 0; i < s.Length; i++)
                 switch (s[i]) {
                 case ' ':
@@ -193,7 +211,7 @@ namespace bibliographer
                 }
             s = wsRemoved.ToString ();
             String[] toks = s.Split (',');
-            StringBuilder result = new StringBuilder ();
+            var result = new StringBuilder ();
             for (int i = 0; i < toks.Length; i++) {
                 if (toks[i] != "") {
                     if (toks[i][0] == '*') {
@@ -210,9 +228,9 @@ namespace bibliographer
             return result.ToString ();
         }
 
-        private String validChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&()-+";
+        readonly String validChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&()-+";
 
-        private String Encode (int x)
+        String Encode (int x)
         {
             String result = "";
             do {
@@ -222,7 +240,7 @@ namespace bibliographer
             return result;
         }
 
-        private int Decode (String s)
+        int Decode (String s)
         {
             int x = 0;
             for (int i = 0; i < s.Length; i++)

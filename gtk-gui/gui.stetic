@@ -5,7 +5,6 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="gnome-sharp, Version=2.24.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/bibliographer.exe" internal="true" />
   </import>
   <icon-factory>
@@ -224,9 +223,6 @@
     <property name="WindowPosition">CenterOnParent</property>
     <property name="DefaultWidth">640</property>
     <property name="DefaultHeight">420</property>
-    <signal name="SizeAllocated" handler="OnWindowSizeAllocated" />
-    <signal name="WindowStateEvent" handler="OnWindowStateChanged" />
-    <signal name="DeleteEvent" handler="OnWindowDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
         <property name="MemberName" />
@@ -443,7 +439,6 @@
                                     <property name="Type">TextOnly</property>
                                     <property name="Label" translatable="yes">Generate</property>
                                     <property name="UseUnderline">True</property>
-                                    <signal name="Clicked" handler="OnButtonBibtexKeyGenerateClicked" />
                                   </widget>
                                   <packing>
                                     <property name="TopAttach">1</property>
@@ -468,7 +463,6 @@
                                     <property name="MemberName" />
                                     <property name="IsTextCombo">True</property>
                                     <property name="Items" translatable="yes" />
-                                    <signal name="Changed" handler="OnComboRecordTypeChanged" />
                                   </widget>
                                   <packing>
                                     <property name="LeftAttach">1</property>
@@ -491,7 +485,6 @@
                                     <property name="CanFocus">True</property>
                                     <property name="IsEditable">True</property>
                                     <property name="InvisibleChar">●</property>
-                                    <signal name="Changed" handler="OnEntryReqBibtexKeyChanged" />
                                   </widget>
                                   <packing>
                                     <property name="TopAttach">1</property>
@@ -706,7 +699,6 @@
                                 <property name="Label" translatable="yes">E_dit Records</property>
                                 <property name="UseUnderline">True</property>
                                 <property name="Active">True</property>
-                                <signal name="Toggled" handler="OnToggleEditRecordsActivated" />
                               </widget>
                               <packing>
                                 <property name="Expand">False</property>

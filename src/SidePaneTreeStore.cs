@@ -1,6 +1,26 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  SidePaneTreeStore.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using libbibby;
@@ -13,7 +33,7 @@ namespace bibliographer
         Gtk.TreeIter iterAll, iterAuth, iterYear, iterJourn;
         BibtexRecords bibtexRecords;
 
-        private bool threadLock = false;
+        bool threadLock;
 
         public SidePaneTreeStore (BibtexRecords btRecords)
         {
@@ -23,25 +43,25 @@ namespace bibliographer
             bibtexRecords.RecordAdded += OnBibtexRecordAdded;
             bibtexRecords.RecordDeleted += OnBibtexRecordDeleted;
             
-            GLib.GType[] coltype = new GLib.GType[1];
+            var coltype = new GLib.GType[1];
             coltype[0] = (GLib.GType)typeof(string);
-            this.ColumnTypes = coltype;
+            ColumnTypes = coltype;
             
             Debug.WriteLine (5, "Adding Side Pane Filter Categories");
             
-            iterAll = this.AppendNode ();
-            this.SetValue (iterAll, 0, "All");
-            iterAuth = this.AppendNode ();
-            this.SetValue (iterAuth, 0, "Author");
-            iterYear = this.AppendNode ();
-            this.SetValue (iterYear, 0, "Year");
-            iterJourn = this.AppendNode ();
-            this.SetValue (iterJourn, 0, "Journal");
+            iterAll = AppendNode ();
+            SetValue (iterAll, 0, "All");
+            iterAuth = AppendNode ();
+            SetValue (iterAuth, 0, "Author");
+            iterYear = AppendNode ();
+            SetValue (iterYear, 0, "Year");
+            iterJourn = AppendNode ();
+            SetValue (iterJourn, 0, "Journal");
             
             InitialiseTreeStore ();
         }
 
-        private void OnBibtexRecordModified (object o, EventArgs e)
+        void OnBibtexRecordModified (object o, EventArgs e)
         {
             Debug.WriteLine (5, "BibtexRecordModified");
             BibtexRecord btRecord;
@@ -52,7 +72,7 @@ namespace bibliographer
             UpdateTreeStore (btRecord);
         }
 
-        private void OnBibtexRecordAdded (object o, EventArgs e)
+        void OnBibtexRecordAdded (object o, EventArgs e)
         {
             Debug.WriteLine (5, "BibtexRecordAdded");
             BibtexRecord btRecord;
@@ -61,7 +81,7 @@ namespace bibliographer
             UpdateTreeStore (btRecord);
         }
 
-        private void OnBibtexRecordDeleted (object o, EventArgs e)
+        void OnBibtexRecordDeleted (object o, EventArgs e)
         {
             Debug.WriteLine (5, "BibtexRecordDeleted");
             BibtexRecord btRecord;
@@ -85,338 +105,341 @@ namespace bibliographer
             UpdateYears (btRecord);
         }
 
-        private void InitialiseAuthors ()
+        void InitialiseAuthors ()
         {
             string author;
-            StringArrayList bibrecsAuthors = new StringArrayList ();
+            StringArrayList bibrecsAuthors;
+
             bibrecsAuthors = bibtexRecords.GetAuthors ();
             for (int ii = 0; ii < bibrecsAuthors.Count; ii++) {
                 author = bibrecsAuthors[ii];
                 
                 // Insert Author
-                StringArrayList treeAuthors = this.GetAuthors ();
+                StringArrayList treeAuthors = GetAuthors ();
                 Debug.WriteLine (5, "Checking if Author {0} is in filter list", author);
-                if (((treeAuthors.Contains (author)) == false) && (author != null) && (author != "")) {
+                if ((!treeAuthors.Contains (author)) && (author != null) && (author != "")) {
                     // Tree does not contain the new author, so we're inserting it
                     Debug.WriteLine (5, "Inserting Author {0} into Filter List", author);
-                    this.AppendValues (iterAuth, author);
+                    AppendValues (iterAuth, author);
                 }
             }
             Debug.WriteLine (10, "Finished inserting Authors into Filter List");
             
             // Iterate through tree and remove authors that are not in the bibtexRecords
             Gtk.TreeIter iter;
-            StringArrayList treeAuth = new StringArrayList ();
-            this.IterChildren (out iter, iterAuth);
-            int n = this.IterNChildren (iterAuth);
+            var treeAuth = new StringArrayList ();
+            IterChildren (out iter, iterAuth);
+            int n = IterNChildren (iterAuth);
             for (int i = 0; i < n; i++) {
-                string author1 = (string)this.GetValue (iter, 0);
-                if (bibrecsAuthors.Contains (author1) && treeAuth.Contains (author1) == false) {
-                    this.IterNext (ref iter);
+                string author1 = (string)GetValue (iter, 0);
+                if (bibrecsAuthors.Contains (author1) && !treeAuth.Contains (author1)) {
+                    IterNext (ref iter);
                     treeAuth.Add (author1);
                 } else {
                     Debug.WriteLine (5, "Removing Author {0} from Side Pane", author1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
-        private void InitialiseJournals ()
+        void InitialiseJournals ()
         {
             string journal;
-            StringArrayList bibrecsJournals = new StringArrayList ();
+            StringArrayList bibrecsJournals;
+
             bibrecsJournals = bibtexRecords.GetJournals ();
             for (int ii = 0; ii < bibrecsJournals.Count; ii++) {
                 journal = bibrecsJournals[ii];
                 
                 // Insert Journal
-                StringArrayList treeJournals = this.GetJournals ();
-                if (((treeJournals.Contains (journal)) == false) && (journal != null) && (journal != "")) {
+                StringArrayList treeJournals = GetJournals ();
+                if ((!treeJournals.Contains (journal)) && (journal != null) && (journal != "")) {
                     // Tree does not contain the new journal, so we're inserting it
                     Debug.WriteLine (5, "Inserting Journal into Filter List");
-                    this.AppendValues (iterJourn, journal);
+                    AppendValues (iterJourn, journal);
                 }
             }
             
             // Iterate through tree and remove journals that are not in the bibtexRecords
-            StringArrayList treeJourn = new StringArrayList ();
+            var treeJourn = new StringArrayList ();
             Gtk.TreeIter iter;
-            this.IterChildren (out iter, iterJourn);
-            int n = this.IterNChildren (iterJourn);
+            IterChildren (out iter, iterJourn);
+            int n = IterNChildren (iterJourn);
             for (int i = 0; i < n; i++) {
-                string journal1 = (string)this.GetValue (iter, 0);
-                if (bibrecsJournals.Contains (journal1) && treeJourn.Contains (journal1) == false) {
-                    this.IterNext (ref iter);
+                string journal1 = (string)GetValue (iter, 0);
+                if (bibrecsJournals.Contains (journal1) && !treeJourn.Contains (journal1)) {
+                    IterNext (ref iter);
                     treeJourn.Add (journal1);
                 } else {
                     Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
-        private void InitialiseYears ()
+        void InitialiseYears ()
         {
             string year;
-            StringArrayList bibrecsYear = new StringArrayList ();
-            bibrecsYear = bibtexRecords.GetYears ();
+            StringArrayList bibrecsYear;
+
+			bibrecsYear = bibtexRecords.GetYears ();
             for (int ii = 0; ii < bibrecsYear.Count; ii++) {
                 year = bibrecsYear[ii];
                 
                 // Insert Year
-                StringArrayList treeYear = this.GetYears ();
-                if (((treeYear.Contains (year)) == false) && (year != null) && (year != "")) {
+                StringArrayList treeYear = GetYears ();
+                if ((!treeYear.Contains (year)) && (year != null) && (year != "")) {
                     // Tree does not contain the new year, so we're inserting it
                     Debug.WriteLine (5, "Inserting Year into Filter List");
-                    this.AppendValues (iterYear, year);
+                    AppendValues (iterYear, year);
                 }
             }
             
             // Iterate through tree and remove years that are not in the bibtexRecords
             Gtk.TreeIter iter;
-            StringArrayList treeYr = new StringArrayList ();
-            this.IterChildren (out iter, iterYear);
-            int n = this.IterNChildren (iterYear);
+            var treeYr = new StringArrayList ();
+            IterChildren (out iter, iterYear);
+            int n = IterNChildren (iterYear);
             for (int i = 0; i < n; i++) {
-                string year1 = (string)this.GetValue (iter, 0);
-                if (bibrecsYear.Contains (year1) && treeYr.Contains (year1) == false) {
-                    this.IterNext (ref iter);
+                string year1 = (string)GetValue (iter, 0);
+                if (bibrecsYear.Contains (year1) && !treeYr.Contains (year1)) {
+                    IterNext (ref iter);
                     treeYr.Add (year1);
                 } else {
                     Debug.WriteLine (5, "Removing Year {0} from Side Pane", year1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
-        private void UpdateAuthors (BibtexRecord btRecord)
+        void UpdateAuthors (BibtexRecord btRecord)
         {
             string author;
-            StringArrayList bibrecAuthors = new StringArrayList ();
+            StringArrayList bibrecAuthors;
             bibrecAuthors = btRecord.GetAuthors ();
-            StringArrayList bibrecsAuthors = new StringArrayList ();
+            StringArrayList bibrecsAuthors;
             bibrecsAuthors = bibtexRecords.GetAuthors ();
             
             // Interate through updated record's authors
             for (int ii = 0; ii < bibrecAuthors.Count; ii++) {
                 author = bibrecAuthors[ii];
                 // Insert Author
-                StringArrayList treeAuthors = this.GetAuthors ();
-                if (((treeAuthors.Contains (author)) == false) && (author != null) && (author != "")) {
+                StringArrayList treeAuthors = GetAuthors ();
+                if ((!treeAuthors.Contains (author)) && (author != null) && (author != "")) {
                     // Tree does not contain the new author, so we're inserting it
                     Debug.WriteLine (5, "Inserting Author {0} into Filter List", author);
-                    this.AppendValues (iterAuth, author);
+                    AppendValues (iterAuth, author);
                 }
             }
             
             // Iterate through tree and remove authors that are not in the bibtexRecords
             Gtk.TreeIter iter;
-            StringArrayList treeAuth = new StringArrayList ();
-            this.IterChildren (out iter, iterAuth);
-            int n = this.IterNChildren (iterAuth);
+            var treeAuth = new StringArrayList ();
+            IterChildren (out iter, iterAuth);
+            int n = IterNChildren (iterAuth);
             for (int i = 0; i < n; i++) {
-                string author1 = (string)this.GetValue (iter, 0);
-                if (bibrecsAuthors.Contains (author1) && treeAuth.Contains (author1) == false) {
-                    this.IterNext (ref iter);
+                string author1 = (string)GetValue (iter, 0);
+                if (bibrecsAuthors.Contains (author1) && !treeAuth.Contains (author1)) {
+                    IterNext (ref iter);
                     treeAuth.Add (author1);
                 } else {
                     Debug.WriteLine (5, "Removing Author {0} from Side Pane", author1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
-        private void UpdateJournals (BibtexRecord btRecord)
+        void UpdateJournals (BibtexRecord btRecord)
         {
             string journal;
             
             journal = btRecord.GetJournal ();
-            StringArrayList bibrecsJournals = new StringArrayList ();
+            StringArrayList bibrecsJournals;
             bibrecsJournals = bibtexRecords.GetJournals ();
             
             // Insert Journal
-            StringArrayList treeJournals = this.GetJournals ();
-            if (((treeJournals.Contains (journal)) == false) && (journal != null) && (journal != "")) {
+            StringArrayList treeJournals = GetJournals ();
+            if ((!treeJournals.Contains (journal)) && (journal != null) && (journal != "")) {
                 // Tree does not contain the new journal, so we're inserting it
                 Debug.WriteLine (5, "Inserting Journal into Filter List");
-                this.AppendValues (iterJourn, journal);
+                AppendValues (iterJourn, journal);
             }
             
             // Iterate through tree and remove journals that are not in the bibtexRecords
-            StringArrayList treeJourn = new StringArrayList ();
+            var treeJourn = new StringArrayList ();
             Gtk.TreeIter iter;
-            this.IterChildren (out iter, iterJourn);
-            int n = this.IterNChildren (iterJourn);
+            IterChildren (out iter, iterJourn);
+            int n = IterNChildren (iterJourn);
             for (int i = 0; i < n; i++) {
-                string journal1 = (string)this.GetValue (iter, 0);
-                if (bibrecsJournals.Contains (journal1) && treeJourn.Contains (journal1) == false) {
-                    this.IterNext (ref iter);
+                string journal1 = (string)GetValue (iter, 0);
+                if (bibrecsJournals.Contains (journal1) && !treeJourn.Contains (journal1)) {
+                    IterNext (ref iter);
                     treeJourn.Add (journal1);
                 } else {
                     Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
-        private void UpdateYears (BibtexRecord btRecord)
+        void UpdateYears (BibtexRecord btRecord)
         {
             string year;
             year = btRecord.GetYear ();
             
-            StringArrayList bibrecsYear = new StringArrayList ();
+            StringArrayList bibrecsYear;
             bibrecsYear = bibtexRecords.GetYears ();
             // Insert Year
-            StringArrayList treeYear = this.GetYears ();
-            if (((treeYear.Contains (year)) == false) && (year != null) && (year != "")) {
+            StringArrayList treeYear = GetYears ();
+            if ((!treeYear.Contains (year)) && (year != null) && (year != "")) {
                 // Tree does not contain the new year, so we're inserting it
                 Debug.WriteLine (5, "Inserting Year into Filter List");
-                this.AppendValues (iterYear, year);
+                AppendValues (iterYear, year);
             }
             
             // Iterate through tree and remove years that are not in the bibtexRecords
             Gtk.TreeIter iter;
-            StringArrayList treeYr = new StringArrayList ();
-            this.IterChildren (out iter, iterYear);
-            int n = this.IterNChildren (iterYear);
+            var treeYr = new StringArrayList ();
+            IterChildren (out iter, iterYear);
+            int n = IterNChildren (iterYear);
             for (int i = 0; i < n; i++) {
-                string year1 = (string)this.GetValue (iter, 0);
-                if (bibrecsYear.Contains (year1) && treeYr.Contains (year1) == false) {
-                    this.IterNext (ref iter);
+                string year1 = (string)GetValue (iter, 0);
+                if (bibrecsYear.Contains (year1) && !treeYr.Contains (year1)) {
+                    IterNext (ref iter);
                     treeYr.Add (year1);
                 } else {
                     Debug.WriteLine (5, "Removing Year {0} from Side Pane", year1);
-                    this.Remove (ref iter);
+                    Remove (ref iter);
                 }
             }
         }
 
         public void UpdateTreeStore ()
         {
-            if (this.threadLock == false) {
-                this.threadLock = true;
+			if (!threadLock) {
+				threadLock = true;
                 
-                if (bibtexRecords != null) {
-                    // Deal with authors
-                    StringArrayList bibAuthors;
-                    if (bibtexRecords.GetAuthors () == null)
-                        bibAuthors = new StringArrayList ();
-                    else
-                        bibAuthors = (StringArrayList)bibtexRecords.GetAuthors ();
-                    if (this.IterHasChild (iterAuth)) {
-                        Gtk.TreeIter iter;
-                        this.IterChildren (out iter, iterAuth);
-                        int n = this.IterNChildren (iterAuth);
-                        for (int i = 0; i < n; i++) {
-                            string author = (string)this.GetValue (iter, 0);
-                            if (bibAuthors.Contains (author))
-                                this.IterNext (ref iter);
-                            else {
-                                Debug.WriteLine (5, "Removing Author {0} from Side Pane", author);
-                                this.Remove (ref iter);
-                            }
-                        }
-                        StringArrayList treeAuthors = this.GetAuthors ();
-                        for (int i = 0; i < bibAuthors.Count; i++) {
-                            if (!(treeAuthors.Contains (bibAuthors[i]))) {
-                                // Add bibAuthor to the TreeStore
-                                if (bibAuthors[i] != "") {
-                                    Debug.WriteLine (5, "Inserting Author {0} to Side Pane", bibAuthors[i]);
-                                    Gtk.TreeIter insert = this.InsertNode (iterAuth, i);
-                                    this.SetValue (insert, 0, bibAuthors[i]);
-                                }
-                            }
-                        }
-                    } else {
-                        Debug.WriteLine (5, "Generating Author Filter List");
-                        for (int i = 0; i < bibAuthors.Count; i++) {
-                            if (bibAuthors[i] != "")
-                                this.AppendValues (iterAuth, bibAuthors[i]);
-                        }
-                    }
+				if (bibtexRecords != null) {
+					// Deal with authors
+					StringArrayList bibAuthors;
+					if (bibtexRecords.GetAuthors () == null)
+						bibAuthors = new StringArrayList ();
+					else
+						bibAuthors = bibtexRecords.GetAuthors ();
+					if (IterHasChild (iterAuth)) {
+						Gtk.TreeIter iter;
+						IterChildren (out iter, iterAuth);
+						int n = IterNChildren (iterAuth);
+						for (int i = 0; i < n; i++) {
+							string author = (string)GetValue (iter, 0);
+							if (bibAuthors.Contains (author))
+								IterNext (ref iter);
+							else {
+								Debug.WriteLine (5, "Removing Author {0} from Side Pane", author);
+								Remove (ref iter);
+							}
+						}
+						StringArrayList treeAuthors = GetAuthors ();
+						for (int i = 0; i < bibAuthors.Count; i++) {
+							if (!(treeAuthors.Contains (bibAuthors [i]))) {
+								// Add bibAuthor to the TreeStore
+								if (bibAuthors [i] != "") {
+									Debug.WriteLine (5, "Inserting Author {0} to Side Pane", bibAuthors [i]);
+									Gtk.TreeIter insert = InsertNode (iterAuth, i);
+									SetValue (insert, 0, bibAuthors [i]);
+								}
+							}
+						}
+					} else {
+						Debug.WriteLine (5, "Generating Author Filter List");
+						for (int i = 0; i < bibAuthors.Count; i++) {
+							if (bibAuthors [i] != "")
+								AppendValues (iterAuth, bibAuthors [i]);
+						}
+					}
                     
-                    // Deal with years
-                    StringArrayList bibYears;
-                    if (bibtexRecords.GetYears () == null)
-                        bibYears = new StringArrayList ();
-                    else
-                        bibYears = (StringArrayList)bibtexRecords.GetYears ();
+					// Deal with years
+					StringArrayList bibYears;
+					if (bibtexRecords.GetYears () == null)
+						bibYears = new StringArrayList ();
+					else
+						bibYears = bibtexRecords.GetYears ();
                     
-                    if (this.IterHasChild (iterYear)) {
-                        Gtk.TreeIter iter;
-                        this.IterChildren (out iter, iterYear);
-                        for (int i = 0; i < this.IterNChildren (iterYear); i++) {
-                            string year = (string)this.GetValue (iter, 0);
+					if (IterHasChild (iterYear)) {
+						Gtk.TreeIter iter;
+						IterChildren (out iter, iterYear);
+						for (int i = 0; i < IterNChildren (iterYear); i++) {
+							string year = (string)GetValue (iter, 0);
                             
-                            if (bibYears.Contains (year))
-                                this.IterNext (ref iter);
-                            else {
-                                Debug.WriteLine (5, "Removing Year {0} from Side Pane", year);
-                                this.Remove (ref iter);
-                            }
-                        }
-                        StringArrayList treeYears = this.GetYears ();
-                        for (int i = 0; i < bibYears.Count; i++) {
-                            if (!(treeYears.Contains (bibYears[i]))) {
-                                // Add bibYear to the TreeStore
-                                if (bibYears[i] != "") {
-                                    Debug.WriteLine (5, "Inserting Year {0} to Side Pane", bibYears[i]);
-                                    Gtk.TreeIter insert = this.InsertNode (iterYear, i);
-                                    this.SetValue (insert, 0, bibYears[i]);
-                                }
-                            }
-                        }
-                    } else {
-                        Debug.WriteLine (5, "Generating Year Filter List");
-                        for (int i = 0; i < bibYears.Count; i++) {
-                            if (bibYears[i] != "")
-                                this.AppendValues (iterYear, bibYears[i]);
-                        }
-                    }
+							if (bibYears.Contains (year))
+								IterNext (ref iter);
+							else {
+								Debug.WriteLine (5, "Removing Year {0} from Side Pane", year);
+								Remove (ref iter);
+							}
+						}
+						StringArrayList treeYears = GetYears ();
+						for (int i = 0; i < bibYears.Count; i++) {
+							if (!(treeYears.Contains (bibYears [i]))) {
+								// Add bibYear to the TreeStore
+								if (bibYears [i] != "") {
+									Debug.WriteLine (5, "Inserting Year {0} to Side Pane", bibYears [i]);
+									Gtk.TreeIter insert = InsertNode (iterYear, i);
+									SetValue (insert, 0, bibYears [i]);
+								}
+							}
+						}
+					} else {
+						Debug.WriteLine (5, "Generating Year Filter List");
+						for (int i = 0; i < bibYears.Count; i++) {
+							if (bibYears [i] != "")
+								AppendValues (iterYear, bibYears [i]);
+						}
+					}
                     
-                    // Deal with journals
-                    StringArrayList bibJournals;
-                    if (bibtexRecords.GetJournals () == null)
-                        bibJournals = new StringArrayList ();
-                    else
-                        bibJournals = (StringArrayList)bibtexRecords.GetJournals ();
+					// Deal with journals
+					StringArrayList bibJournals;
+					if (bibtexRecords.GetJournals () == null)
+						bibJournals = new StringArrayList ();
+					else
+						bibJournals = bibtexRecords.GetJournals ();
                     
-                    if (this.IterHasChild (iterJourn)) {
-                        Gtk.TreeIter iter;
-                        this.IterChildren (out iter, iterJourn);
-                        for (int i = 0; i < this.IterNChildren (iterJourn); i++) {
-                            string journal = (string)this.GetValue (iter, 0);
+					if (IterHasChild (iterJourn)) {
+						Gtk.TreeIter iter;
+						IterChildren (out iter, iterJourn);
+						for (int i = 0; i < IterNChildren (iterJourn); i++) {
+							string journal = (string)GetValue (iter, 0);
                             
-                            if (bibYears.Contains (journal))
-                                this.IterNext (ref iter);
-                            else {
-                                Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal);
-                                this.Remove (ref iter);
-                            }
-                        }
-                        StringArrayList treeJournals = this.GetJournals ();
-                        for (int i = 0; i < bibJournals.Count; i++) {
-                            if (!(treeJournals.Contains (bibJournals[i]))) {
-                                // Add bibYear to the TreeStore
-                                if (bibJournals[i] != "") {
-                                    Debug.WriteLine (5, "Inserting Journal {0} to Side Pane", bibJournals[i]);
-                                    Gtk.TreeIter insert = this.InsertNode (iterJourn, i);
-                                    this.SetValue (insert, 0, bibJournals[i]);
-                                }
-                            }
-                        }
-                    } else {
-                        Debug.WriteLine (5, "Generating Journal Filter List");
-                        for (int i = 0; i < bibJournals.Count; i++) {
-                            if (bibJournals[i] != "")
-                                this.AppendValues (iterJourn, bibJournals[i]);
-                        }
-                    }
-                }
-                this.threadLock = false;
-            } else {
-                Debug.WriteLine (2, "Thread is locked");
-            }
+							if (bibYears.Contains (journal))
+								IterNext (ref iter);
+							else {
+								Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal);
+								Remove (ref iter);
+							}
+						}
+						StringArrayList treeJournals = GetJournals ();
+						for (int i = 0; i < bibJournals.Count; i++) {
+							if (!(treeJournals.Contains (bibJournals [i]))) {
+								// Add bibYear to the TreeStore
+								if (bibJournals [i] != "") {
+									Debug.WriteLine (5, "Inserting Journal {0} to Side Pane", bibJournals [i]);
+									Gtk.TreeIter insert = InsertNode (iterJourn, i);
+									SetValue (insert, 0, bibJournals [i]);
+								}
+							}
+						}
+					} else {
+						Debug.WriteLine (5, "Generating Journal Filter List");
+						for (int i = 0; i < bibJournals.Count; i++) {
+							if (bibJournals [i] != "")
+								AppendValues (iterJourn, bibJournals [i]);
+						}
+					}
+				}
+				threadLock = false;
+			} else {
+				Debug.WriteLine (2, "Thread is locked");
+			}
         }
 
         public void SetBibtexRecords (BibtexRecords btRecords)
@@ -428,21 +451,21 @@ namespace bibliographer
             InitialiseTreeStore ();
         }
 
-        private StringArrayList GetAuthors ()
+        StringArrayList GetAuthors ()
         {
             Debug.WriteLine (10, "SidePaneTreeStore.GetAuthors()");
-            StringArrayList authors = new StringArrayList ();
+            var authors = new StringArrayList ();
             
-            if (this.IterHasChild (this.iterAuth)) {
+            if (IterHasChild (iterAuth)) {
                 Gtk.TreeIter iter;
                 
-                this.IterChildren (out iter, this.iterAuth);
+                IterChildren (out iter, iterAuth);
                 
-                while (this.IterIsValid (iter)) {
-                    string author = (string)this.GetValue (iter, 0);
+                while (IterIsValid (iter)) {
+                    string author = (string)GetValue (iter, 0);
                     Debug.WriteLine (10, "Add the Author {0} to an output list", author);
                     authors.Add (author);
-                    if (!this.IterNext (ref iter))
+                    if (!IterNext (ref iter))
                         break;
                 }
             }
@@ -450,18 +473,18 @@ namespace bibliographer
             return authors;
         }
 
-        private StringArrayList GetYears ()
+        StringArrayList GetYears ()
         {
-            StringArrayList years = new StringArrayList ();
+            var years = new StringArrayList ();
             
-            if (this.IterHasChild (iterYear)) {
+            if (IterHasChild (iterYear)) {
                 
                 Gtk.TreeIter iter;
-                this.IterChildren (out iter, iterYear);
-                while (this.IterIsValid (iter)) {
-                    string year = (string)this.GetValue (iter, 0);
+                IterChildren (out iter, iterYear);
+                while (IterIsValid (iter)) {
+                    string year = (string)GetValue (iter, 0);
                     years.Add (year);
-                    if (!this.IterNext (ref iter))
+                    if (!IterNext (ref iter))
                         break;
                 }
             }
@@ -469,17 +492,17 @@ namespace bibliographer
             return years;
         }
 
-        private StringArrayList GetJournals ()
+        StringArrayList GetJournals ()
         {
-            StringArrayList journals = new StringArrayList ();
+            var journals = new StringArrayList ();
             
-            if (this.IterHasChild (iterJourn)) {
+            if (IterHasChild (iterJourn)) {
                 Gtk.TreeIter iter;
-                this.IterChildren (out iter, iterJourn);
-                while (this.IterIsValid (iter)) {
-                    string journal = (string)this.GetValue (iter, 0);
+                IterChildren (out iter, iterJourn);
+                while (IterIsValid (iter)) {
+                    string journal = (string)GetValue (iter, 0);
                     journals.Add (journal);
-                    if (!this.IterNext (ref iter))
+                    if (!IterNext (ref iter))
                         break;
                 }
             }
@@ -489,7 +512,7 @@ namespace bibliographer
 
         public Gtk.TreePath GetPathAll ()
         {
-            return this.GetPath (iterAll);
+            return GetPath (iterAll);
         }
     }
 }

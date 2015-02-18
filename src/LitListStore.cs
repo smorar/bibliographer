@@ -1,11 +1,28 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  LitListStore.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System.Threading;
 using libbibby;
 
 namespace bibliographer
@@ -14,13 +31,13 @@ namespace bibliographer
 
     public class LitListStore : Gtk.ListStore
     {
-        private BibtexRecords bibtexRecords;
+        BibtexRecords bibtexRecords;
 
         public LitListStore (BibtexRecords btRecords)
         {
-            GLib.GType[] coltype = new GLib.GType[1];
+            var coltype = new GLib.GType[1];
             coltype[0] = (GLib.GType)typeof(BibtexRecord);
-            this.ColumnTypes = coltype;
+            ColumnTypes = coltype;
 
             if (btRecords == null)
             {
@@ -36,35 +53,35 @@ namespace bibliographer
             //this.bibtexRecords.RecordDeleted += this.OnRecordDeleted;
         }
 
-        private void OnRecordAdded (object o, EventArgs a)
+        void OnRecordAdded (object o, EventArgs a)
         {
             Debug.WriteLine (5, "Record added in LitListStore");
             //BibtexRecord record = (BibtexRecord) o;
-            Gtk.TreeIter iter = this.Append ();
-            this.SetValue (iter, 0, o);
+            Gtk.TreeIter iter = Append ();
+            SetValue (iter, 0, o);
         }
 
-        private void OnRecordDeleted (object o, EventArgs a)
+        void OnRecordDeleted (object o, EventArgs a)
         {
             Debug.WriteLine (5, "Record deleted in LitListStore");
-            BibtexRecord record = (BibtexRecord)o;
+            var record = (BibtexRecord)o;
             
-            Gtk.TreeIter iter = this.GetIter (record);
-            this.Remove (ref iter);
+            Gtk.TreeIter iter = GetIter (record);
+            Remove (ref iter);
         }
 
         public void SetBibtexRecords (BibtexRecords btRecords)
         {
-            this.Clear ();
+            Clear ();
             
-            this.bibtexRecords = btRecords;
-            this.bibtexRecords.RecordAdded += this.OnRecordAdded;
-            this.bibtexRecords.RecordDeleted += this.OnRecordDeleted;
+            bibtexRecords = btRecords;
+            bibtexRecords.RecordAdded += OnRecordAdded;
+            bibtexRecords.RecordDeleted += OnRecordDeleted;
             
             foreach (BibtexRecord record in btRecords) {
                 Debug.WriteLine (5, "Inserting record");
-                Gtk.TreeIter iter = this.Append ();
-                this.SetValue (iter, 0, record);
+                Gtk.TreeIter iter = Append ();
+                SetValue (iter, 0, record);
             }
         }
 
@@ -78,15 +95,15 @@ namespace bibliographer
             Gtk.TreeIter iter;
             BibtexRecord rec;
             
-            if (this.GetIterFirst (out iter)) {
-                rec = this.GetValue (iter, 0) as BibtexRecord;
+            if (GetIterFirst (out iter)) {
+                rec = GetValue (iter, 0) as BibtexRecord;
                 
                 if (rec.GetHashCode () == record.GetHashCode ()) {
                     return iter;
                 }
                 
-                while (this.IterNext (ref iter)) {
-                    rec = this.GetValue (iter, 0) as BibtexRecord;
+                while (IterNext (ref iter)) {
+                    rec = GetValue (iter, 0) as BibtexRecord;
                     
                     if (rec.GetHashCode () == record.GetHashCode ()) {
                         return iter;

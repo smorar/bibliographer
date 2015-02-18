@@ -1,6 +1,26 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  BibliographerLitTreeView.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using libbibby;
@@ -9,13 +29,13 @@ namespace bibliographer
 {
     class LitTreeView : Gtk.TreeView
     {
-        private Gtk.TreeModelSort sorter;
+        Gtk.TreeModelSort sorter;
 
         public LitTreeView (Gtk.TreeModel model)
         {
             sorter = new Gtk.TreeModelSort (model);
             
-            this.Model = sorter;
+            Model = sorter;
             
             // TODO: Perform this more elegantly
             // Possibly, read out fields from the bibtex record spec file
@@ -44,15 +64,15 @@ namespace bibliographer
             }
             
             foreach (Gtk.TreeViewColumn column in columnarray) {
-                this.AppendColumn (column);
+                AppendColumn (column);
             }
-            this.HeadersClickable = true;
+            HeadersClickable = true;
             
-            Gtk.TreeCellDataFunc textDataFunc = new Gtk.TreeCellDataFunc (RenderColumnTextFromBibtexRecord);
-            Gtk.TreeCellDataFunc pixmapDataFunc = new Gtk.TreeCellDataFunc (RenderColumnPixbufFromBibtexRecord);
+			var textDataFunc = new Gtk.TreeCellDataFunc (RenderColumnTextFromBibtexRecord);
+            var pixmapDataFunc = new Gtk.TreeCellDataFunc (RenderColumnPixbufFromBibtexRecord);
             int id = 0;
             
-            foreach (Gtk.TreeViewColumn column in this.Columns) {
+            foreach (Gtk.TreeViewColumn column in Columns) {
                 // Check for persistant settings
                 // Checking for column visibility
                 if (Config.KeyExists ("Columns/" + column.Title + "/visible")) {
@@ -61,7 +81,7 @@ namespace bibliographer
                     // Default visible columns
                     string[] defaultVisible = { "Icon", "Author", "Title", "Year", "Journal", "Bibtex Key", "Volume", "Pages" };
                     
-                    if (System.Array.IndexOf (defaultVisible, column.Title) >= 0) {
+                    if (Array.IndexOf (defaultVisible, column.Title) >= 0) {
                         column.Visible = true;
                         //Config.SetBool("Columns/"+column.Title+"/visible",true);
                     } else {
@@ -112,19 +132,19 @@ namespace bibliographer
             }
             
             // Callbacks for the LitTreeView
-            this.DragMotion += OnDragMotion;
-            this.RowActivated += OnRowActivated;
-            this.DragLeave += OnDragLeave;
+            DragMotion += OnDragMotion;
+            RowActivated += OnRowActivated;
+            DragLeave += OnDragLeave;
             
-            this.Show ();
+            Show ();
         }
 
-        private void RenderColumnPixbufFromBibtexRecord (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+        static void RenderColumnPixbufFromBibtexRecord (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
         {
             if (model != null) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 
-                Gdk.Pixbuf pixbuf = (Gdk.Pixbuf)record.GetCustomDataField ("smallThumbnail");
+                var pixbuf = (Gdk.Pixbuf)record.GetCustomDataField ("smallThumbnail");
                 
                 if ((cell != null) && (record != null)) {
                     (cell as Gtk.CellRendererPixbuf).Pixbuf = pixbuf;
@@ -132,7 +152,7 @@ namespace bibliographer
             }
         }
 
-        private void RenderColumnTextFromBibtexRecord (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+        static void RenderColumnTextFromBibtexRecord (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
         {
             // See here for an example of how you can highlight cells
             // based on something todo with the entry
@@ -141,7 +161,7 @@ namespace bibliographer
             // are missing required fields
             
             if ((model != null) && (column != null) && (column.Title != null)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 if (record != null) {
                     if (record.HasField (column.Title) && column.Title != "Author") {
                         (cell as Gtk.CellRendererText).Text = StringOps.TeXToUnicode (record.GetField (column.Title));
@@ -176,8 +196,8 @@ namespace bibliographer
 
         public int StringCompare (Gtk.TreeModel model, Gtk.TreeIter tia, Gtk.TreeIter tib)
         {
-            BibtexRecord a = (BibtexRecord)model.GetValue (tia, 0);
-            BibtexRecord b = (BibtexRecord)model.GetValue (tib, 0);
+            var a = (BibtexRecord)model.GetValue (tia, 0);
+            var b = (BibtexRecord)model.GetValue (tib, 0);
             string A, B;
             string sortString = "";
             int sortColumn;
@@ -228,8 +248,8 @@ namespace bibliographer
 
         public int StringCompareAuthor (Gtk.TreeModel model, Gtk.TreeIter tia, Gtk.TreeIter tib)
         {
-            BibtexRecord a = (BibtexRecord)model.GetValue (tia, 0);
-            BibtexRecord b = (BibtexRecord)model.GetValue (tib, 0);
+            var a = (BibtexRecord)model.GetValue (tia, 0);
+            var b = (BibtexRecord)model.GetValue (tib, 0);
             string A, B;
             if (a != null)
                 if (a.GetAuthors ().Count > 0)
@@ -253,7 +273,7 @@ namespace bibliographer
         {
             // Save column states
             int i = 0;
-            foreach (Gtk.TreeViewColumn column in this.Columns) {
+            foreach (Gtk.TreeViewColumn column in Columns) {
                 Config.SetBool ("Columns/" + column.Title + "/visible", column.Visible);
                 Config.SetInt ("Columns/" + column.Title + "/order", i);
                 // Prevent columns from persisting with a width less than 10 pixels
@@ -272,7 +292,7 @@ namespace bibliographer
 
         protected virtual void OnColumnSort (object o, EventArgs a)
         {
-            Gtk.TreeViewColumn col = (Gtk.TreeViewColumn)o;
+            var col = (Gtk.TreeViewColumn)o;
             Debug.WriteLine (5, "OnColumnSort: Column ID is {0} and {1}", col.SortColumnId, col.SortOrder.ToString ());
             
             int sortColumn;
@@ -291,19 +311,19 @@ namespace bibliographer
             Gtk.TreeIter iter;
             BibtexRecord record;
             
-            if (!this.Model.GetIter (out iter, args.Path)) {
+            if (!Model.GetIter (out iter, args.Path)) {
                 Debug.WriteLine (5, "Failed to open record because of GetIter faliure");
                 return;
             }
-            record = (BibtexRecord)this.Model.GetValue (iter, 0);
+            record = (BibtexRecord)Model.GetValue (iter, 0);
             string uriString = record.GetURI ();
-            if (uriString == null || uriString == "") {
-                Debug.WriteLine (5, "Selected record does not have a URI field");
-                return;
-            }
-            Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri (uriString);
+			if (string.IsNullOrEmpty (uriString)) {
+				Debug.WriteLine (5, "Selected record does not have a URI field");
+				return;
+			}
+            var uri = new Gnome.Vfs.Uri (uriString);
             
-            GLib.List list = new GLib.List (typeof(String));
+            var list = new GLib.List (typeof(String));
             list.Append (uriString);
             if (System.IO.File.Exists (Gnome.Vfs.Uri.GetLocalPathFromUri (uriString))) {
                 Gnome.Vfs.MimeApplication app = Gnome.Vfs.Mime.GetDefaultApplication (uri.MimeType.Name);
@@ -311,7 +331,7 @@ namespace bibliographer
                     app.Launch (list);
                 return;
             } else {
-                Gtk.MessageDialog md = new Gtk.MessageDialog ((Gtk.Window)this.Toplevel, Gtk.DialogFlags.DestroyWithParent, Gtk.MessageType.Error, Gtk.ButtonsType.Close, "Error loading associated file:\n" + Gnome.Vfs.Uri.GetLocalPathFromUri (uriString));
+                var md = new Gtk.MessageDialog ((Gtk.Window)Toplevel, Gtk.DialogFlags.DestroyWithParent, Gtk.MessageType.Error, Gtk.ButtonsType.Close, "Error loading associated file:\n" + Gnome.Vfs.Uri.GetLocalPathFromUri (uriString));
                 //int result = md.Run ();
                 md.Run ();
                 md.Destroy ();
@@ -321,7 +341,7 @@ namespace bibliographer
 
         protected virtual void OnDragLeave (object o, Gtk.DragLeaveArgs args)
         {
-            this.UnsetRowsDragDest ();
+            UnsetRowsDragDest ();
         }
 
         protected virtual void OnDragMotion (object o, Gtk.DragMotionArgs args)
@@ -330,10 +350,10 @@ namespace bibliographer
             
             Gtk.TreePath path;
             Gtk.TreeViewDropPosition drop_position;
-            if (this.GetDestRowAtPos (args.X, args.Y, out path, out drop_position)) {
-                this.SetDragDestRow (path, Gtk.TreeViewDropPosition.IntoOrAfter);
+            if (GetDestRowAtPos (args.X, args.Y, out path, out drop_position)) {
+                SetDragDestRow (path, Gtk.TreeViewDropPosition.IntoOrAfter);
             } else
-                this.UnsetRowsDragDest ();
+                UnsetRowsDragDest ();
         }
         
         

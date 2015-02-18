@@ -1,22 +1,40 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
-
-using System;
+//
+//  BibliographerChooseColumns.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 namespace bibliographer
 {
-    public partial class BibliographerChooseColumns : Gtk.Dialog
+    public sealed partial class BibliographerChooseColumns : Gtk.Dialog
     {
 
         public BibliographerChooseColumns ()
         {
-            this.Build ();
+            Build ();
         }
 
         public void ConstructDialog (Gtk.TreeViewColumn[] columns)
         {
-            int rows = 5;
+            const int rows = 5;
             int i = 0;
             Gtk.VBox vbox;
             vbox = new Gtk.VBox ();
@@ -46,11 +64,11 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnCheckButtonClicked (object o, System.EventArgs e)
+        static void OnCheckButtonClicked (object o, System.EventArgs e)
         {
-            Gtk.CheckButton checkbutton = (Gtk.CheckButton)o;
+            var checkbutton = (Gtk.CheckButton)o;
             
-            Gtk.TreeViewColumn column = (Gtk.TreeViewColumn)checkbutton.Data["column"];
+            var column = (Gtk.TreeViewColumn)checkbutton.Data["column"];
             
             column.Visible = checkbutton.Active;
             if (Config.KeyExists ("Columns/" + column.Title + "/width"))

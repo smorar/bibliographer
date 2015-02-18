@@ -1,31 +1,48 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  ThumbGen.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
 
 using System;
 using Gdk;
-using Gtk;
-using Gnome;
-using Gnome.Vfs;
 using libbibby;
 
 namespace bibliographer
 {
 
 
-    public class ThumbGen
+    public static class ThumbGen
     {
 
         public static Pixbuf Gen (string uriString)
         {
             // No URI, so just exit
-            if (!(uriString == null || uriString == "")) {
+            if (!(string.IsNullOrEmpty (uriString))) {
                 // Thumbnail not cached, generate and then cache :)
-                Gnome.Vfs.Uri uri = new Gnome.Vfs.Uri (uriString);
-                Gnome.Vfs.MimeType mimeType = new Gnome.Vfs.MimeType (uri);
-                Gnome.ThumbnailFactory thumbFactory = new Gnome.ThumbnailFactory (Gnome.ThumbnailSize.Normal);
+                var uri = new Gnome.Vfs.Uri (uriString);
+                var mimeType = new Gnome.Vfs.MimeType (uri);
+                var thumbFactory = new Gnome.ThumbnailFactory (Gnome.ThumbnailSize.Normal);
 
-                if (thumbFactory.CanThumbnail (uriString, mimeType.Name, System.DateTime.Now)) {
+                if (thumbFactory.CanThumbnail (uriString, mimeType.Name, DateTime.Now)) {
                     //      System.Console.WriteLine("Generating a thumbnail");
                     return thumbFactory.GenerateThumbnail (uriString, mimeType.Name);
                 } else {
@@ -42,7 +59,7 @@ namespace bibliographer
                     string iconPath = iconInfo.Filename;
                     if (iconPath != null) {
                         Debug.WriteLine (5, "IconPath: {0}", iconPath);
-                        return new Gdk.Pixbuf (iconPath);
+                        return new Pixbuf (iconPath);
                     } else {
                         // just go blank
                         return null;
@@ -58,15 +75,15 @@ namespace bibliographer
             Pixbuf smallThumbnail, largeThumbnail;
             string cacheKey;
 
-            if ((record.HasCustomDataField ("smallThumbnail") == false) || (record.HasCustomDataField ("largeThumbnail") == false)) {
+            if ((!record.HasCustomDataField ("smallThumbnail")) || (!record.HasCustomDataField ("largeThumbnail"))) {
                 // No thumbnail - so generate it and index
 
                 if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
                     cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                     record.SetCustomDataField ("cacheKey", cacheKey);
 
-                    largeThumbnail = Gen (record.GetURI ().ToString ());
-                    smallThumbnail = ((Pixbuf) largeThumbnail.Clone()).ScaleSimple (20, 20, Gdk.InterpType.Bilinear);
+                    largeThumbnail = Gen (record.GetURI ());
+                    smallThumbnail = ((Pixbuf) largeThumbnail.Clone()).ScaleSimple (20, 20, InterpType.Bilinear);
 
                     largeThumbnail.Save (Cache.Filename("small_thumb",cacheKey), "png");
                     smallThumbnail.Save (Cache.Filename("large_thumb",cacheKey), "png");
@@ -79,24 +96,24 @@ namespace bibliographer
                 cacheKey = (string)record.GetCustomDataField ("cacheKey");
 
                 // Load cachekey if it hasn't been loaded yet
-                if (record.HasCustomDataField ("smallThumbnail") == false) {
-                    try {
-                        record.SetCustomDataField ("smallThumbnail", new Gdk.Pixbuf (Cache.CachedFile ("small_thumb", cacheKey)));
-                    } catch (Exception) {
-                        // probably a corrupt cache file
-                        // delete it and try again :-)
-                        Cache.RemoveFromCache ("small_thumb", cacheKey);
-                    }
-                }
-                if (record.HasCustomDataField ("largeThumbnail") == false) {
-                    try {
-                        record.SetCustomDataField ("largeThumbnail", new Gdk.Pixbuf (Cache.CachedFile ("large_thumb", cacheKey)));
-                    } catch (Exception) {
-                        // probably a corrupt cache file
-                        // delete it and try again :-)
-                        Cache.RemoveFromCache ("large_thumb", cacheKey);
-                    }
-                }
+				if (!record.HasCustomDataField ("smallThumbnail")) {
+					try {
+						record.SetCustomDataField ("smallThumbnail", new Pixbuf (Cache.CachedFile ("small_thumb", cacheKey)));
+					} catch (Exception) {
+						// probably a corrupt cache file
+						// delete it and try again :-)
+						Cache.RemoveFromCache ("small_thumb", cacheKey);
+					}
+				}
+				if (!record.HasCustomDataField ("largeThumbnail")) {
+					try {
+						record.SetCustomDataField ("largeThumbnail", new Pixbuf (Cache.CachedFile ("large_thumb", cacheKey)));
+					} catch (Exception) {
+						// probably a corrupt cache file
+						// delete it and try again :-)
+						Cache.RemoveFromCache ("large_thumb", cacheKey);
+					}
+				}
             }
         }
     }

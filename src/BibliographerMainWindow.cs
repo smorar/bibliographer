@@ -1,10 +1,30 @@
-// Copyright 2005-2010 Sameer Morar <smorar@gmail.com>, Carl Hultquist <chultquist@gmail.com>
-// This code is licensed under the GPLv2 license. Please see the COPYING file
-// for more information
+//
+//  BibliographerMainWindow.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//       Carl Hultquist <chultquist@gmail.com>
+//
+//  Copyright (c) 2005-2015 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+
 
 using System;
 using System.Collections;
-using System.Threading;
 using libbibby;
 
 namespace bibliographer
@@ -12,52 +32,52 @@ namespace bibliographer
 
     public partial class BibliographerMainWindow : Gtk.Window
     {
-        private Gtk.Viewport viewportRequired;
-        private Gtk.Viewport viewportOptional;
-        private Gtk.Viewport viewportOther;
-        private Gtk.Viewport viewportBibliographerData;
+        Gtk.Viewport viewportRequired;
+        Gtk.Viewport viewportOptional;
+        Gtk.Viewport viewportOther;
+        Gtk.Viewport viewportBibliographerData;
 
-        private bibliographer.SearchEntry searchEntry;
-        private bibliographer.LitTreeView litTreeView;
-        private bibliographer.SidePaneTreeView sidePaneTreeView;
+        SearchEntry searchEntry;
+        LitTreeView litTreeView;
+        SidePaneTreeView sidePaneTreeView;
 
-        private BibtexRecords bibtexRecords;
-        private SidePaneTreeStore sidePaneStore;
-        private LitListStore litStore;
-        private Gtk.TreeModelFilter modelFilter;
-        private Gtk.TreeModelFilter fieldFilter;
+        BibtexRecords bibtexRecords;
+        SidePaneTreeStore sidePaneStore;
+        LitListStore litStore;
+        Gtk.TreeModelFilter modelFilter;
+        Gtk.TreeModelFilter fieldFilter;
 
-        private bool modified;
-        private bool new_selected_record;
-        private string file_name;
-        private string application_name;
+        bool modified;
+        bool new_selected_record;
+        string file_name;
+        string application_name;
 
         public AlterationMonitor am;
 
-        private static Gtk.TargetEntry[] target_table = new Gtk.TargetEntry[] { new Gtk.TargetEntry ("text/uri-list", 0, 0) };
+        static Gtk.TargetEntry[] target_table = { new Gtk.TargetEntry ("text/uri-list", 0, 0) };
 
         class FieldEntry : Gtk.Entry
         {
             public string field = "";
         }
 
-        class FieldButton : Gtk.Button
+        sealed class FieldButton : Gtk.Button
         {
             public string field = "";
         }
 
         public BibliographerMainWindow () : base(Gtk.WindowType.Toplevel)
         {
-            System.Reflection.AssemblyTitleAttribute title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
+            var title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
             application_name = title.Title;
 
-            this.Build ();
+            Build ();
 
             am = new AlterationMonitor ();
 
             // Set up main window defaults
-            this.WidthRequest = 600;
-            this.HeightRequest = 420;
+            WidthRequest = 600;
+            HeightRequest = 420;
 
             int width, height;
 
@@ -69,12 +89,12 @@ namespace bibliographer
                 height = Config.GetInt ("window_height");
             else
                 height = 420;
-            this.Resize (width, height);
+            Resize (width, height);
             if (Config.KeyExists ("window_maximized"))
-                if (Config.GetBool ("window_maximized") == true)
-                    this.Maximize ();
+			if (Config.GetBool ("window_maximized"))
+				Maximize ();
 
-            this.SetPosition (Gtk.WindowPosition.Center);
+            SetPosition (Gtk.WindowPosition.Center);
 
             viewportBibliographerData = new Gtk.Viewport ();
             viewportOptional = new Gtk.Viewport ();
@@ -125,15 +145,15 @@ namespace bibliographer
             if (Config.KeyExists ("SideBar/visible")) {
                 // Can't figure out how to get or set MenuItem viewSideBar's bool state, so
                 // we just fire off an Activate event here instead.
-                if (Config.GetBool ("SideBar/visible") == true) {
+                if (Config.GetBool ("SideBar/visible")) {
                     SidebarAction.Activate ();
                 }
             }
 
             // Read cached sidePane width
             if (Config.KeyExists ("SideBar/width")) {
-                Gtk.HPaned hpane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
-                hpane.Position = Config.GetInt ("SideBar/width");
+                var sidePane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
+                sidePane.Position = Config.GetInt ("SideBar/width");
             }
 
             // Set up comboRecordType items
@@ -144,7 +164,7 @@ namespace bibliographer
             Gtk.Drag.DestSet (litTreeView, Gtk.DestDefaults.All, target_table, Gdk.DragAction.Copy);
 
             // Search entry
-            searchEntry = new bibliographer.SearchEntry ();
+            searchEntry = new SearchEntry ();
             searchEntry.Changed += OnFilterEntryChanged;
             searchEntry.BorderWidth = 12;
             searchHbox.Add (searchEntry);
@@ -158,10 +178,10 @@ namespace bibliographer
             ReconstructTabs ();
             ReconstructDetails ();
             // Now that we are configured, show the window
-            this.Show ();
+            Show ();
         }
 
-        private void BibtexGenerateKeySetStatus ()
+        void BibtexGenerateKeySetStatus ()
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
@@ -169,11 +189,11 @@ namespace bibliographer
             // Get selected bibtex record
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
 
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 // Record has Author and Year fields
                 if (record.HasField ("author") && record.HasField ("year")) {
                     // Author and year fields are not empty
-                    if (!(record.GetField ("author") == "" || record.GetField ("author") == null) && !(record.GetField ("year") == "" || record.GetField ("year") == null)) {
+                    if (!(string.IsNullOrEmpty (record.GetField ("author"))) && !(string.IsNullOrEmpty (record.GetField ("year")))) {
                         // Bibtex Entry is empty
                         if (entryReqBibtexKey.Text == "" | entryReqBibtexKey.Text == null)
                             buttonBibtexKeyGenerate.Sensitive = true;
@@ -191,22 +211,22 @@ namespace bibliographer
                 buttonBibtexKeyGenerate.Sensitive = false;
         }
 
-        private bool FieldFilterListStore (Gtk.TreeModel model, Gtk.TreeIter iter)
+        bool FieldFilterListStore (Gtk.TreeModel model, Gtk.TreeIter iter)
         {
             // TODO: add support for searching certain columns eg. Author / Journal / Title etc...
             // This is possible by implimenting a method such as record.searchField(field, text)
 
-            BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+            var record = (BibtexRecord)model.GetValue (iter, 0);
 
             Gtk.TreeIter iterFilter;
-            Gtk.TreeModel modelFilter;
+            Gtk.TreeModel modelFilterListStore;
 
-            if (sidePaneTreeView.Selection.GetSelected (out modelFilter, out iterFilter)) {
+            if (sidePaneTreeView.Selection.GetSelected (out modelFilterListStore, out iterFilter)) {
                 Gtk.TreeIter iterParent;
                 string column, filter;
-                if (((SidePaneTreeStore)modelFilter).IterParent (out iterParent, iterFilter)) {
-                    column = ((SidePaneTreeStore)modelFilter).GetValue (iterParent, 0) as string;
-                    filter = ((SidePaneTreeStore)modelFilter).GetValue (iterFilter, 0) as string;
+                if (((SidePaneTreeStore)modelFilterListStore).IterParent (out iterParent, iterFilter)) {
+					column = ((SidePaneTreeStore)modelFilterListStore).GetValue (iterParent, 0) as string;
+					filter = ((SidePaneTreeStore)modelFilterListStore).GetValue (iterFilter, 0) as string;
                     // Deal with authors
                     if (column.ToLower () == "author") {
                         //string authorstring = record.GetField(column.ToLower());
@@ -214,18 +234,12 @@ namespace bibliographer
                             StringArrayList authors = record.GetAuthors ();
                             if (authors == null)
                                 authors = new StringArrayList ();
-                            if (authors.Contains (filter))
-                                return true;
-                            else
-                                return false;
+							return authors.Contains (filter);
                         }
                         // Deal with other fields
                     } else {
                         if (record != null) {
-                            if (record.GetField (column.ToLower ()) == filter)
-                                return true;
-                            else
-                                return false;
+                            return record.GetField (column.ToLower ()) == filter;
                         }
                     }
                     //System.Console.WriteLine(column + " -> " + filter);
@@ -235,7 +249,7 @@ namespace bibliographer
             return true;
         }
 
-        private bool ModelFilterListStore (Gtk.TreeModel model, Gtk.TreeIter iter)
+        bool ModelFilterListStore (Gtk.TreeModel model, Gtk.TreeIter iter)
         {
             BibtexSearchField sfield;
             sfield = BibtexSearchField.All;
@@ -248,24 +262,24 @@ namespace bibliographer
                 }
             }
 
-            if (searchEntry.InnerEntry.Text == "" || searchEntry.InnerEntry.Text == null)
-                return true;
+			if (string.IsNullOrEmpty (searchEntry.InnerEntry.Text))
+				return true;
 
-            BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+            var record = (BibtexRecord)model.GetValue (iter, 0);
 
             if (record != null) {
-                if (record.SearchRecord (searchEntry.InnerEntry.Text, sfield) == true)
-                    return true;
-                else {
-                    if ((sfield == BibtexSearchField.All) || (sfield == BibtexSearchField.Article)) {
-                        Tri index = (Tri)record.GetCustomDataField ("indexData");
-                        if (index != null) {
-                            //System.Console.WriteLine("Index tri data: " + index.ToString());
-                            if (index.IsSubString (searchEntry.InnerEntry.Text))
-                                return true;
-                        }
-                    }
-                }
+				if (record.SearchRecord (searchEntry.InnerEntry.Text, sfield))
+					return true;
+				else {
+					if ((sfield == BibtexSearchField.All) || (sfield == BibtexSearchField.Article)) {
+						var index = (Tri)record.GetCustomDataField ("indexData");
+						if (index != null) {
+							//System.Console.WriteLine("Index tri data: " + index.ToString());
+							if (index.IsSubString (searchEntry.InnerEntry.Text))
+								return true;
+						}
+					}
+				}
             }
             return false;
         }
@@ -280,7 +294,7 @@ namespace bibliographer
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 recordIcon.Pixbuf = (Gdk.Pixbuf)record.GetCustomDataField ("largeThumbnail");
 
                 string text;
@@ -306,10 +320,10 @@ namespace bibliographer
             viewportBibliographerData.Forall (viewportBibliographerData.Remove);
 
             // step 2: add stuff to the viewports
-            Gtk.VBox req = new Gtk.VBox (false, 5);
-            Gtk.VBox opt = new Gtk.VBox (false, 5);
-            Gtk.VBox other = new Gtk.VBox (false, 5);
-            Gtk.VBox bData = new Gtk.VBox (false, 5);
+            var req = new Gtk.VBox (false, 5);
+            var opt = new Gtk.VBox (false, 5);
+            var other = new Gtk.VBox (false, 5);
+            var bData = new Gtk.VBox (false, 5);
 
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
@@ -327,14 +341,14 @@ namespace bibliographer
                 }
                 //  Console.WriteLine("Combo box active: " + comboRecordType.Active);
 
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 uint numItems;
                 BibtexRecordType recordType = null;
                 if (BibtexRecordTypeLibrary.Contains (record.RecordType)) {
                     recordType = BibtexRecordTypeLibrary.Get (record.RecordType);
 
                     // viewportRequired
-                    Gtk.Table tableReq = new Gtk.Table (0, 2, false);
+                    var tableReq = new Gtk.Table (0, 2, false);
                     // TODO: process OR type fields
                     numItems = 0;
                     for (int i = 1; i < recordType.fields.Count; i++) {
@@ -345,7 +359,7 @@ namespace bibliographer
                                 if (subNumItems > 1) {
                                     numItems += 2;
                                     tableReq.NRows = numItems;
-                                    Gtk.Label orLabel = new Gtk.Label ();
+                                    var orLabel = new Gtk.Label ();
                                     orLabel.Markup = "<b>or</b>";
                                     tableReq.Attach (orLabel, 0, 2, numItems - 2, numItems - 1, 0, 0, 5, 5);
                                 } else {
@@ -354,7 +368,7 @@ namespace bibliographer
                                 }
                                 string fieldName = recordType.fields[j];
                                 tableReq.Attach (new Gtk.Label (fieldName), 0, 1, numItems - 1, numItems, 0, 0, 5, 5);
-                                FieldEntry textEntry = new FieldEntry ();
+                                var textEntry = new FieldEntry ();
                                 if (record.HasField (fieldName))
                                     textEntry.Text = record.GetField (fieldName);
                                 tableReq.Attach (textEntry, 1, 2, numItems - 1, numItems, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 5, 5);
@@ -368,14 +382,14 @@ namespace bibliographer
                     req.PackStart (tableReq, false, false, 5);
 
                     //  viewportOptional
-                    Gtk.Table tableOpt = new Gtk.Table (0, 2, false);
+                    var tableOpt = new Gtk.Table (0, 2, false);
                     numItems = 0;
                     for (int i = 0; i < recordType.fields.Count; i++) {
                         if (recordType.optional[i] == 0) {
                             numItems++;
                             tableOpt.NRows = numItems;
                             tableOpt.Attach (new Gtk.Label (recordType.fields[i]), 0, 1, numItems - 1, numItems, 0, 0, 5, 5);
-                            FieldEntry textEntry = new FieldEntry ();
+                            var textEntry = new FieldEntry ();
                             if (record.HasField (recordType.fields[i]))
                                 textEntry.Text = record.GetField (recordType.fields[i]);
                             tableOpt.Attach (textEntry, 1, 2, numItems - 1, numItems, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 5, 5);
@@ -387,7 +401,7 @@ namespace bibliographer
                 }
 
                 // viewportOther
-                Gtk.Table tableOther = new Gtk.Table (0, 3, false);
+                var tableOther = new Gtk.Table (0, 3, false);
                 numItems = 0;
                 for (int i = 0; i < record.RecordFields.Count; i++) {
                     // doing this the hard way because we want to
@@ -410,19 +424,19 @@ namespace bibliographer
                             }
                         numItems++;
                         tableOther.NRows = numItems;
-                        Gtk.Label fieldLabel = new Gtk.Label ();
+                        var fieldLabel = new Gtk.Label ();
                         if (inFieldLibrary)
                             fieldLabel.Text = fieldName;
                         else
                             fieldLabel.Markup = "<span foreground=\"red\">" + fieldName + "</span>";
                         tableOther.Attach (fieldLabel, 0, 1, numItems - 1, numItems, 0, 0, 5, 5);
-                        FieldEntry textEntry = new FieldEntry ();
+                        var textEntry = new FieldEntry ();
                         if (record.HasField (fieldName))
                             textEntry.Text = record.GetField (fieldName);
                         textEntry.field = fieldName;
                         textEntry.Changed += OnFieldChanged;
                         tableOther.Attach (textEntry, 1, 2, numItems - 1, numItems, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 5, 5);
-                        FieldButton removeButton = new FieldButton ();
+                        var removeButton = new FieldButton ();
                         removeButton.Label = "Remove field";
                         removeButton.field = fieldName;
                         removeButton.Clicked += OnFieldRemoved;
@@ -459,27 +473,27 @@ namespace bibliographer
                     comboAdded = true;
                 }
                 if (comboAdded) {
-                    Gtk.HBox hbox = new Gtk.HBox ();
+                    var hbox = new Gtk.HBox ();
                     hbox.PackStart (new Gtk.Label ("Add extra field:"), false, false, 5);
                     hbox.PackStart (extraFields, false, false, 5);
                     other.PackStart (hbox, false, false, 5);
                     extraFields.Changed += OnExtraFieldAdded;
                 } else {
-                    Gtk.Label noExtraFields = new Gtk.Label ();
+                    var noExtraFields = new Gtk.Label ();
                     noExtraFields.Markup = "<i>No extra fields</i>";
                     other.PackStart (noExtraFields, false, false, 5);
                 }
 
                 // viewportBibliographerData
-                Gtk.HBox uriHBox = new Gtk.HBox ();
+                var uriHBox = new Gtk.HBox ();
                 uriHBox.PackStart (new Gtk.Label ("Associated file:"), false, false, 5);
-                FieldEntry uriEntry = new FieldEntry ();
+                var uriEntry = new FieldEntry ();
                 if (record.HasURI())
                     uriEntry.Text = record.GetURI();
                 uriEntry.field = BibtexRecord.BibtexFieldName.URI;
                 uriEntry.Changed += OnFieldChanged;
                 uriHBox.PackStart (uriEntry, false, false, 5);
-                Gtk.Button uriBrowseButton = new Gtk.Button ("Browse");
+                var uriBrowseButton = new Gtk.Button ("Browse");
                 uriBrowseButton.Activated += OnURIBrowseClicked;
                 uriBrowseButton.Clicked += OnURIBrowseClicked;
                 uriHBox.PackStart (uriBrowseButton, false, false, 5);
@@ -504,16 +518,16 @@ namespace bibliographer
             viewportBibliographerData.ShowAll ();
         }
 
-        private void FileUnmodified ()
+        void FileUnmodified ()
         {
-            this.Title = application_name + " - " + file_name;
+            Title = application_name + " - " + file_name;
             modified = false;
         }
 
-        private void FileModified ()
+        void FileModified ()
         {
             //System.Console.WriteLine ("File modified setting file_name: {0}", file_name);
-            this.Title = application_name + " - " + file_name + "*";
+            Title = application_name + " - " + file_name + "*";
             modified = true;
         }
 
@@ -539,7 +553,7 @@ namespace bibliographer
             UpdateFileHistory (file_name);
         }
 
-        private Gtk.ResponseType FileSave ()
+        Gtk.ResponseType FileSave ()
         {
             if (file_name != "Untitled.bib") {
                 //BibtexListStoreParser btparser = new BibtexListStoreParser(
@@ -554,9 +568,9 @@ namespace bibliographer
             }
         }
 
-        private Gtk.ResponseType FileSaveAs ()
+        Gtk.ResponseType FileSaveAs ()
         {
-            Gtk.FileChooserDialog fileSaveDialog = new Gtk.FileChooserDialog ("Save Bibtex file...", this, Gtk.FileChooserAction.Save, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
+            var fileSaveDialog = new Gtk.FileChooserDialog ("Save Bibtex file...", this, Gtk.FileChooserAction.Save, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
 
             // TODO: filter for *.bib files only :)
             fileSaveDialog.Filter = new Gtk.FileFilter ();
@@ -565,7 +579,7 @@ namespace bibliographer
             if (Config.KeyExists ("bib_browse_path"))
                 fileSaveDialog.SetCurrentFolder (Config.GetString ("bib_browse_path"));
 
-            Gtk.ResponseType response = (Gtk.ResponseType)fileSaveDialog.Run ();
+            var response = (Gtk.ResponseType)fileSaveDialog.Run ();
 
             if (response == Gtk.ResponseType.Ok) {
                 Config.SetString ("bib_browse_path", fileSaveDialog.CurrentFolder);
@@ -582,7 +596,7 @@ namespace bibliographer
             return Gtk.ResponseType.Cancel;
         }
 
-        private void InsertFilesInDir (object o)
+        void InsertFilesInDir (object o)
         {
             string dir = (string)o;
             string[] files = System.IO.Directory.GetFiles (dir);
@@ -593,24 +607,24 @@ namespace bibliographer
                 while (Gtk.Application.EventsPending ())
                     Gtk.Application.RunIteration ();
                 string uri = Gnome.Vfs.Uri.GetUriFromLocalPath (file);
-                if (bibtexRecords.HasURI (uri) == false) {
-                    Debug.WriteLine (5, "Adding new record with URI: {0}", uri);
-                    BibtexRecord record = new BibtexRecord ();
-                    bibtexRecords.Add (record);
+				if (!bibtexRecords.HasURI (uri)) {
+					Debug.WriteLine (5, "Adding new record with URI: {0}", uri);
+					var record = new BibtexRecord ();
+					bibtexRecords.Add (record);
 
-                    // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
-                    //System.Console.WriteLine("Setting URI: {0}", uri);
-                    record.SetURI (uri);
-                }
+					// Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
+					//System.Console.WriteLine("Setting URI: {0}", uri);
+					record.SetURI (uri);
+				}
             }
         }
 
-        private void UpdateRecordTypeCombo ()
+        void UpdateRecordTypeCombo ()
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 string recordType = record.RecordType;
                 new_selected_record = true;
                 if (BibtexRecordTypeLibrary.Contains (recordType))
@@ -625,7 +639,7 @@ namespace bibliographer
             }
         }
 
-        private void UpdateFileHistory (string filename)
+        void UpdateFileHistory (string filename)
         {
             if (!Config.KeyExists ("max_file_history_count"))
                 Config.SetInt ("max_file_history_count", 5);
@@ -635,7 +649,7 @@ namespace bibliographer
                 max = 0;
                 Config.SetInt ("max_file_history_count", max);
             }
-            System.String[] tempHistory = (System.String[])Config.GetKey ("file_history");
+            var tempHistory = (String[])Config.GetKey ("file_history");
             ArrayList history;
             if (tempHistory == null)
                 history = new ArrayList ();
@@ -668,20 +682,20 @@ namespace bibliographer
             UpdateMenuFileHistory ();
         }
 
-        private void UpdateMenuFileHistory ()
+        void UpdateMenuFileHistory ()
         {
             Debug.WriteLine (5, "File History - doing update...");
 
-            Gtk.Widget[] menus = (Gtk.Widget[])menuBar.Children;
+            var menus = menuBar.Children;
             foreach (Gtk.Widget menu in menus) {
-                Gtk.MenuItem menu_ = (Gtk.MenuItem)menu;
+                var menu_ = (Gtk.MenuItem)menu;
                 if (menu_.Name == "FileAction") {
-                    Gtk.Menu file_menu = (Gtk.Menu)menu_.Submenu;
-                    Gtk.Widget[] file_menu_items = (Gtk.Widget[])file_menu.Children;
+                    var file_menu = (Gtk.Menu)menu_.Submenu;
+                    var file_menu_items = file_menu.Children;
                     foreach (Gtk.Widget file_menu_item in file_menu_items) {
-                        Gtk.MenuItem file_menu_item_ = (Gtk.MenuItem)file_menu_item;
+                        var file_menu_item_ = (Gtk.MenuItem)file_menu_item;
                         if (file_menu_item_.Name == "RecentFilesAction") {
-                            Gtk.Menu recentFilesMenu = (Gtk.Menu)file_menu_item_.Submenu;
+                            var recentFilesMenu = (Gtk.Menu)file_menu_item_.Submenu;
                             // step 1: clear the menu
                             foreach (Gtk.Widget w in recentFilesMenu) {
                                 recentFilesMenu.Remove (w);
@@ -692,14 +706,14 @@ namespace bibliographer
                             if (Config.KeyExists ("max_file_history_count") && Config.KeyExists ("file_history")) {
                                 object o = Config.GetKey ("file_history");
                                 Debug.WriteLine (5, "{0}", o.GetType ());
-                                System.String[] history = (System.String[])o;
+                                var history = (String[])o;
                                 for (int i = 0; i < history.Length; i++) {
                                     // Workaround for clearing history - check if history item is not an empty string
                                     if (history[i] != "") {
-                                        string label = string.Format ("_{0} ", i + 1) + (string)history[i];
-                                        Gtk.MenuItem item = new Gtk.MenuItem (label);
+                                        string label = string.Format ("_{0} ", i + 1) + history [i];
+                                        var item = new Gtk.MenuItem (label);
                                         item.Activated += OnFileHistoryActivate;
-                                        item.Data.Add ("i", (System.IntPtr)i);
+                                        item.Data.Add ("i", (IntPtr)i);
                                         recentFilesMenu.Append (item);
                                         gotOne = true;
                                     }
@@ -707,13 +721,13 @@ namespace bibliographer
                             }
                             if (gotOne) {
                                 recentFilesMenu.Append (new Gtk.SeparatorMenuItem ());
-                                Gtk.AccelGroup accel = new Gtk.AccelGroup ();
-                                Gtk.ImageMenuItem clear = new Gtk.ImageMenuItem ("gtk-clear", accel);
+                                var accel = new Gtk.AccelGroup ();
+                                var clear = new Gtk.ImageMenuItem ("gtk-clear", accel);
 
                                 clear.Activated += OnClearFileHistory;
                                 recentFilesMenu.Append (clear);
                             } else {
-                                Gtk.MenuItem none = new Gtk.MenuItem ("(none)");
+                                var none = new Gtk.MenuItem ("(none)");
                                 // want to disable this somehow...
                                 //none. = false;
                                 recentFilesMenu.Append (none);
@@ -726,15 +740,15 @@ namespace bibliographer
             }
         }
 
-        private void Quit ()
+        void Quit ()
         {
             litTreeView.SaveColumnsState ();
 
             // Save sidebar visibility
             Config.SetBool ("SideBar/visible", scrolledwindowSidePane.Visible);
-            Gtk.HPaned hpane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
+            var sidePane = (Gtk.HPaned)scrolledwindowSidePane.Parent;
             // Save sidebar width
-            Config.SetInt ("SideBar/width", hpane.Position);
+            Config.SetInt ("SideBar/width", sidePane.Position);
 
             if (IsModified ()) {
                 if (!ProcessModifiedData ())
@@ -744,7 +758,7 @@ namespace bibliographer
             Gtk.Application.Quit ();
         }
 
-        private bool ProcessModifiedData ()
+        bool ProcessModifiedData ()
         {
             // display a dialog asking the user if they
             // want to save their changes (offering them
@@ -752,11 +766,11 @@ namespace bibliographer
             // FileSave and return true. If they choose
             // No, just return true. If they choose
             // Cancel, return false
-            Gtk.MessageDialog dialog = new Gtk.MessageDialog (this, Gtk.DialogFlags.Modal, Gtk.MessageType.Question, Gtk.ButtonsType.None, "{0} has been modified. Do you want to save it?", file_name);
+            var dialog = new Gtk.MessageDialog (this, Gtk.DialogFlags.Modal, Gtk.MessageType.Question, Gtk.ButtonsType.None, "{0} has been modified. Do you want to save it?", file_name);
             dialog.AddButton ("Yes", Gtk.ResponseType.Yes);
             dialog.AddButton ("No", Gtk.ResponseType.No);
             dialog.AddButton ("Cancel", Gtk.ResponseType.Cancel);
-            Gtk.ResponseType msg_result = (Gtk.ResponseType)dialog.Run ();
+            var msg_result = (Gtk.ResponseType)dialog.Run ();
             dialog.Destroy ();
 
             if (msg_result == Gtk.ResponseType.Yes) {
@@ -768,7 +782,7 @@ namespace bibliographer
                 return true; else if (msg_result == Gtk.ResponseType.Cancel)
                 return false;
             else {
-                Gtk.MessageDialog error = new Gtk.MessageDialog (this, Gtk.DialogFlags.Modal, Gtk.MessageType.Error, Gtk.ButtonsType.Ok, "An unexpected error occurred in processing your response, please contact the developers!");
+                var error = new Gtk.MessageDialog (this, Gtk.DialogFlags.Modal, Gtk.MessageType.Error, Gtk.ButtonsType.Ok, "An unexpected error occurred in processing your response, please contact the developers!");
                 error.Run ();
                 error.Destroy ();
                 return false;
@@ -776,7 +790,7 @@ namespace bibliographer
             return false;
         }
 
-        private bool IsModified ()
+        bool IsModified ()
         {
             return modified;
         }
@@ -785,18 +799,18 @@ namespace bibliographer
            CALLBACKS
            ----------------------------------------------------------------- */
 
-        protected virtual void OnBibtexRecordURIAdded (object o, EventArgs a)
+        protected void OnBibtexRecordURIAdded (object o, EventArgs a)
         {
-            BibtexRecord record = (BibtexRecord)o;
+            var record = (BibtexRecord)o;
             if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI added");
                 // Add record to get re-indexed
                 am.SubscribeRecord (record);
             }
         }
-        protected virtual void OnBibtexRecordURIModified (object o, EventArgs a)
+        protected void OnBibtexRecordURIModified (object o, EventArgs a)
         {
-            BibtexRecord record = (BibtexRecord)o;
+            var record = (BibtexRecord)o;
             if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI modified");
                 // Add record to get re-indexed
@@ -804,7 +818,7 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnComboRecordTypeChanged (object o, EventArgs a)
+        protected void OnComboRecordTypeChanged (object o, EventArgs a)
         {
             // the next check stops bad things from happening when
             // the user selects a new record in the list view,
@@ -842,27 +856,27 @@ namespace bibliographer
             ReconstructDetails ();
         }
 
-        protected virtual void OnSidePaneTreeSelectionChanged (object o, EventArgs a)
+        protected void OnSidePaneTreeSelectionChanged (object o, EventArgs a)
         {
             fieldFilter.Refilter ();
         }
 
-        protected virtual void OnBibtexRecordsModified (object o, EventArgs a)
+        protected void OnBibtexRecordsModified (object o, EventArgs a)
         {
             // Refresh the Article Type field
             FileModified ();
             UpdateRecordTypeCombo ();
         }
 
-        protected virtual void OnExtraFieldAdded (object o, EventArgs a)
+        protected void OnExtraFieldAdded (object o, EventArgs a)
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                Gtk.ComboBox combo = (Gtk.ComboBox)o;
+                var combo = (Gtk.ComboBox)o;
                 Gtk.TreeIter comboIter;
                 if (combo.GetActiveIter (out comboIter)) {
-                    BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                    var record = (BibtexRecord)model.GetValue (iter, 0);
                     record.SetField ((string)combo.Model.GetValue (comboIter, 0), "");
                     ReconstructTabs ();
                     ReconstructDetails ();
@@ -870,38 +884,38 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnFieldChanged (object o, EventArgs a)
+        protected void OnFieldChanged (object o, EventArgs a)
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                FieldEntry entry = (FieldEntry)o;
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var entry = (FieldEntry)o;
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 record.SetField (entry.field, entry.Text);
                 model.EmitRowChanged (model.GetPath (iter), iter);
                 BibtexGenerateKeySetStatus ();
             }
         }
 
-        protected virtual void OnFieldRemoved (object o, EventArgs a)
+        protected void OnFieldRemoved (object o, EventArgs a)
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                FieldButton button = (FieldButton)o;
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var button = (FieldButton)o;
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 record.RemoveField (button.field);
                 ReconstructTabs ();
                 ReconstructDetails ();
             }
         }
 
-        protected virtual void OnFileQuitActivated (object sender, System.EventArgs e)
+        protected void OnFileQuitActivated (object sender, EventArgs e)
         {
             Quit ();
         }
 
-        protected virtual void OnFileNewActivated (object sender, System.EventArgs e)
+        protected void OnFileNewActivated (object sender, EventArgs e)
         {
             if (IsModified ()) {
                 if (!ProcessModifiedData ())
@@ -923,34 +937,34 @@ namespace bibliographer
             FileUnmodified ();
         }
 
-        protected virtual void OnHelpAboutActivated (object sender, System.EventArgs e)
+        protected void OnHelpAboutActivated (object sender, EventArgs e)
         {
-            AboutBox ab = new AboutBox ();
+            var ab = new AboutBox ();
             ab.Run ();
             ab.Destroy ();
         }
 
-        protected virtual void OnEntryReqBibtexKeyChanged (object sender, System.EventArgs e)
+        protected void OnEntryReqBibtexKeyChanged (object sender, EventArgs e)
         {
 
-            Gtk.Entry bibtexEntry = (Gtk.Entry)sender;
+            var bibtexEntry = (Gtk.Entry)sender;
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 record.SetKey (bibtexEntry.Text);
                 model.EmitRowChanged (model.GetPath (iter), iter);
             }
         }
 
-        protected virtual void OnURIBrowseClicked (object o, EventArgs a)
+        protected void OnURIBrowseClicked (object o, EventArgs a)
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
 
-                Gtk.FileChooserDialog fileOpenDialog = new Gtk.FileChooserDialog ("Associate file...", this, Gtk.FileChooserAction.Open, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
+                var fileOpenDialog = new Gtk.FileChooserDialog ("Associate file...", this, Gtk.FileChooserAction.Open, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
 
                 fileOpenDialog.Filter = new Gtk.FileFilter ();
                 fileOpenDialog.Title = "Associate file...";
@@ -964,7 +978,7 @@ namespace bibliographer
                     fileOpenDialog.SetCurrentFolder (Config.GetString ("uri_browse_path"));
                 }
 
-                Gtk.ResponseType result = (Gtk.ResponseType)fileOpenDialog.Run ();
+                var result = (Gtk.ResponseType)fileOpenDialog.Run ();
 
                 if (result == Gtk.ResponseType.Ok) {
                     record.SetField (BibtexRecord.BibtexFieldName.URI, Gnome.Vfs.Uri.GetUriFromLocalPath (fileOpenDialog.Filename));
@@ -977,10 +991,10 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnFileOpenActivated (object o, EventArgs a)
+        protected void OnFileOpenActivated (object o, EventArgs a)
         {
 
-            Gtk.FileChooserDialog fileOpenDialog = new Gtk.FileChooserDialog ("Open Bibtex File...", this, Gtk.FileChooserAction.Open, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
+            var fileOpenDialog = new Gtk.FileChooserDialog ("Open Bibtex File...", this, Gtk.FileChooserAction.Open, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
 
             fileOpenDialog.Filter = new Gtk.FileFilter ();
             fileOpenDialog.Filter.AddPattern ("*.bib");
@@ -989,12 +1003,12 @@ namespace bibliographer
             if (Config.KeyExists ("bib_browse_path"))
                 fileOpenDialog.SetCurrentFolder (Config.GetString ("bib_browse_path"));
 
-            Gtk.ResponseType result = (Gtk.ResponseType)fileOpenDialog.Run ();
+            var result = (Gtk.ResponseType)fileOpenDialog.Run ();
 
             if (result == Gtk.ResponseType.Ok)
                 if (fileOpenDialog.Filename != null) {
                     file_name = fileOpenDialog.Filename;
-                    this.FileOpen (file_name);
+                    FileOpen (file_name);
                     // TODO: Verify document integrity
                     // (search for conflicting bibtexkeys)
                     // (highlite any uncomplete entries)
@@ -1002,32 +1016,32 @@ namespace bibliographer
             fileOpenDialog.Destroy ();
         }
 
-        protected virtual void OnFileSaveActivated (object sender, System.EventArgs e)
+        protected void OnFileSaveActivated (object sender, EventArgs e)
         {
             FileSave ();
         }
 
-        protected virtual void OnFileSaveAsActivated (object sender, System.EventArgs e)
+        protected void OnFileSaveAsActivated (object sender, EventArgs e)
         {
             FileSaveAs ();
         }
 
-        protected virtual void OnFileHistoryActivate (object o, EventArgs a)
+        protected void OnFileHistoryActivate (object o, EventArgs a)
         {
-            Gtk.MenuItem item = (Gtk.MenuItem)o;
-            int index = (int)System.Convert.ToUInt16 ((string)item.Data["i"].ToString ());
+            var item = (Gtk.MenuItem)o;
+            int index = (int)Convert.ToUInt16 ((string)item.Data["i"].ToString ());
             if (Config.KeyExists ("max_file_history_count") && index >= 0 && index < Config.GetInt ("max_file_history_count") && Config.KeyExists ("file_history")) {
-                string[] history = (string[])Config.GetKey ("file_history");
+                var history = (string[])Config.GetKey ("file_history");
                 if (index < history.Length) {
                     Debug.WriteLine (5, "Loading {0}", history[index]);
-                    file_name = (string)history[index];
-                    this.FileOpen (file_name);
+                    file_name = history[index];
+                    FileOpen (file_name);
                     UpdateFileHistory (file_name);
                 }
             }
         }
 
-        protected virtual void OnAddRecordActivated (object sender, System.EventArgs e)
+        protected void OnAddRecordActivated (object sender, EventArgs e)
         {
             Debug.WriteLine (5, "Adding a new record");
             //Debug.WriteLine(5, "Prev rec count: {0}", bibtexRecords.Count);
@@ -1048,7 +1062,7 @@ namespace bibliographer
                 bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
             }
 
-            BibtexRecord record = new BibtexRecord ();
+            var record = new BibtexRecord ();
             //System.Console.WriteLine ("Calling Add");
             bibtexRecords.Add (record);
 
@@ -1060,7 +1074,7 @@ namespace bibliographer
             am.SubscribeRecord (record);
         }
 
-        protected virtual void OnRemoveRecordActivated (object sender, System.EventArgs e)
+        protected void OnRemoveRecordActivated (object sender, EventArgs e)
         {
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
@@ -1091,22 +1105,22 @@ namespace bibliographer
                 Gtk.TreeIter realIter = ((Gtk.TreeModelFilter)filterModel).ConvertIterToChildIter (filterIter);
 
                 // Delete record from the real model
-                BibtexRecord record = ((Gtk.ListStore)realModel).GetValue (realIter, 0) as BibtexRecord;
+                var record = ((Gtk.ListStore)realModel).GetValue (realIter, 0) as BibtexRecord;
                 bibtexRecords.Remove (record);
 
             }
         }
 
-        protected virtual void OnAddRecordFromBibtexActivated (object sender, System.EventArgs e)
+        protected void OnAddRecordFromBibtexActivated (object sender, EventArgs e)
         {
             Gtk.TreeIter iter;
 
-            BibtexEntryDialog bibtexEntryDialog = new BibtexEntryDialog ();
+            var bibtexEntryDialog = new BibtexEntryDialog ();
 
-            Gtk.ResponseType result = (Gtk.ResponseType)bibtexEntryDialog.Run ();
+            var result = (Gtk.ResponseType)bibtexEntryDialog.Run ();
             if (result == Gtk.ResponseType.Ok) {
                 try {
-                    BibtexRecord record = new BibtexRecord (bibtexEntryDialog.GetText ());
+                    var record = new BibtexRecord (bibtexEntryDialog.GetText ());
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1123,12 +1137,12 @@ namespace bibliographer
             bibtexEntryDialog.Destroy ();
         }
 
-        protected virtual void OnAddRecordFromClipboardActivated (object sender, System.EventArgs e)
+        protected void OnAddRecordFromClipboardActivated (object sender, EventArgs e)
         {
             Gtk.TreeIter iter;
             Gtk.Clipboard clipboard = Gtk.Clipboard.Get (Gdk.Atom.Intern ("GDK_CLIPBOARD_SELECTION", false));
             string contents = clipboard.WaitForText ();
-            BibtexRecord record = new BibtexRecord (contents);
+            var record = new BibtexRecord (contents);
             bibtexRecords.Add (record);
 
             iter = litStore.GetIter (record);
@@ -1139,25 +1153,25 @@ namespace bibliographer
             am.SubscribeRecord (record);
         }
 
-        protected virtual void OnClearFileHistory (object o, EventArgs a)
+        protected void OnClearFileHistory (object o, EventArgs a)
         {
             Debug.WriteLine (5, "Clearing file history");
-            ArrayList temp = new ArrayList ();
+            var temp = new ArrayList ();
             // Workaround for clear file history bug - set history to contain a single empty string
             temp.Add ("");
             Config.SetKey ("file_history", temp.ToArray ());
             UpdateMenuFileHistory ();
         }
 
-        protected virtual void OnImportFolderActivated (object sender, System.EventArgs e)
+        protected void OnImportFolderActivated (object sender, EventArgs e)
         {
-            Gtk.FileChooserDialog folderImportDialog = new Gtk.FileChooserDialog ("Import folder...", this, Gtk.FileChooserAction.SelectFolder, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
+            var folderImportDialog = new Gtk.FileChooserDialog ("Import folder...", this, Gtk.FileChooserAction.SelectFolder, Gtk.Stock.Cancel, Gtk.ResponseType.Cancel, Gtk.Stock.Ok, Gtk.ResponseType.Ok);
 
             // query config for stored path
             if (Config.KeyExists ("bib_import_path"))
                 folderImportDialog.SetCurrentFolder (Config.GetString ("bib_import_path"));
 
-            Gtk.ResponseType response = (Gtk.ResponseType)folderImportDialog.Run ();
+            var response = (Gtk.ResponseType)folderImportDialog.Run ();
 
             if (response == Gtk.ResponseType.Ok) {
                 string folderImportPath = folderImportDialog.Filename;
@@ -1178,34 +1192,34 @@ namespace bibliographer
 
         }
 
-        protected virtual void OnToggleSideBarActivated (object sender, System.EventArgs e)
+        protected void OnToggleSideBarActivated (object sender, EventArgs e)
         {
-            if (SidebarAction.Active == true)
-                scrolledwindowSidePane.Visible = true;
-            else
-                scrolledwindowSidePane.Visible = false;
+			if (SidebarAction.Active)
+				scrolledwindowSidePane.Visible = true;
+			else
+				scrolledwindowSidePane.Visible = false;
         }
 
-        protected virtual void OnToggleRecordDetailsActivated (object sender, System.EventArgs e)
+        protected void OnToggleRecordDetailsActivated (object sender, EventArgs e)
         {
-            if (RecordDetailsAction.Active == false) {
-                recordDetailsView.Visible = false;
+			if (!RecordDetailsAction.Active) {
+				recordDetailsView.Visible = false;
+			} else {
+				recordDetailsView.Visible = true;
+			}
+        }
+
+        protected void OnToggleFullScreenActionActivated (object sender, EventArgs e)
+        {
+
+            if (FullScreenAction.Active) {
+                Fullscreen ();
             } else {
-                recordDetailsView.Visible = true;
+                Unfullscreen ();
             }
         }
 
-        protected virtual void OnToggleFullScreenActionActivated (object sender, System.EventArgs e)
-        {
-
-            if (FullScreenAction.Active == true) {
-                this.Fullscreen ();
-            } else {
-                this.Unfullscreen ();
-            }
-        }
-
-        protected virtual void OnRadioViewRecordsActivated (object sender, System.EventArgs e)
+        protected void OnRadioViewRecordsActivated (object sender, EventArgs e)
         {
             if (ViewRecordsAction.Active) {
                 recordView.Visible = true;
@@ -1215,7 +1229,7 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnRadioEditRecordsActivated (object sender, System.EventArgs e)
+        protected void OnRadioEditRecordsActivated (object sender, EventArgs e)
         {
             if (EditRecordsAction.Active) {
                 recordView.Visible = false;
@@ -1226,23 +1240,23 @@ namespace bibliographer
             }
         }
 
-        protected virtual void OnChooseColumnsActivated (object sender, System.EventArgs e)
+        protected void OnChooseColumnsActivated (object sender, EventArgs e)
         {
-            BibliographerChooseColumns chooseColumnsDialog = new BibliographerChooseColumns ();
+            var chooseColumnsDialog = new BibliographerChooseColumns ();
 
             chooseColumnsDialog.ConstructDialog (litTreeView.Columns);
             chooseColumnsDialog.Run ();
             chooseColumnsDialog.Destroy ();
         }
 
-        protected virtual void OnLitTreeViewSelectionChanged (object o, EventArgs a)
+        protected void OnLitTreeViewSelectionChanged (object o, EventArgs a)
         {
             //Console.WriteLine("Selection changed");
             Gtk.TreeIter iter;
             Gtk.TreeModel model;
 
             if (((Gtk.TreeSelection)o).GetSelected (out model, out iter)) {
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 string recordType = record.RecordType;
                 new_selected_record = true;
                 if (BibtexRecordTypeLibrary.Contains (recordType))
@@ -1274,28 +1288,28 @@ namespace bibliographer
             ReconstructDetails ();
         }
 
-        protected virtual void OnToggleEditRecordsActivated (object sender, System.EventArgs e)
+        protected void OnToggleEditRecordsActivated (object sender, EventArgs e)
         {
-            if (toggleEditRecords.Active == true) {
+            if (toggleEditRecords.Active) {
                 EditRecordsAction.Active = true;
             } else {
                 ViewRecordsAction.Active = true;
             }
         }
 
-        protected virtual void OnWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
+        protected void OnWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
         {
             args.RetVal = true;
             Quit ();
         }
 
-        protected virtual void OnFilterEntryChanged (object sender, System.EventArgs e)
+        protected void OnFilterEntryChanged (object sender, EventArgs e)
         {
             // Filter when the filter entry text has changed
             modelFilter.Refilter ();
         }
 
-        protected virtual void OnButtonBibtexKeyGenerateClicked (object sender, System.EventArgs e)
+        protected void OnButtonBibtexKeyGenerateClicked (object sender, EventArgs e)
         {
             //System.Console.WriteLine("Generate a Bibtex Key");
 
@@ -1307,7 +1321,7 @@ namespace bibliographer
                 // (it currently doesn't work for types that don't have an author
                 // or year field)
 
-                BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
+                var record = (BibtexRecord)model.GetValue (iter, 0);
                 string authors = record.HasField ("author") ? (record.GetField ("author").ToLower ()).Trim () : "";
                 string year = record.HasField ("year") ? record.GetField ("year").Trim () : "";
 
@@ -1317,7 +1331,7 @@ namespace bibliographer
                 string[] authorarray = authors.Split (("&").ToCharArray ());
 
                 if (authorarray.Length > 0) {
-                    ArrayList authorsurname = new ArrayList ();
+                    var authorsurname = new ArrayList ();
                     foreach (string author in authorarray) {
                         //System.Console.WriteLine(author);
                         // Deal with format of "Surname, Firstname ..."
@@ -1352,7 +1366,7 @@ namespace bibliographer
             BibtexGenerateKeySetStatus ();
         }
 
-        protected virtual void OnLitTreeViewDragDataReceived (object o, Gtk.DragDataReceivedArgs args)
+        protected void OnLitTreeViewDragDataReceived (object o, Gtk.DragDataReceivedArgs args)
         {
             //Console.WriteLine("Data received is of type '" + args.SelectionData.Type.Name + "'");
             // the atom type we want is a text/uri-list
@@ -1396,15 +1410,15 @@ namespace bibliographer
             ReconstructDetails ();
         }
 
-        protected virtual void OnWindowSizeAllocated (object o, Gtk.SizeAllocatedArgs a)
+        protected void OnWindowSizeAllocated (object o, Gtk.SizeAllocatedArgs a)
         {
-            if (Config.GetBool ("window_maximized") == false) {
+            if (!Config.GetBool ("window_maximized")) {
                 Config.SetInt ("window_width", a.Allocation.Width);
                 Config.SetInt ("window_height", a.Allocation.Height);
             }
         }
 
-        protected virtual void OnWindowStateChanged (object o, Gtk.WindowStateEventArgs a)
+        protected void OnWindowStateChanged (object o, Gtk.WindowStateEventArgs a)
         {
             Gdk.EventWindowState gdk_event = a.Event;
 
@@ -1414,7 +1428,7 @@ namespace bibliographer
             } else if (gdk_event.NewWindowState == 0) {
                 Debug.WriteLine (10, "window is back to normal");
                 Config.SetBool ("window_maximized", false);
-                this.Resize (Config.GetInt ("window_width"), Config.GetInt ("window_height"));
+                Resize (Config.GetInt ("window_width"), Config.GetInt ("window_height"));
             }
         }
 

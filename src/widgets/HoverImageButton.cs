@@ -36,19 +36,19 @@ namespace bibliographer
     {
         public class HoverImageButton : EventBox
         {
-            private static Gdk.Cursor hand_cursor = new Gdk.Cursor(Gdk.CursorType.Hand1);
+            static Gdk.Cursor hand_cursor = new Gdk.Cursor(Gdk.CursorType.Hand1);
     
-            private IconSize icon_size = IconSize.Menu;
-            private string [] icon_names = { "image-missing", Stock.MissingImage };
-            private Gdk.Pixbuf normal_pixbuf;
-            private Gdk.Pixbuf active_pixbuf;
-            private Image image;
-            private bool is_hovering;
-            private bool is_pressed;
+            IconSize icon_size = IconSize.Menu;
+            string [] icon_names = { "image-missing", Stock.MissingImage };
+            Gdk.Pixbuf normal_pixbuf;
+            Gdk.Pixbuf active_pixbuf;
+            Image image;
+            bool is_hovering;
+            bool is_pressed;
     
-            private bool draw_focus = true;
+            bool draw_focus = true;
     
-            private event EventHandler clicked;
+            event EventHandler clicked;
     
             public event EventHandler Clicked {
                 add { clicked += value; }
@@ -65,13 +65,13 @@ namespace bibliographer
             }
     
             public HoverImageButton(IconSize size, string icon_name) : 
-                this(size, new string [] { icon_name })
+                this(size, new  [] { icon_name })
             {
             }
     
             public HoverImageButton(IconSize size, string [] icon_names) : this()
             {
-                this.icon_size = size;
+                icon_size = size;
                 this.icon_names = icon_names;
             }
     
@@ -83,7 +83,7 @@ namespace bibliographer
                 }
             }
             
-            private bool changing_style = false;
+            bool changing_style;
             protected override void OnStyleSet(Style previous_style)
             {
                 if(changing_style) {
@@ -164,13 +164,13 @@ namespace bibliographer
                 return true;
             }
     
-            private void UpdateImage()
+            void UpdateImage()
             {
                 image.Pixbuf = is_hovering || is_pressed || HasFocus 
                     ? active_pixbuf : normal_pixbuf;
             }
     
-            private void LoadPixbufs()
+            void LoadPixbufs()
             {
                 int width, height;
                 Icon.SizeLookup(icon_size, out width, out height);
@@ -198,17 +198,20 @@ namespace bibliographer
                 UpdateImage();
             }
     
-            private static byte PixelClamp(int val)
+            static byte PixelClamp(int val)
             {
                 return (byte)Math.Max(0, Math.Min(255, val));
             }
             
-            private unsafe Gdk.Pixbuf ColorShiftPixbuf(Gdk.Pixbuf src, byte shift)
+            unsafe static Gdk.Pixbuf ColorShiftPixbuf(Gdk.Pixbuf src, byte shift)
             {
-                Gdk.Pixbuf dest = new Gdk.Pixbuf(src.Colorspace, src.HasAlpha, src.BitsPerSample, src.Width, src.Height);
+                var dest = new Gdk.Pixbuf(src.Colorspace, src.HasAlpha, src.BitsPerSample, src.Width, src.Height);
                 
-                byte *src_pixels_orig = (byte *)src.Pixels;
-                byte *dest_pixels_orig = (byte *)dest.Pixels;
+				byte* src_pixels_orig;
+				byte* dest_pixels_orig;
+
+				src_pixels_orig = (byte*)src.Pixels;
+				dest_pixels_orig = (byte*)dest.Pixels;
                 
                 for(int i = 0; i < src.Height; i++) {
                     byte *src_pixels = src_pixels_orig + i * src.Rowstride;
