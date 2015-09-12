@@ -35,8 +35,6 @@ Updated May 2014
   Search online literature databases, eg. Medline, ScienceDirect etc...
   Automatic downloading of results?
 
-* Fix paste BibTeX from clipboard functionality
-
 * Store some general stuff (options, history etc) in ~/.config/bibliographer
 
 * Get the win32 port actually working :-)

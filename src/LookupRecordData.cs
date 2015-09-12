@@ -32,6 +32,8 @@ namespace bibliographer
 
         public void LookupDOI (object o, EventArgs e)
         {
+            if (e == null)
+                throw new ArgumentNullException ("e");
             // TODO: refactor this in terms of a doi record
             // should be a static function
             var record = (BibtexRecord)o;
@@ -68,9 +70,10 @@ namespace bibliographer
             }
         }
 
-//        private void LookupData ()
-//        {
-//            // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
+        private void LookupData ()
+        {
+            // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
+            Console.WriteLine ("Conversion still reqd for GTK3");
 //            string url = "http://www.crossref.org/openurl/?id=doi:"+this.GetField("bibliographer_doi")+"&noredirect=true";
 //            Debug.WriteLine(5, "Looking up data for {0} from {1}", this.GetField("bibliographer_doi"), url);
 //            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
@@ -238,7 +241,7 @@ namespace bibliographer
 //            {
 //                Debug.WriteLine(2, e.Message);
 //            }
-//        }
+        }
     }
 
     public class RunOnMainThread

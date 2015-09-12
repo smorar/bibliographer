@@ -24,7 +24,7 @@
 
 namespace bibliographer
 {
-    class SidePaneTreeView : Gtk.TreeView
+    public class SidePaneTreeView : Gtk.TreeView
     {
         public SidePaneTreeView (SidePaneTreeStore sidePaneStore)
         {
@@ -33,7 +33,7 @@ namespace bibliographer
             var filterTextDataFunc = new Gtk.TreeCellDataFunc (RenderFilterColumnTextFromBibtexRecords);
             var col = new Gtk.TreeViewColumn ("Filter", new Gtk.CellRendererText (), "text");
             
-            col.SetCellDataFunc (col.CellRenderers[0], filterTextDataFunc);
+			col.SetCellDataFunc (col.Cells[0], filterTextDataFunc);
             col.Sizing = Gtk.TreeViewColumnSizing.Autosize;
             
             AppendColumn (col);
@@ -47,7 +47,7 @@ namespace bibliographer
             Show ();
         }
 
-        static void RenderFilterColumnTextFromBibtexRecords (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.TreeModel model, Gtk.TreeIter iter)
+        static void RenderFilterColumnTextFromBibtexRecords (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel model, Gtk.TreeIter iter)
         {
             //System.Console.WriteLine("Rendering cell");
             string val = (string)model.GetValue (iter, 0);

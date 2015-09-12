@@ -36,6 +36,7 @@ namespace bibliographer
 		public Thread alterationMonitorThread;
 		public Thread thumbGenThread;
         Queue indexerQueue, alterationMonitorQueue, thumbGenQueue;
+        protected DateTime lastCheck;
 
         public AlterationMonitor ()
         {
@@ -52,9 +53,6 @@ namespace bibliographer
 
         public bool Altered (BibtexRecord record)
         {
-            //System.Console.WriteLine("Checking that record is altered: " + record.GetKey());
-            DateTime lastCheck = DateTime.MinValue;
-            
             String uriString = record.GetURI ();
             String indexedUriString = (string) record.GetCustomDataField ("bibliographer_last_uri");
             
@@ -73,16 +71,20 @@ namespace bibliographer
             }
 			if (string.IsNullOrEmpty (uriString))
 				return false;
-            var uri = new Gnome.Vfs.Uri (uriString);
+            Uri uri;
             TimeSpan checkInterval;
+
+            uri = new Uri(uriString);
+
+            //TODO: specify checking frequencies in settings
             switch (uri.Scheme) {
             case "http":
                 // default update interval for HTTP: 30 mins
                 checkInterval = new TimeSpan (0, 30, 0);
                 break;
             case "file":
-                // default update interval for local files: 5 minutes
-                checkInterval = new TimeSpan (0, 0, 30);
+                // default update interval for local files: 1 minute
+                checkInterval = new TimeSpan (0, 1, 0);
                 break;
             default:
                 // default update interval for anything else: 5 minutes
@@ -95,13 +97,16 @@ namespace bibliographer
                 // not enough time has passed for us to check this one
                 // FIXME: should probably move this out to the alteration
                 // monitor queue
-                Console.WriteLine("Not enough time has passed to check this record");
+                Debug.WriteLine (10, "Not enough time has passed to check this record");
                 return false;
             }
-            if (!uri.Exists) {
+            if (!uri.IsFile) {
                 Debug.WriteLine (5, "URI \"" + uriString + "\" does not seem to exist...");
                 return false;
             }
+            // initiating a check - recording time
+            lastCheck = DateTime.Now;
+
             String size = (string)record.GetCustomDataField ("bibliographer_last_size") ?? "";
             String mtime = (string) record.GetCustomDataField ("bibliographer_last_mtime");
 			if (mtime == null) {
@@ -109,7 +114,13 @@ namespace bibliographer
 			}
             String md5 = (string) record.GetCustomDataField ("bibliographer_last_md5");
             String newSize = "";
-            ulong intSize = 0;
+
+            long intSize;
+            GLib.IFile file;
+            GLib.FileInfo fileInfo;
+
+            intSize = 0;
+
             String newMtime = "";
             try {
                 Debug.WriteLine (5, "URI \"" + uriString + "\" has the following characteristics:");
@@ -118,20 +129,32 @@ namespace bibliographer
                 else
                     Debug.WriteLine (5, "\t* md5: " + md5);
                 Debug.WriteLine (5, "\t* Scheme: " + uri.Scheme);
-                Gnome.Vfs.FileInfo info = uri.GetFileInfo ();
-                if ((info.ValidFields & Gnome.Vfs.FileInfoFields.Size) != 0) {
-                    Debug.WriteLine (5, "\t* Size: " + info.Size);
-                    newSize = info.Size.ToString ();
-                    intSize = (ulong)info.Size;
+
+                file = GLib.FileFactory.NewForUri(uri);
+
+                fileInfo = file.QueryInfo ("*", GLib.FileQueryInfoFlags.NofollowSymlinks, null);
+                if (fileInfo.Size != 0) {
+                    Debug.WriteLine (5, "\t* Size: " + fileInfo.Size);
+                    newSize = fileInfo.Size.ToString();
+                    intSize = fileInfo.Size;
                 }
-                if ((info.ValidFields & Gnome.Vfs.FileInfoFields.Ctime) != 0)
-                    Debug.WriteLine (5, "\t* ctime: " + info.Ctime);
-                if ((info.ValidFields & Gnome.Vfs.FileInfoFields.Mtime) != 0) {
-                    Debug.WriteLine (5, "\t* mtime: " + info.Mtime);
-                    newMtime = info.Mtime.ToString ();
+                if ((fileInfo.GetAttributeULong("time::changed")) != 0)
+                    Debug.WriteLine (5, "\t* ctime: " + fileInfo.GetAttributeULong("time::changed"));
+                if ((fileInfo.GetAttributeULong("time::modified")) != 0) {
+                    Debug.WriteLine (5, "\t* mtime: " + fileInfo.GetAttributeULong("time::modified"));
+                    newMtime = fileInfo.GetAttributeULong("time::modified").ToString ();
                 }
-                if ((info.ValidFields & Gnome.Vfs.FileInfoFields.MimeType) != 0)
-                    Debug.WriteLine (5, "\t* Mime type: " + info.MimeType);
+                bool uncertain;
+                string result;
+                byte data;
+                ulong data_size;
+
+                data_size = 0;
+
+                result = GLib.ContentType.Guess(uri.ToString(), out data, data_size, out uncertain);
+                if (result != "" || result != null)
+                    Debug.WriteLine (5, "\t* Mime type: " + result);
+                
             } catch (Exception e) {
                 Debug.WriteLine (10, e.Message);
                 Debug.WriteLine (1, "\t*** Whoops! Caught an exception!");
@@ -145,13 +168,18 @@ namespace bibliographer
                 // something has changed or we don't have a MD5
                 // recalculate the MD5
                 Debug.WriteLine (5, "\t* Recalculating MD5...");
-                Gnome.Vfs.Handle handle = Gnome.Vfs.Sync.Open (uri, Gnome.Vfs.OpenMode.Read);
+
+                GLib.IFile uriFile;
+                GLib.FileInputStream stream;
+                uriFile = GLib.FileFactory.NewForUri (uri);
+                stream = uriFile.Read (null);
+
                 ulong sizeRead;
-                var contents = new byte[intSize];
-                if (Gnome.Vfs.Sync.Read (handle, out contents[0], intSize, out sizeRead) != Gnome.Vfs.Result.Ok) {
-                    // read failed
+                byte[] contents;
+                contents = new byte[intSize];
+                
+                if (!stream.ReadAll (contents, (ulong)intSize, out sizeRead, null)) {
                     Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
-                    return false;
                 }
 
                 MD5 hasher = MD5.Create ();
@@ -162,7 +190,7 @@ namespace bibliographer
                     // definitely something changed
                     record.SetCustomDataField ("bibliographer_last_md5", newMd5);
                 }
-                //System.Console.WriteLine(record.GetKey() + " is altered!! - 2");
+                //Console.WriteLine(record.GetKey() + " is altered!! - 2");
 
                 if (record.HasCustomDataField("indexData"))
                     record.RemoveCustomDataField("indexData");

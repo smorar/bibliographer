@@ -28,7 +28,7 @@ using libbibby;
 namespace bibliographer
 {
 
-    public class SidePaneTreeStore : Gtk.TreeStore, Gtk.TreeSortable
+    public class SidePaneTreeStore : Gtk.TreeStore
     {
         Gtk.TreeIter iterAll, iterAuth, iterYear, iterJourn;
         BibtexRecords bibtexRecords;

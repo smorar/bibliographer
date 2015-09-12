@@ -31,6 +31,8 @@ namespace bibliographer
 {
     public static class Cache
     {
+        private static ArrayList sections;
+
         public static void Initialise ()
         {
             LoadCacheData ();
@@ -72,10 +74,21 @@ namespace bibliographer
 
         public static string AddToCache (string section, string key)
         {
-            keySection kSection = LookupKey (section, key);
+
+            GLib.Settings settings;
+            keySection kSection;
+            cacheSection cSection;
+            Random random;
+            string datadir, filename;
+
+            settings = new GLib.Settings ("apps.bibliographer");
+
+            kSection = LookupKey (section, key);
             if (kSection != null)
                 return kSection.filename;
-            cacheSection cSection = LookupSection (section);
+            
+            cSection = LookupSection (section);
+
             if (cSection == null) {
                 // add a new section
                 sections.Add (new cacheSection (section));
@@ -86,10 +99,12 @@ namespace bibliographer
                     return "";
                 }
             }
-            string filename;
-            var random = new Random ();
+
+            datadir = settings.GetString ("data-directory");
+            random = new Random ();
             do {
-                filename = Config.GetDataDir () + "cache/";
+                filename = datadir + "cache/";
+
                 const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 for (int i = 0; i < 20; i++)
                     filename = filename + chars[random.Next () % chars.Length];
@@ -102,15 +117,15 @@ namespace bibliographer
                     Debug.WriteLine (10, e.Message);
                     
                     try {
-                        Directory.CreateDirectory (Config.GetDataDir ());
+                        Directory.CreateDirectory (datadir);
                     } catch (Exception e2) {
                         Debug.WriteLine (10, e2.Message);
                     }
                     try {
-                        Directory.CreateDirectory (Config.GetDataDir () + "cache");
+                        Directory.CreateDirectory (datadir + "cache");
                     } catch (Exception e2) {
                         Debug.WriteLine (10, e2.Message);
-                        Debug.WriteLine (1, "Failed to create directory {0}", Config.GetDataDir () + "cache");
+                        Debug.WriteLine (1, "Failed to create directory {0}", datadir + "cache");
                     }
                 } catch (IOException e) {
                     Debug.WriteLine (10, e.Message);
@@ -152,7 +167,7 @@ namespace bibliographer
 
         // Private data & functions
 
-        class keySection
+        private class keySection
         {
             public keySection (string _key, string _filename)
             {
@@ -164,7 +179,7 @@ namespace bibliographer
             public string filename;
         }
 
-        class keyCompare : IComparer
+        private class keyCompare : IComparer
         {
             public int Compare (object x, object y)
             {
@@ -172,7 +187,7 @@ namespace bibliographer
             }
         }
 
-        class cacheSection
+        private class cacheSection
         {
             public cacheSection (string _section)
             {
@@ -184,7 +199,7 @@ namespace bibliographer
             public ArrayList keys;
         }
 
-        class sectionCompare : IComparer
+        private class sectionCompare : IComparer
         {
             public int Compare (object x, object y)
             {
@@ -192,17 +207,23 @@ namespace bibliographer
             }
         }
 
-        static ArrayList sections;
-
         static void LoadCacheData ()
         {
+            GLib.Settings settings;
+            cacheSection curSection;
+            StreamReader stream;
+            string datadir;
+
+            settings = new GLib.Settings ("apps.bibliographer");
+            datadir = settings.GetString ("data-directory");
+
             sections = new ArrayList ();
-			StreamReader stream;
+
             try {
-                stream = new StreamReader (new FileStream (Config.GetDataDir () + "cachedata", FileMode.Open, FileAccess.Read));
+                stream = new StreamReader (new FileStream (datadir + "cachedata", FileMode.Open, FileAccess.Read));
                 
                 // cache opened! let's read some data...
-                cacheSection curSection = null;
+                curSection = null;
                 while (stream.Peek () > -1) {
                     string line = stream.ReadLine ();
                     if (line != "") {
@@ -248,7 +269,7 @@ namespace bibliographer
             } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
-                Directory.CreateDirectory (Config.GetDataDir ());
+                Directory.CreateDirectory (datadir);
             } catch (FileNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 // no cache, no problem-o :-)
@@ -257,11 +278,17 @@ namespace bibliographer
 
         static void SaveCacheData ()
         {
+            GLib.Settings settings;
+            string datadir;
+
+            settings = new GLib.Settings ("apps.bibliographer");
+            datadir = settings.GetString ("data-directory");
+
 			cleanup_invalid_dirs();
 			
             try {
                 Monitor.Enter (sections);
-                var stream = new StreamWriter (new FileStream (Config.GetDataDir () + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
+                var stream = new StreamWriter (new FileStream (datadir + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
                 
                 for (int section = 0; section < sections.Count; section++) {
                     stream.WriteLine ("[{0}]", ((cacheSection)sections[section]).section);
@@ -275,7 +302,7 @@ namespace bibliographer
             } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
                 Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
-                Directory.CreateDirectory (Config.GetDataDir ());
+                Directory.CreateDirectory (datadir);
             } catch (Exception e) {
                 Debug.WriteLine (1, "Unhandled exception whilst trying to save cache: {0}", e);
             }
@@ -287,7 +314,7 @@ namespace bibliographer
 			{
 				if (Directory.Exists("~/.bibliographer"))
 				{
-					Debug.WriteLine(1, "Deleting old ~/.bibliohrapher directory");
+					Debug.WriteLine(1, "Deleting old ~/.bibliographer directory");
 					Directory.Delete("~/.bibliographer/");
 				}
 			} catch (DirectoryNotFoundException e)

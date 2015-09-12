@@ -47,19 +47,17 @@ namespace bibliographer
     {
         public static void Main (string[] args)
         {
-            
-            var title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), typeof(System.Reflection.AssemblyTitleAttribute));
-            var version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version;
-            
-            var program = new Gnome.Program (title.ToString ().ToLower (), version.Major + "." + version.Minor, Gnome.Modules.UI, args);
-            
+			BibliographerMainWindow window;
+
+			string filename;
+
             try {
                 Utilities.SetProcessName ("bibliographer");
             } catch {
 				Debug.WriteLine (0, "Cannot set process name");
             }
             
-            string filename = "";
+			filename = "";
             
             // Handle startup arguments
             foreach (string arg in args) {
@@ -84,18 +82,16 @@ namespace bibliographer
                 }
             }
             
-            Gtk.Application.Init (program.AppId, ref args);
-            Gnome.Vfs.Vfs.Initialize ();
-
             Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_records");
             BibtexRecordTypeLibrary.Load ();
             Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_fields");
             BibtexRecordFieldTypeLibrary.Load ();
             
-            Config.Initialise ();
             Cache.Initialise ();
+
+			Gtk.Application.Init ();
             
-            var window = new BibliographerMainWindow ();
+			window = new BibliographerMainWindow ();
             
             if (filename != "")
                 window.FileOpen (filename);

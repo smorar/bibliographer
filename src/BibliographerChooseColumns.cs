@@ -21,29 +21,36 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
+using Gtk;
 
 namespace bibliographer
 {
-    public sealed partial class BibliographerChooseColumns : Gtk.Dialog
+    public class BibliographerChooseColumns : Dialog
     {
+        protected Box columnChecklistHbox;
 
-        public BibliographerChooseColumns ()
+        public BibliographerChooseColumns (TreeViewColumn[] columns)
         {
-            Build ();
-        }
+            Title = "Choose Columns";
+            WidthRequest = 200;
+            AddButton ("Close", ResponseType.Close);
 
-        public void ConstructDialog (Gtk.TreeViewColumn[] columns)
-        {
-            const int rows = 5;
+            ContentArea.Add (new Label ("Visible Columns"));
+
+            columnChecklistHbox = new Box (Orientation.Horizontal, 5);
+            ContentArea.Add (columnChecklistHbox);
+
+            const int rows = 8;
             int i = 0;
-            Gtk.VBox vbox;
-            vbox = new Gtk.VBox ();
+            VBox vbox;
+            vbox = new VBox ();
             columnChecklistHbox.Add (vbox);
             vbox.Show ();
-            foreach (Gtk.TreeViewColumn column in columns) {
-                Gtk.CheckButton checkbutton;
+            foreach (TreeViewColumn column in columns) {
+                CheckButton checkbutton;
                 
-                checkbutton = new Gtk.CheckButton ();
+                checkbutton = new CheckButton ();
                 checkbutton.Data.Add ("column", column);
                 checkbutton.Active = column.Visible;
                 checkbutton.Label = column.Title;
@@ -55,26 +62,23 @@ namespace bibliographer
                 vbox.Add (checkbutton);
                 
                 if (i == rows - 1) {
-                    vbox = new Gtk.VBox ();
+                    vbox = new VBox ();
                     columnChecklistHbox.Add (vbox);
                     vbox.Show ();
                     i = 0;
                 }
                 i = i + 1;
             }
+            ShowAll ();
         }
 
-        static void OnCheckButtonClicked (object o, System.EventArgs e)
+        static void OnCheckButtonClicked (object o, EventArgs e)
         {
-            var checkbutton = (Gtk.CheckButton)o;
+            var checkbutton = (CheckButton)o;
             
-            var column = (Gtk.TreeViewColumn)checkbutton.Data["column"];
+            var column = (TreeViewColumn)checkbutton.Data["column"];
             
             column.Visible = checkbutton.Active;
-            if (Config.KeyExists ("Columns/" + column.Title + "/width"))
-                column.FixedWidth = Config.GetInt ("Columns/" + column.Title + "/width");
-            else
-                column.FixedWidth = 100;
         }
     }
 }

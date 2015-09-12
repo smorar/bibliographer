@@ -26,13 +26,13 @@ using libbibby;
 
 namespace bibliographer
 {
-    public class SearchEntry : bibliographer.widget.SearchEntry
+
+	public class SearchEntry : bibliographer.widget.SearchEntry
     {
         public new event System.EventHandler Changed;
 
         public SearchEntry ()
         {
-            BorderWidth = 6;
             WidthRequest = 200;
             
             Gtk.Menu searchMenu = Menu;
@@ -56,14 +56,14 @@ namespace bibliographer
             searchMenuItemAuthor.Activated += OnSearchEntryChanged;
             searchMenuItemTitle.Activated += OnSearchEntryChanged;
             searchMenuItemArticle.Activated += OnSearchEntryChanged;
-            InnerEntry.Changed += OnSearchEntryChanged;
+			Changed += OnSearchEntryChanged;
             
             Show ();
         }
 
         public void Clear ()
         {
-            InnerEntry.Text = "";
+            Text = "";
         }
 
         protected virtual void OnSearchEntryChanged (object sender, System.EventArgs e)

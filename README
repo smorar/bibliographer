@@ -1,8 +1,8 @@
 Bibliographer is a bibtex editor written in Gtk# and Mono.
 
 Requirements:
-Mono => 1.0.5
-gtk-sharp => 2.4 
+Mono => 4.0
+gtk-sharp => 2.99
 
 Installation instructions:
 

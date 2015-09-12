@@ -26,3 +26,4 @@ libbibby/*.dll
 libbibby/TestResult.xml
 libbibby/%temp%
 test-results
+obj

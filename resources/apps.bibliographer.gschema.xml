@@ -1,0 +1,210 @@
+<schemalist>
+  <schema id="apps.bibliographer" path="/apps/bibliographer/">
+    <key type="i" name="window-width">
+      <range min="600"/>
+      <default>600</default>
+      <summary>Bibliographer main window width</summary>
+      <description>Used to store the window width.</description>
+    </key>
+    <key type="i" name="window-height">
+      <range min="480"/>
+      <default>480</default>
+      <summary>Bibliographer main window height</summary>
+      <description>Used to store the window height.</description>
+    </key>
+    <key type="b" name="window-maximized">
+      <default>false</default>
+      <summary>Bibliographer window maximized state</summary>
+      <description>Used to store window maximized state.</description>
+    </key>
+    <key type="s" name="data-directory">
+	    <default>""</default>
+	    <summary>Cached data directory</summary>
+	    <description>Directory used to store bibliographer's application data.</description>
+    </key>
+  </schema>
+  <schema id="apps.bibliographer.index" path="/apps/bibliographer/index/">
+  	<key type="as" name="textual-extractor">
+  		<default>[]</default>
+  		<summary>Text extractors</summary>
+  		<description>Programs used to extract text from files.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.sidebar" path="/apps/bibliographer/sidebar/">
+	  <key type="b" name="visible">
+		  <default>true</default>
+		  <summary>Sidebar visibility property</summary>
+		  <description>Used to store the visibility state of the sidebar.</description>
+	  </key>
+    <key type="i" name="width">
+      <range min="0"/>
+      <default>200</default>
+      <summary>Bibliographer sidebar width</summary>
+      <description>Used to store the width of the sidebar.</description>
+    </key>
+  </schema>
+  <schema id="apps.bibliographer.filehandling" path="/apps/bibliographer/filehandling/">
+	  <key type="i" name="max-file-history-count">
+	  	<default>5</default>
+	  	<summary>Number of recent files</summary>
+	  	<description>Used to specify the number of recent files kept in the recent files menu.</description>
+	  </key>
+	  <key type="as" name="file-history">
+		<default>[]</default>
+		<summary>Recent files</summary>
+		<description>Lists recent files in the file->recent files menu.</description>
+	  </key>
+	  <key type="s" name="bib-browse-path">
+		<default>"~/"</default>
+		<summary>File browser default path</summary>
+		<description>Variable used to track the last browsed directory in the file browser.</description>
+	  </key>
+	  <key type="s" name="uri-browse-path">
+		<default>"~/"</default>
+		<summary>URI file browser default path</summary>
+		<description>Variable used to track the last browsed directory in the URI file browser.</description>
+	  </key>
+	  <key type="s" name="bib-import-path">
+		<default>"~/"</default>
+		<summary>Import file browser default path</summary>
+		<description>Variable used to track the last browsed directory in the import file browser.</description>
+	  </key>
+  </schema>
+  <schema id="apps.bibliographer.columns.icon" path="/apps/bibliographer/columns/icon/">
+  	<key type="i" name="order">
+  		<default>0</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>40</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.author" path="/apps/bibliographer/columns/author/">
+  	<key type="i" name="order">
+  		<default>1</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.title" path="/apps/bibliographer/columns/title/">
+  	<key type="i" name="order">
+  		<default>2</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.year" path="/apps/bibliographer/columns/year/">
+  	<key type="i" name="order">
+  		<default>3</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.journal" path="/apps/bibliographer/columns/journal/">
+  	<key type="i" name="order">
+  		<default>4</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.bibtexkey" path="/apps/bibliographer/columns/bibtexkey/">
+  	<key type="i" name="order">
+  		<default>5</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.volume" path="/apps/bibliographer/columns/volume/">
+  	<key type="i" name="order">
+  		<default>6</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+  <schema id="apps.bibliographer.columns.pages" path="/apps/bibliographer/columns/pages/">
+  	<key type="i" name="order">
+  		<default>7</default>
+  		<summary>Column order</summary>
+  		<description>Order of the column.</description>
+  	</key>
+  	<key type="b" name="visible">
+  		<default>true</default>
+	  	<summary>Column visibility</summary>
+  		<description>Variable used to track the visibility status of the column.</description>
+  	</key>
+  	<key type="i" name="width">
+  		<default>100</default>
+  		<summary>Column width</summary>
+  		<description>Variable used to store the column width.</description>
+  	</key>
+  </schema>
+</schemalist>
+

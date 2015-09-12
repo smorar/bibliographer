@@ -28,7 +28,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using Gnome.Vfs;
 using libbibby;
 
 namespace bibliographer
@@ -112,22 +111,31 @@ namespace bibliographer
 
         static StringArrayList GetTextualExtractor (object mimeType)
         {
-            var extractor = new StringArrayList ();
-            
-			if (!Config.KeyExists ("textual_extractor")) {
-				var def_extractors = new ArrayList ();
-				// Set application defaults
-				def_extractors.Add ("application/pdf:pdftotext:{0} -");
-				def_extractors.Add ("application/msword:antiword:{0}");
-				def_extractors.Add ("application/postscript:pstotext:{0}");
-				def_extractors.Add ("text/plain:cat:{0}");
-                
-				Config.Initialise ();
-				Config.SetKey ("textual_extractor", def_extractors.ToArray ());
-			}
-            
-            // TODO Move Config class into a utils library
-            var extractors = (string[])Config.GetKey ("textual_extractor");
+            GLib.Settings settings;
+            string[] extractors;
+            StringArrayList extractor;
+
+            extractor = new StringArrayList ();
+            settings = new GLib.Settings ("apps.bibliographer.index");
+            extractors = settings.GetStrv ("textual-extractor");
+
+            if (extractors.Length == 0) {
+                // Default extractors for Gnu/Linux systems
+                ArrayList newExtractors;
+                newExtractors = new ArrayList();
+
+                newExtractors.Add ("application/pdf:pdftotext:{0} -");
+                newExtractors.Add ("application/msword:antiword:{0}");
+                newExtractors.Add ("application/postscript:pstotext:{0}");
+                newExtractors.Add ("text/plain:cat:{0}");
+
+                //TODO: Add default extractors for other systems
+
+                extractors = (string[])newExtractors.ToArray (typeof(string));
+                settings.SetStrv ("textual-extractor", extractors);
+            } else {
+            }
+
             string[] output;
             
             foreach (string entry in extractors) {
@@ -143,23 +151,31 @@ namespace bibliographer
             return extractor;
         }
 
-        public static StringArrayList GetTextualData (string URI)
+        public static StringArrayList GetTextualData (string uriString)
         {
             // TODO: Cache result, and load cache if cache exists!!
-            var uri = new Gnome.Vfs.Uri (URI);
-            var mimeType = new MimeType (uri);
-            
-            Debug.WriteLine (5, "Indexing a file of MimeType: " + mimeType.Name);
+            Uri uri;
+            bool uncertain;
+            string mimeType;
+            byte data;
+            ulong data_size;
+
+            data_size = 0;
+
+            uri = new Uri (uriString);
+            mimeType = GLib.ContentType.Guess(uri.ToString(), out data, data_size, out uncertain);
+
+            Debug.WriteLine (5, "Indexing a file of MimeType: " + mimeType);
             
             StringArrayList textualData = null;
             StringArrayList extractor;
             
             extractor = GetTextualExtractor (mimeType);
-            
+
             if (extractor.Count == 2) {
                 Debug.WriteLine (5, "Textual extractor is {0}", extractor[0]);
 				string extractor_options;
-                extractor_options = String.Format (extractor[1], '"' + Gnome.Vfs.Uri.GetLocalPathFromUri (URI) + '"');
+                extractor_options = String.Format (extractor[1], '"' + uri.LocalPath + '"');
                 Debug.WriteLine (5, "extractor options are {0}", extractor_options);
                 textualData = GetProcessOutput (extractor[0], extractor_options);
             }
@@ -193,10 +209,20 @@ namespace bibliographer
 
         public static void Index (BibtexRecord record)
         {
-            //System.Console.WriteLine("Indexing " + record.GetKey());
+            //Console.WriteLine("Indexing " + record.GetKey());
             Tri index;
-            string cacheKey;
-            
+            string cacheKey, doi;
+            Uri uri;
+            GLib.IFile file;
+            GLib.FileInfo fileInfo;
+            ulong sizeRead;
+            byte[] contents;
+            StreamWriter streamWriter;
+            StringArrayList textualDataArray;
+            GLib.FileInputStream stream;
+
+            cacheKey = "";
+
             if ((!record.HasCustomDataField ("cacheKey")) ||
                 (Cache.CachedFile ("index_data", (string)record.GetCustomDataField ("cacheKey")).Trim() == ""))
             {
@@ -209,44 +235,43 @@ namespace bibliographer
                 else
                 {
                     string uriString = record.GetURI();
-                    ulong intSize = 0;
-                    var uri = new Gnome.Vfs.Uri(uriString);
+                    ulong intSize;
+
+                    uri = new Uri(uriString);
 
                     try {
-                        Gnome.Vfs.FileInfo info = uri.GetFileInfo ();
-                        if ((info.ValidFields & FileInfoFields.Size) != 0) {
-                            intSize = (ulong)info.Size;
+                        file = GLib.FileFactory.NewForUri(uri);
+                        fileInfo = file.QueryInfo ("*", GLib.FileQueryInfoFlags.NofollowSymlinks, null);
+                        intSize = (ulong)fileInfo.Size;
+                        stream = file.Read (null);
+                        contents = new byte[intSize];
+                        if (!stream.ReadAll (contents, intSize, out sizeRead, null)) {
+                            Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
                         }
+
+                        MD5 hasher = MD5.Create ();
+                        byte[] newMd5Array = hasher.ComputeHash (contents);
+                        string newMd5 = BitConverter.ToString(newMd5Array).Replace("-","").ToLower();
+
+                        record.SetCustomDataField ("bibliographer_last_md5", newMd5);
+                        record.SetCustomDataField ("bibliographer_last_uri", uriString);
+                        cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
+
                     } catch (Exception e) {
                         Debug.WriteLine (10, e.Message);
                         Debug.WriteLine (1, "\t*** Whoops! Caught an exception!");
                     }
 
-                    Handle handle = Sync.Open (uriString, OpenMode.Read);
-                    ulong sizeRead;
-                    var contents = new byte[intSize];
-                    if (Sync.Read (handle, out contents[0], intSize, out sizeRead) != Result.Ok) {
-                        // read failed
-                        Debug.WriteLine (5, "Something weird happened trying to read data for URI \"" + uriString + "\"");
-                    }
-                    MD5 hasher = MD5.Create ();
-                    byte[] newMd5Array = hasher.ComputeHash (contents);
-                    string newMd5 = BitConverter.ToString(newMd5Array).Replace("-","").ToLower();
-
-                    record.SetCustomDataField ("bibliographer_last_md5", newMd5);
-                    record.SetCustomDataField ("bibliographer_last_uri", uriString);
-                    cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                 }
 
-                StringArrayList textualDataArray = GetTextualData (record.GetURI ());
+                textualDataArray = GetTextualData (record.GetURI ());
 
                 index = Index (textualDataArray);
-                string doi = ExtractDOI(textualDataArray);
+                doi = ExtractDOI(textualDataArray);
 
-
-                var stream = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
-                stream.WriteLine (index);
-                stream.Close ();
+                streamWriter = new StreamWriter (new FileStream (Cache.Filename ("index_data", cacheKey), FileMode.OpenOrCreate, FileAccess.Write));
+                streamWriter.WriteLine (index);
+                streamWriter.Close ();
 
                 record.SetCustomDataField ("indexData", index);
                 if (doi != null)
