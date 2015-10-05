@@ -45,7 +45,7 @@ namespace bibliographer
             Copyright = copyright.Copyright;
             Comments = description.Description;
             ProgramName = title.Title;
-            Version = version.Major.ToString () + "." + version.Minor.ToString ();
+            Version = version.Major + "." + version.Minor;
             
         }
     }
