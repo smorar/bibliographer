@@ -81,6 +81,7 @@ namespace bibliographer
         protected GLib.Settings windowSettings;
         protected GLib.Settings sidebarSettings;
         protected GLib.Settings filehandlingSettings;
+        protected LookupRecordData lookupRecordData;
 
         bool modified;
         bool new_selected_record;
@@ -122,6 +123,8 @@ namespace bibliographer
             }
 
             am = new AlterationMonitor ();
+
+            lookupRecordData = new LookupRecordData ();
 
             // Set up main window defaults
 
@@ -494,6 +497,14 @@ namespace bibliographer
                 if (BibtexRecordTypeLibrary.Contains (record.RecordType)) {
                     recordType = BibtexRecordTypeLibrary.Get (record.RecordType);
 
+                    if (comboRecordType.ActiveText != record.RecordType) {
+                        comboRecordType.Active = BibtexRecordTypeLibrary.Index (record.RecordType);
+                    }
+
+                    if (entryReqBibtexKey.Text == "") {
+                        buttonBibtexKeyGenerate.Activate ();
+                    }
+
                     // viewportRequired
                     var tableReq = new Table (0, 2, false);
                     // TODO: process OR type fields
@@ -759,6 +770,8 @@ namespace bibliographer
                 if (!bibtexRecords.HasURI (fileUri.ToString())) {
                     Debug.WriteLine (5, "Adding new record with URI: {0}", fileUri.ToString());
                     var record = new BibtexRecord ();
+                    record.DoiAdded += lookupRecordData.LookupDOI;
+                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
                     // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
@@ -1070,6 +1083,7 @@ namespace bibliographer
         protected void OnHelpAboutActivated (object sender, EventArgs e)
         {
             var ab = new AboutBox ();
+            ab.TransientFor = window;
             ab.Run ();
             ab.Destroy ();
         }
@@ -1205,6 +1219,8 @@ namespace bibliographer
 
             var record = new BibtexRecord ();
             //System.Console.WriteLine ("Calling Add");
+            record.DoiAdded += lookupRecordData.LookupDOI;
+            record.RecordModified += OnRecordModified;
             bibtexRecords.Add (record);
 
             fieldFilter.IterNthChild (out litTreeViewIter, fieldFilter.IterNChildren ()-1);
@@ -1272,6 +1288,7 @@ namespace bibliographer
             if (result == ResponseType.Ok) {
                 try {
                     var record = new BibtexRecord (BibtexTextBuffer.Text);
+                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1300,6 +1317,7 @@ namespace bibliographer
             if (clipboard.WaitIsTextAvailable()) {
                 try{
                     var record = new BibtexRecord (clipboard.WaitForText());
+                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1389,6 +1407,19 @@ namespace bibliographer
                 MainVpane.Position = MainVpane.MaxPosition - 180;
                 ToggleEditRecords.Active = false;
             }
+        }
+
+        protected void OnRecordModified (object sender, EventArgs e)
+        {
+//            var record = (BibtexRecord)sender;
+//            if (comboRecordType.ActiveText != record.RecordType) {
+//                comboRecordType.Active = BibtexRecordTypeLibrary.Index (record.RecordType);
+//            }
+//            if (entryReqBibtexKey.Text == "") {
+//                buttonBibtexKeyGenerate.Activate ();
+//            }
+            ReconstructTabs ();
+            ReconstructDetails();
         }
 
         protected void OnRadioEditRecordsActivated (object sender, EventArgs e)
@@ -1564,6 +1595,8 @@ namespace bibliographer
                     // TODO: disable debugging info
                     //Console.WriteLine("Importing: " + u);
                     //bibtexRecord record = new bibtexRecord(store, u);
+                    //record.DoiAdded += lookupRecordData.LookupDOI;
+                    //record.RecordModified += OnRecordModified;
                 }
             }
             //if (litTreeView.Selection.GetSelected(out model, out check) && (iter == check))

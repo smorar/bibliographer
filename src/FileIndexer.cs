@@ -92,23 +92,6 @@ namespace bibliographer
             
         }
 
-        /*
-        private static StringArrayList ReadFromFile(String filename)
-        {
-            System.IO.StreamReader stream = new System.IO.StreamReader(new System.IO.FileStream(filename, System.IO.FileMode.Open));
-            StringArrayList result = new StringArrayList();
-            do {
-                String line = stream.ReadLine();
-                if (line != null)
-                    result.Add(line);
-                else
-                    break;
-            } while (true);
-            stream.Close();
-            return result;
-        }
-        */
-
         static StringArrayList GetTextualExtractor (object mimeType)
         {
             GLib.Settings settings;
@@ -274,10 +257,12 @@ namespace bibliographer
                 streamWriter.Close ();
 
                 record.SetCustomDataField ("indexData", index);
-                if (doi != null)
-                {
-                    //System.Console.WriteLine("Setting DOI: {0}", doi);
-                    record.SetField(BibtexRecord.BibtexFieldName.DOI, doi);
+                if (doi != null) {
+                    Console.WriteLine("Setting DOI: {0}", doi);
+                    record.SetField (BibtexRecord.BibtexFieldName.DOI, doi);
+                    Console.WriteLine ("Finished setting DOI field");
+                } else {
+                    Debug.WriteLine(5, "No DOI record found");
                 }
             } else {
                 // cachekey exists - load
@@ -318,12 +303,18 @@ namespace bibliographer
 
         static string ExtractDOI(StringArrayList stringDataArray)
         {
-            //System.Console.WriteLine ("Attempting to extract DOI");
+            Debug.WriteLine(5, "Attempting to extract DOI");
             if (stringDataArray != null) {
                 for (int line = 0; line < stringDataArray.Count; line++) {
                     String lineData = stringDataArray [line].ToLower ();
-                    if (lineData.IndexOf ("doi:") > 0) {
-                        int idx1 = lineData.IndexOf ("doi:");
+                    Console.WriteLine(lineData);
+                    if ((lineData.IndexOf ("doi:") >= 0) || (lineData.IndexOf("http://dx.doi.org/") >= 0)) {
+                        int idx1;
+                        idx1 = 0;
+                        if (lineData.IndexOf ("doi:") >= 0)
+                            idx1 = lineData.IndexOf ("doi:") + 4;
+                        else if (lineData.IndexOf ("http://dx.doi.org/") >= 0)
+                            idx1 = lineData.IndexOf ("http://dx.doi.org/") + 18;
                         lineData = lineData.Substring (idx1);
                         lineData = lineData.Trim ();
                         // If there are additional characters on this line, find a space character and chop them off
@@ -331,8 +322,6 @@ namespace bibliographer
                             int idx2 = lineData.IndexOf (' ');
                             lineData = lineData.Substring (0, lineData.Length - idx2);
                         }
-                        // Strip out "doi:"
-                        lineData = lineData.Remove (0, 4);
                         Debug.WriteLine (5, "Found doi:{0}", lineData);
                         return lineData;
                     }

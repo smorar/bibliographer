@@ -76,6 +76,36 @@ namespace libbibby
                 get {return "doi";}
             }
 
+            public static string Journal
+            {
+                get { return "journal"; }
+            }
+
+            public static string Volume
+            {
+                get { return "volume"; }
+            }
+
+            public static string Number
+            {
+                get { return "number"; }
+            }
+
+            public static string Pages
+            {
+                get { return "pages"; }
+            }
+
+            public static string Year
+            {
+                get { return "year"; }
+            }
+
+            public static string Month
+            {
+                get { return "month"; }
+            }
+
         }
 
         private string recordType;
@@ -232,6 +262,7 @@ namespace libbibby
 
         public void SetField (string field, string content)
         {
+            Console.WriteLine ("SetField: " + field);
             if (recordFields != null) {
                 for (int i = 0; i < recordFields.Count; i++) {
                     //if ((HasURI() == false) && (field == BibtexRecord.BibtexFieldName.URI))
@@ -239,7 +270,7 @@ namespace libbibby
                     if (String.Compare (((BibtexRecordField)recordFields[i]).fieldName, field, true) == 0) {
                         // Check if the field has _actually_ changed
                         if (content != ((BibtexRecordField)recordFields[i]).fieldValue) {
-                            //System.Console.WriteLine("Field: {0} updated with content: {1}", field, content);
+                            Console.WriteLine("Field: {0} updated with content: {1}", field, content);
                             Debug.WriteLine (5, "Field: {0} updated with content: {1}", field, content);
                             ((BibtexRecordField)recordFields[i]).fieldValue = content;
                             if (field == BibtexRecord.BibtexFieldName.URI) {
@@ -249,12 +280,14 @@ namespace libbibby
                                 else
                                     this.OnUriAdded (new EventArgs ());
                             } else if (field == BibtexRecord.BibtexFieldName.DOI) {
-                                if (HasDOI() == true)
+                                if (HasDOI () == true)
                                     this.OnDoiUpdated (new EventArgs ());
-                                else
+                                else {
+                                    Console.WriteLine ("DOI added to record");
                                     this.OnDoiAdded (new EventArgs ());
+                                }
                             }
-                            //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
+                            Console.WriteLine ("Record modified event emitted: SetField {0}", field);
                             this.OnRecordModified (new EventArgs ());
                         }
                         return;
@@ -273,6 +306,9 @@ namespace libbibby
                 if (field == BibtexRecord.BibtexFieldName.URI) {
                     //System.Console.WriteLine ("OnUriAdded event emitted: SetField {0}", field);
                     this.OnUriAdded (new EventArgs ());
+                }
+                if (field == BibtexRecord.BibtexFieldName.DOI) {
+                    this.OnDoiAdded (new EventArgs ());
                 }
             }
         }

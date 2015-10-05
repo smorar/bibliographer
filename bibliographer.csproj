@@ -67,6 +67,13 @@
     <None Include="TODO" />
     <None Include="resources\error.png" />
     <None Include="resources\apps.bibliographer.gschema.xml" />
+    <None Include="configure.ac" />
+    <None Include="Makefile.am" />
+    <None Include="src\Makefile.am" />
+    <None Include="resources\bibliographer.desktop">
+      <DeployService-TargetDirectoryId>Linux.DesktopApplications</DeployService-TargetDirectoryId>
+    </None>
+    <None Include="resources\bibliographer.man" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\bibliographer.png">
@@ -104,6 +111,11 @@
     </Reference>
     <Reference Include="cairo-sharp, Version=1.10.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <Package>gtk-sharp-3.0</Package>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>/usr/lib/cli/Newtonsoft.Json-5.0/Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
