@@ -65,4 +65,7 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="libbibby\Makefile.am" />
+  </ItemGroup>
 </Project>

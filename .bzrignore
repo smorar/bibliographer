@@ -27,3 +27,6 @@ libbibby/TestResult.xml
 libbibby/%temp%
 test-results
 obj
+missing
+stamp-h2
+install-sh

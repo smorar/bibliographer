@@ -1,7 +1,7 @@
-MCS_FLAGS += -nowarn:0169
-MCS_FLAGS += -unsafe+
+#MCS_FLAGS += -nowarn:0169
+#MCS_FLAGS += -unsafe+
 
-CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS) $(GTKSHARP_LIBS) 
+CSC = $(MCS) $(MCS_FLAGS) $(CSFLAGS) $(GTKSHARP_LIBS) $(NEWTONSOFTJSON_LIBS)
 
 ASSEMBLY_NAME = bibliographer
 ASSEMBLY = $(ASSEMBLY_NAME).exe
@@ -14,11 +14,6 @@ WRAPPER = $(ASSEMBLY_NAME)
 #endif
 
 SOURCES = 								\
-	$(top_srcdir)/gtk-gui/bibliographer.BibliographerMainWindow.cs 	\
-	$(top_srcdir)/gtk-gui/bibliographer.BibliographerChooseColumns.cs \
-	$(top_srcdir)/gtk-gui/bibliographer.BibtexEntryDialog.cs 	\
-	$(top_srcdir)/gtk-gui/generated.cs		\
-	$(srcdir)/widgets/HoverImageButton.cs		\
 	$(srcdir)/widgets/SearchEntry.cs		\
 	$(srcdir)/AboutBox.cs				\
 	$(srcdir)/Alteration.cs				\
@@ -29,10 +24,8 @@ SOURCES = 								\
 	$(srcdir)/BibliographerSearchEntry.cs		\
 	$(srcdir)/BibliographerSidePaneTreeView.cs	\
 	$(srcdir)/BibliographerStartup.cs		\
-	$(srcdir)/BibtexEntryDialog.cs			\
 	$(srcdir)/Cache.cs				\
-	$(srcdir)/Config.cs				\
-        $(srcdir)/Debug.cs				\
+	$(srcdir)/Debug.cs				\
 	$(srcdir)/FileIndexer.cs			\
 	$(srcdir)/LitListStore.cs			\
 	$(srcdir)/LookupRecordData.cs			\
@@ -41,13 +34,12 @@ SOURCES = 								\
 	$(srcdir)/ThumbGen.cs				\
 	$(srcdir)/Tri.cs
 
-RESOURCES =					\
+RESOURCES =							\
+	-resource:$(top_srcdir)/resources/bibliographer.glade	\
 	-resource:$(top_srcdir)/resources/bibliographer.png	\
 	-resource:$(top_srcdir)/resources/error.png		\
-	-pkg:gnome-sharp-2.0					\
-	-pkg:gtk-sharp-2.0					\
-	-pkg:gtk-dotnet-2.0					\
-	-r:/usr/lib/mono/2.0/Mono.Posix.dll			\
+	-r:/usr/lib/mono/4.0/System.Runtime.Serialization.dll	\
+	-r:/usr/lib/mono/4.0/Mono.Posix.dll			\
 	-r:$(top_srcdir)/libbibby/libbibby.dll
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
@@ -91,7 +83,6 @@ $(ASSEMBLY): $(SOURCES)
 all: $(ASSEMBLY)
 
 EXTRA_DIST = $(SOURCES) \
-	$(top_srcdir)/gtk-gui/gui.stetic \
 	bibliographer.in bibliographer.exe.config.in
 
 CLEANFILES = 					\

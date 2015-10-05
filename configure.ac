@@ -1,24 +1,29 @@
 
 AM_CONFIG_HEADER(config.h)
 
-AC_INIT(bibliographer, 0.1.3)
+AC_INIT(bibliographer, 0.2.0)
 AC_CONFIG_SRCDIR(src/BibliographerStartup.cs)
 AM_INIT_AUTOMAKE
 
 AM_MAINTAINER_MODE
 
-MONO_REQUIRED=2.0
-GTKSHARP_REQUIRED=2.12
+MONO_REQUIRED=4.0
+GTKSHARP_REQUIRED=2.99
+GDKSHARP_REQUIRED=2.99
+GIOSHARP_REQUIRED=2.99
+NEWTONSOFTJSON_REQUIRED=5.0
+NUNIT_REQUIRED=2.6
 
 PKG_CHECK_MODULES(MONO,
 	mono >= $MONO_REQUIRED)
 
 PKG_CHECK_MODULES(GTKSHARP,
-	gtk-sharp-2.0 >= $GTKSHARP_REQUIRED \
-	gnome-sharp-2.0 >= $GTKSHARP_REQUIRED \
-	gconf-sharp-2.0 >= $GTKSHARP_REQUIRED)
+	gtk-sharp-3.0 >= $GTKSHARP_REQUIRED \
+	gdk-sharp-3.0 >= $GDKSHARP_REQUIRED \
+	gio-sharp-3.0 >= $GIOSHARP_REQUIRED )
 
-NUNIT_REQUIRED=2.4.7
+PKG_CHECK_MODULES(NEWTONSOFTJSON,
+	newtonsoft-json >= $NEWTONSOFTJSON_REQUIRED )
 
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Enable NUnit tests]), enable_tests=$enableval, enable_tests="no")
 
@@ -34,7 +39,7 @@ else
 	AC_PATH_PROG(NUNIT, nunit-console)
 
 	if test "x$do_tests" = "xno"; then
-		PKG_CHECK_MODULES(NUNIT, mono-nunit >= 2.4,
+		PKG_CHECK_MODULES(NUNIT, mono-nunit >= 2.6,
 		do_tests="yes", do_tests="no")
 
 		AC_SUBST(NUNIT_LIBS)
@@ -47,9 +52,8 @@ else
 	fi
 fi
 
-AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
 AC_PATH_PROG(MONO, mono)
-AC_PATH_PROGS(MCS, [gmcs gmcs2])
+AC_PATH_PROGS(MCS, [mcs gmcs gmcs2])
 
 CS="C#"
 if test "$MCS" = "no" ; then
