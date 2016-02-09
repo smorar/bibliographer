@@ -107,221 +107,227 @@ namespace bibliographer
             System.Reflection.AssemblyTitleAttribute title;
 
             gui = new Builder ();
-            System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("BibliographerGladeUI");
-            var reader = new System.IO.StreamReader (guiStream);
-            gui.AddFromString (reader.ReadToEnd());
-            gui.Autoconnect (this);
+            System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.glade1");
+            try
+            {
+                var reader = new System.IO.StreamReader (guiStream);
+                gui.AddFromString (reader.ReadToEnd());
+                gui.Autoconnect (this);
 
-            // TODO: move window and derived settings into apps.bibliographer.window
-            windowSettings = new GLib.Settings ("apps.bibliographer");
-            sidebarSettings = new GLib.Settings ("apps.bibliographer.sidebar");
-            filehandlingSettings = new GLib.Settings ("apps.bibliographer.filehandling");
+                // TODO: move window and derived settings into apps.bibliographer.window
+                windowSettings = new GLib.Settings ("apps.bibliographer");
+                sidebarSettings = new GLib.Settings ("apps.bibliographer.sidebar");
+                filehandlingSettings = new GLib.Settings ("apps.bibliographer.filehandling");
 
-            if (windowSettings.GetString ("data-directory") == "") {
-                // Set default data directory if none exists
-                windowSettings.SetString ("data-directory", Environment.GetEnvironmentVariable ("HOME") + "/.local/share/bibliographer/");
+                if (windowSettings.GetString ("data-directory") == "") {
+                    // Set default data directory if none exists
+                    windowSettings.SetString ("data-directory", Environment.GetEnvironmentVariable ("HOME") + "/.local/share/bibliographer/");
+                }
+
+                am = new AlterationMonitor ();
+
+                lookupRecordData = new LookupRecordData ();
+
+                // Set up main window defaults
+
+                MenuItem MenuFileNew;
+                MenuItem MenuFileOpen;
+                MenuItem MenuFileSave;
+                MenuItem MenuFileSaveAs;
+                MenuItem MenuFileImportFolder;
+                MenuItem MenuFileQuit;
+                MenuItem MenuEditAddRecord;
+                MenuItem MenuEditRemoveRecord;
+                MenuItem MenuEditAddRecordFromBibtex;
+                MenuItem MenuEditAddRecordClipboard;
+                MenuItem MenuViewColumns;
+                MenuItem MenuHelpAbout;
+
+                ToolButton ToolFileNew;
+                ToolButton ToolFileOpen;
+                ToolButton ToolFileSave;
+                ToolButton ToolFileSaveAs;
+                ToolButton ToolAddRecord;
+                ToolButton ToolRemoveRecord;
+
+
+                Viewport scrolledwindowTreeViewViewport;
+                Box searchHBox;
+
+                window = (Window)gui.GetObject ("bibliographer.BibliographerMainWindow");
+                MenuFileNew = (MenuItem)gui.GetObject ("FileNew");
+                MenuFileOpen = (MenuItem)gui.GetObject ("FileOpen");
+                MenuFileSave = (MenuItem)gui.GetObject ("FileSave");
+                MenuFileSaveAs = (MenuItem)gui.GetObject ("FileSaveAs");
+                MenuFileImportFolder = (MenuItem)gui.GetObject ("FileImportFolder");
+                MenuFileRecentFiles = (MenuItem)gui.GetObject ("recentFilesMenu");
+                MenuFileQuit = (MenuItem)gui.GetObject ("FileQuit");
+                MenuEditAddRecord = (MenuItem)gui.GetObject ("EditAddRecord");
+                MenuEditRemoveRecord = (MenuItem)gui.GetObject ("EditRemoveRecord");
+                MenuEditAddRecordFromBibtex = (MenuItem)gui.GetObject ("EditAddRecordFromBibtex");
+                MenuEditAddRecordClipboard = (MenuItem)gui.GetObject ("EditAddRecordClipboard");
+                MenuViewSidebar = (CheckMenuItem)gui.GetObject ("ViewSidebar");
+                MenuViewRecordDetails = (CheckMenuItem)gui.GetObject ("ViewRecordDetails");
+                MenuViewColumns = (MenuItem)gui.GetObject ("ViewColumns");
+                MenuFullScreen = (CheckMenuItem)gui.GetObject ("ViewFullScreen");
+                MenuHelpAbout = (MenuItem)gui.GetObject ("HelpAbout");
+
+                ToolFileNew = (ToolButton)gui.GetObject ("ToolNewFile");
+                ToolFileOpen = (ToolButton)gui.GetObject ("ToolFileOpen");
+                ToolFileSave = (ToolButton)gui.GetObject ("ToolFileSave");
+                ToolFileSaveAs = (ToolButton)gui.GetObject ("ToolFileSaveAs");
+                ToolAddRecord = (ToolButton)gui.GetObject ("ToolAddRecord");
+                ToolRemoveRecord = (ToolButton)gui.GetObject ("ToolRemoveRecord");
+
+                ViewRecordsAction = (RadioMenuItem)gui.GetObject ("ViewRecordsAction");
+                EditRecordsAction = (RadioMenuItem)gui.GetObject ("EditRecordsAction");
+                ToggleEditRecords = (ToggleButton)gui.GetObject ("ToggleEditRecords");
+
+                scrolledwindowTreeViewViewport = (Viewport)gui.GetObject ("scrolledwindowTreeViewViewport");
+                scrolledwindowSidePaneViewport = (Viewport)gui.GetObject ("scrolledwindowSidePaneViewport");
+                scrolledwindowSidePaneScrolledWindow = (ScrolledWindow)gui.GetObject ("scrolledwindowSidePaneScrolledWindow");
+                scrolledwindowSidePane = (Paned)gui.GetObject ("scrolledwindowSidePane");
+                viewportRequired = (Viewport)gui.GetObject ("viewportRequired");
+                viewportOptional = (Viewport)gui.GetObject ("viewportOptional");
+                viewportOther = (Viewport)gui.GetObject ("viewportOther");
+                viewportBibliographerData = (Viewport)gui.GetObject ("viewportBibliographerData");
+                notebookFields = (Notebook)gui.GetObject ("notebookFields");
+                recordDetailsView = (Box)gui.GetObject ("recordDetailsView");
+                MainVpane = (Paned)gui.GetObject ("MainVpane");
+
+                comboRecordType = (ComboBoxText)gui.GetObject ("comboRecordType");
+                searchHBox = (Box)gui.GetObject ("searchHBox");
+                entryReqBibtexKey = (Entry)gui.GetObject ("entryReqBibtexKey");
+                buttonBibtexKeyGenerate = (Button)gui.GetObject ("buttonBibtexKeyGenerate");
+                lblBibtexKey = (Label)gui.GetObject ("lblBibtexKey");
+                RecordEditor = (Box)gui.GetObject ("RecordEditor");
+                RecordView = (Box)gui.GetObject ("RecordView");
+
+                MenuFileNew.Activated += OnFileNewActivated;
+                MenuFileOpen.Activated += OnFileOpenActivated;
+                MenuFileSave.Activated += OnFileSaveActivated;
+                MenuFileSaveAs.Activated += OnFileSaveAsActivated;
+                MenuFileImportFolder.Activated += OnFileImportFolderActivated;
+                MenuFileQuit.Activated += OnFileQuitActivated;
+                MenuEditAddRecord.Activated += OnAddRecordActivated;
+                MenuEditRemoveRecord.Activated += OnRemoveRecordActivated;
+                MenuEditAddRecordFromBibtex.Activated += OnAddRecordFromBibtexActivated;
+                MenuEditAddRecordClipboard.Activated += OnAddRecordFromClipboardActivated;
+                MenuViewSidebar.Activated += OnToggleSideBarActivated;
+                MenuViewRecordDetails.Activated += OnToggleRecordDetailsActivated;
+                MenuViewColumns.Activated += OnChooseColumnsActivated;
+                MenuFullScreen.Activated += OnToggleFullScreenActionActivated;
+                MenuHelpAbout.Activated += OnHelpAboutActivated;
+
+                ToolFileNew.Clicked += OnFileNewActivated;
+                ToolFileOpen.Clicked += OnFileOpenActivated;
+                ToolFileSave.Clicked += OnFileSaveActivated;
+                ToolFileSaveAs.Clicked += OnFileSaveAsActivated;
+                ToolAddRecord.Clicked += OnAddRecordActivated;
+                ToolRemoveRecord.Clicked += OnRemoveRecordActivated;
+
+                ToggleEditRecords.Clicked += OnToggleEditRecordsActivated;
+                EditRecordsAction.Activated += OnRadioEditRecordsActivated;
+                ViewRecordsAction.Activated += OnRadioViewRecordsActivated;
+
+                buttonBibtexKeyGenerate.Activated += OnButtonBibtexKeyGenerateClicked;
+                comboRecordType.Changed += OnComboRecordTypeChanged;
+
+                window.DeleteEvent += OnWindowDeleteEvent;
+                window.StateChanged += OnWindowStateChanged;
+                window.SizeAllocated += OnWindowSizeAllocated;
+
+                title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), 
+                                                                     typeof(System.Reflection.AssemblyTitleAttribute));
+                application_name = title.Title;
+
+                window.WidthRequest = 800;
+                window.HeightRequest = 600;
+
+                int wdth, hght;
+
+                wdth = windowSettings.GetInt ("window-width");
+                hght = windowSettings.GetInt ("window-height");
+
+                window.Resize(width: wdth, height: hght);
+
+                if (windowSettings.GetBoolean ("window-maximized"))
+                    window.Maximize ();
+
+                window.SetPosition (WindowPosition.Center);
+
+                // Main bibtex view list model
+                bibtexRecords = new BibtexRecords ();
+
+                bibtexRecords.RecordsModified += OnBibtexRecordsModified;
+                bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
+                bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
+
+                litStore = new LitListStore (bibtexRecords);
+
+                modelFilter = new TreeModelFilter (litStore, null);
+                fieldFilter = new TreeModelFilter (modelFilter, null);
+
+                modelFilter.VisibleFunc = new TreeModelFilterVisibleFunc (ModelFilterListStore);
+                fieldFilter.VisibleFunc = new TreeModelFilterVisibleFunc (FieldFilterListStore);
+
+                // Setup and add the LitTreeView
+                litTreeView = new LitTreeView (fieldFilter);
+                scrolledwindowTreeViewViewport.Add (litTreeView);
+                scrolledwindowTreeViewViewport.Visible = true;
+                litTreeView.ShowAll ();
+                // LitTreeView callbacks
+                litTreeView.Selection.Changed += OnLitTreeViewSelectionChanged;
+                litTreeView.DragDataReceived += OnLitTreeViewDragDataReceived;
+
+                // Side Pane tree model
+                sidePaneStore = new SidePaneTreeStore (bibtexRecords);
+                sidePaneStore.SetSortColumnId (0, SortType.Ascending);
+
+                sidePaneTreeView = new SidePaneTreeView (sidePaneStore);
+                scrolledwindowSidePaneViewport.Add (sidePaneTreeView);
+                // SidePaneTreeView callbacks
+                sidePaneTreeView.Selection.Changed += OnSidePaneTreeSelectionChanged;
+
+                if (sidebarSettings.GetBoolean ("visible")) {
+                    MenuViewSidebar.Active = false;
+                    MenuViewSidebar.Activate ();
+                }
+
+                MenuViewRecordDetails.Active = false;
+                MenuViewRecordDetails.Activate ();
+
+                // Read cached sidePane width
+                scrolledwindowSidePane.Position = sidebarSettings.GetInt ("width");
+
+                // Set up comboRecordType items
+                for (int i = 0; i < BibtexRecordTypeLibrary.Count (); i++)
+                    comboRecordType.InsertText (i, BibtexRecordTypeLibrary.GetWithIndex (i).name);
+
+                // Set up drag and drop of files into litTreeView
+                Drag.DestSet (litTreeView, DestDefaults.All, target_table, Gdk.DragAction.Copy);
+
+                // Search entry
+                searchEntry = new SearchEntry ();
+                searchEntry.Changed += OnFilterEntryChanged;
+                searchHBox.Add (searchEntry);
+                searchHBox.Expand = true;
+
+                UpdateMenuFileHistory ();
+
+                // Activate new file
+
+                MenuFileNew.Activate ();
+                ToggleEditRecords.Activate ();
+                ReconstructTabs ();
+                ReconstructDetails ();
+                // Now that we are configured, show the window
+                window.ShowAll ();
             }
-
-            am = new AlterationMonitor ();
-
-            lookupRecordData = new LookupRecordData ();
-
-            // Set up main window defaults
-
-            MenuItem MenuFileNew;
-            MenuItem MenuFileOpen;
-            MenuItem MenuFileSave;
-            MenuItem MenuFileSaveAs;
-            MenuItem MenuFileImportFolder;
-            MenuItem MenuFileQuit;
-            MenuItem MenuEditAddRecord;
-            MenuItem MenuEditRemoveRecord;
-            MenuItem MenuEditAddRecordFromBibtex;
-            MenuItem MenuEditAddRecordClipboard;
-            MenuItem MenuViewColumns;
-            MenuItem MenuHelpAbout;
-
-            ToolButton ToolFileNew;
-            ToolButton ToolFileOpen;
-            ToolButton ToolFileSave;
-            ToolButton ToolFileSaveAs;
-            ToolButton ToolAddRecord;
-            ToolButton ToolRemoveRecord;
-
-
-            Viewport scrolledwindowTreeViewViewport;
-            Box searchHBox;
-
-            window = (Window)gui.GetObject ("bibliographer.BibliographerMainWindow");
-            MenuFileNew = (MenuItem)gui.GetObject ("FileNew");
-            MenuFileOpen = (MenuItem)gui.GetObject ("FileOpen");
-            MenuFileSave = (MenuItem)gui.GetObject ("FileSave");
-            MenuFileSaveAs = (MenuItem)gui.GetObject ("FileSaveAs");
-            MenuFileImportFolder = (MenuItem)gui.GetObject ("FileImportFolder");
-            MenuFileRecentFiles = (MenuItem)gui.GetObject ("recentFilesMenu");
-            MenuFileQuit = (MenuItem)gui.GetObject ("FileQuit");
-            MenuEditAddRecord = (MenuItem)gui.GetObject ("EditAddRecord");
-            MenuEditRemoveRecord = (MenuItem)gui.GetObject ("EditRemoveRecord");
-            MenuEditAddRecordFromBibtex = (MenuItem)gui.GetObject ("EditAddRecordFromBibtex");
-            MenuEditAddRecordClipboard = (MenuItem)gui.GetObject ("EditAddRecordClipboard");
-            MenuViewSidebar = (CheckMenuItem)gui.GetObject ("ViewSidebar");
-            MenuViewRecordDetails = (CheckMenuItem)gui.GetObject ("ViewRecordDetails");
-            MenuViewColumns = (MenuItem)gui.GetObject ("ViewColumns");
-            MenuFullScreen = (CheckMenuItem)gui.GetObject ("ViewFullScreen");
-            MenuHelpAbout = (MenuItem)gui.GetObject ("HelpAbout");
-
-            ToolFileNew = (ToolButton)gui.GetObject ("ToolNewFile");
-            ToolFileOpen = (ToolButton)gui.GetObject ("ToolFileOpen");
-            ToolFileSave = (ToolButton)gui.GetObject ("ToolFileSave");
-            ToolFileSaveAs = (ToolButton)gui.GetObject ("ToolFileSaveAs");
-            ToolAddRecord = (ToolButton)gui.GetObject ("ToolAddRecord");
-            ToolRemoveRecord = (ToolButton)gui.GetObject ("ToolRemoveRecord");
-
-            ViewRecordsAction = (RadioMenuItem)gui.GetObject ("ViewRecordsAction");
-            EditRecordsAction = (RadioMenuItem)gui.GetObject ("EditRecordsAction");
-            ToggleEditRecords = (ToggleButton)gui.GetObject ("ToggleEditRecords");
-
-            scrolledwindowTreeViewViewport = (Viewport)gui.GetObject ("scrolledwindowTreeViewViewport");
-            scrolledwindowSidePaneViewport = (Viewport)gui.GetObject ("scrolledwindowSidePaneViewport");
-            scrolledwindowSidePaneScrolledWindow = (ScrolledWindow)gui.GetObject ("scrolledwindowSidePaneScrolledWindow");
-            scrolledwindowSidePane = (Paned)gui.GetObject ("scrolledwindowSidePane");
-            viewportRequired = (Viewport)gui.GetObject ("viewportRequired");
-            viewportOptional = (Viewport)gui.GetObject ("viewportOptional");
-            viewportOther = (Viewport)gui.GetObject ("viewportOther");
-            viewportBibliographerData = (Viewport)gui.GetObject ("viewportBibliographerData");
-            notebookFields = (Notebook)gui.GetObject ("notebookFields");
-            recordDetailsView = (Box)gui.GetObject ("recordDetailsView");
-            MainVpane = (Paned)gui.GetObject ("MainVpane");
-
-            comboRecordType = (ComboBoxText)gui.GetObject ("comboRecordType");
-            searchHBox = (Box)gui.GetObject ("searchHBox");
-            entryReqBibtexKey = (Entry)gui.GetObject ("entryReqBibtexKey");
-            buttonBibtexKeyGenerate = (Button)gui.GetObject ("buttonBibtexKeyGenerate");
-            lblBibtexKey = (Label)gui.GetObject ("lblBibtexKey");
-            RecordEditor = (Box)gui.GetObject ("RecordEditor");
-            RecordView = (Box)gui.GetObject ("RecordView");
-
-            MenuFileNew.Activated += OnFileNewActivated;
-            MenuFileOpen.Activated += OnFileOpenActivated;
-            MenuFileSave.Activated += OnFileSaveActivated;
-            MenuFileSaveAs.Activated += OnFileSaveAsActivated;
-            MenuFileImportFolder.Activated += OnFileImportFolderActivated;
-            MenuFileQuit.Activated += OnFileQuitActivated;
-            MenuEditAddRecord.Activated += OnAddRecordActivated;
-            MenuEditRemoveRecord.Activated += OnRemoveRecordActivated;
-            MenuEditAddRecordFromBibtex.Activated += OnAddRecordFromBibtexActivated;
-            MenuEditAddRecordClipboard.Activated += OnAddRecordFromClipboardActivated;
-            MenuViewSidebar.Activated += OnToggleSideBarActivated;
-            MenuViewRecordDetails.Activated += OnToggleRecordDetailsActivated;
-            MenuViewColumns.Activated += OnChooseColumnsActivated;
-            MenuFullScreen.Activated += OnToggleFullScreenActionActivated;
-            MenuHelpAbout.Activated += OnHelpAboutActivated;
-
-            ToolFileNew.Clicked += OnFileNewActivated;
-            ToolFileOpen.Clicked += OnFileOpenActivated;
-            ToolFileSave.Clicked += OnFileSaveActivated;
-            ToolFileSaveAs.Clicked += OnFileSaveAsActivated;
-            ToolAddRecord.Clicked += OnAddRecordActivated;
-            ToolRemoveRecord.Clicked += OnRemoveRecordActivated;
-
-            ToggleEditRecords.Clicked += OnToggleEditRecordsActivated;
-            EditRecordsAction.Activated += OnRadioEditRecordsActivated;
-            ViewRecordsAction.Activated += OnRadioViewRecordsActivated;
-
-            buttonBibtexKeyGenerate.Activated += OnButtonBibtexKeyGenerateClicked;
-            comboRecordType.Changed += OnComboRecordTypeChanged;
-
-            window.DeleteEvent += OnWindowDeleteEvent;
-            window.StateChanged += OnWindowStateChanged;
-            window.SizeAllocated += OnWindowSizeAllocated;
-
-            title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), 
-                                                                 typeof(System.Reflection.AssemblyTitleAttribute));
-            application_name = title.Title;
-
-            window.WidthRequest = 800;
-            window.HeightRequest = 600;
-
-            int wdth, hght;
-
-            wdth = windowSettings.GetInt ("window-width");
-            hght = windowSettings.GetInt ("window-height");
-
-            window.Resize(width: wdth, height: hght);
-
-            if (windowSettings.GetBoolean ("window-maximized"))
-                window.Maximize ();
-
-            window.SetPosition (WindowPosition.Center);
-
-            // Main bibtex view list model
-            bibtexRecords = new BibtexRecords ();
-
-            bibtexRecords.RecordsModified += OnBibtexRecordsModified;
-            bibtexRecords.RecordURIAdded += OnBibtexRecordURIAdded;
-            bibtexRecords.RecordURIModified += OnBibtexRecordURIModified;
-
-            litStore = new LitListStore (bibtexRecords);
-
-            modelFilter = new TreeModelFilter (litStore, null);
-            fieldFilter = new TreeModelFilter (modelFilter, null);
-
-            modelFilter.VisibleFunc = new TreeModelFilterVisibleFunc (ModelFilterListStore);
-            fieldFilter.VisibleFunc = new TreeModelFilterVisibleFunc (FieldFilterListStore);
-
-            // Setup and add the LitTreeView
-            litTreeView = new LitTreeView (fieldFilter);
-            scrolledwindowTreeViewViewport.Add (litTreeView);
-            scrolledwindowTreeViewViewport.Visible = true;
-            litTreeView.ShowAll ();
-            // LitTreeView callbacks
-            litTreeView.Selection.Changed += OnLitTreeViewSelectionChanged;
-            litTreeView.DragDataReceived += OnLitTreeViewDragDataReceived;
-
-            // Side Pane tree model
-            sidePaneStore = new SidePaneTreeStore (bibtexRecords);
-            sidePaneStore.SetSortColumnId (0, SortType.Ascending);
-
-            sidePaneTreeView = new SidePaneTreeView (sidePaneStore);
-            scrolledwindowSidePaneViewport.Add (sidePaneTreeView);
-            // SidePaneTreeView callbacks
-            sidePaneTreeView.Selection.Changed += OnSidePaneTreeSelectionChanged;
-
-            if (sidebarSettings.GetBoolean ("visible")) {
-                MenuViewSidebar.Active = false;
-                MenuViewSidebar.Activate ();
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine ("GUI configuration file not found.\n" + e.Message);
             }
-
-            MenuViewRecordDetails.Active = false;
-            MenuViewRecordDetails.Activate ();
-
-            // Read cached sidePane width
-            scrolledwindowSidePane.Position = sidebarSettings.GetInt ("width");
-
-            // Set up comboRecordType items
-            for (int i = 0; i < BibtexRecordTypeLibrary.Count (); i++)
-                comboRecordType.InsertText (i, BibtexRecordTypeLibrary.GetWithIndex (i).name);
-
-            // Set up drag and drop of files into litTreeView
-            Drag.DestSet (litTreeView, DestDefaults.All, target_table, Gdk.DragAction.Copy);
-
-            // Search entry
-            searchEntry = new SearchEntry ();
-            searchEntry.Changed += OnFilterEntryChanged;
-            searchHBox.Add (searchEntry);
-            searchHBox.Expand = true;
-
-            UpdateMenuFileHistory ();
-
-            // Activate new file
-
-            MenuFileNew.Activate ();
-            ToggleEditRecords.Activate ();
-            ReconstructTabs ();
-            ReconstructDetails ();
-            // Now that we are configured, show the window
-            window.ShowAll ();
-
         }
 
         void BibtexGenerateKeySetStatus ()

@@ -90,25 +90,30 @@ namespace bibliographer
             Cache.Initialise ();
 
 			Gtk.Application.Init ();
-            
-			window = new BibliographerMainWindow ();
-            
-            if (filename != "")
-                window.FileOpen (filename);
+            try
+            {
+			    window = new BibliographerMainWindow ();
+                if (filename != "")
+                    window.FileOpen (filename);
 
-            window.am.thumbGenThread.Start ();
-            window.am.indexerThread.Start ();
-            window.am.alterationMonitorThread.Start ();
+                window.am.thumbGenThread.Start ();
+                window.am.indexerThread.Start ();
+                window.am.alterationMonitorThread.Start ();
 
-            Gtk.Application.Run ();
-            
-            window.am.alterationMonitorThread.Abort ();
-            window.am.alterationMonitorThread.Join ();
-            window.am.indexerThread.Abort ();
-            window.am.indexerThread.Join ();
-            window.am.thumbGenThread.Abort ();
-            window.am.thumbGenThread.Join ();
+                Gtk.Application.Run ();
 
+                window.am.alterationMonitorThread.Abort ();
+                window.am.alterationMonitorThread.Join ();
+                window.am.indexerThread.Abort ();
+                window.am.indexerThread.Join ();
+                window.am.thumbGenThread.Abort ();
+                window.am.thumbGenThread.Join ();
+
+            }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine ("Bibliographer window not initialized.\n" + e.Message);
+            }
         }
     }
 }

@@ -80,7 +80,7 @@
       <LogicalName>bibliographer.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\bibliographer.glade">
-      <LogicalName>BibliographerGladeUI</LogicalName>
+      <LogicalName>bibliographer.glade</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -115,7 +115,7 @@
     <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>/usr/lib/cli/Newtonsoft.Json-5.0/Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\usr\lib\cli\Newtonsoft.Json-5.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
