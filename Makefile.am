@@ -18,6 +18,8 @@ EXTRA_DIST = resources/bibliographer.png 	\
 DISTCLEANFILES = 	\
 	*.bak		\
 	*~		\
+	obj		\
+	bin		\
 	*.pidb
 
 MAINTAINERCLEANFILES = 	\

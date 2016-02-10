@@ -107,7 +107,7 @@ namespace bibliographer
             System.Reflection.AssemblyTitleAttribute title;
 
             gui = new Builder ();
-            System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.glade1");
+            System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.glade");
             try
             {
                 var reader = new System.IO.StreamReader (guiStream);

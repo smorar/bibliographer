@@ -3,15 +3,15 @@ Section: gnome
 Priority: optional
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: Sameer Morar <smorar@gmail.com>
-Standards-Version: 3.8.3
-Build-Depends: debhelper (>= 7.0), mono-gmcs, mono-2.0-devel, libmono-dev, libmono2.0-cil, libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.24-cil (>=2.3.9) | libgconf2.0-cil (>=2.3.9)
+Standards-Version: 3.9.6
+Build-Depends: debhelper (>= 9.0), mono-mcs, mono-devel, libmono-cil-dev, libgtk3.0-cil-dev (>=2.99.0), libglib3.0-cil-dev (>= 2.99.0), libatk3.0-cil (>=2.99.0), libcairo1.10-cil (>=2.99.0), libgdk3.0-cil-dev (>=2.99.0), libgio3.0-cil-dev (>=2.99.0), libmono-sqlite4.0-cil, libnewtonsoft-json-cil-dev, libpango3.0-cil (>=2.99.0)
 Homepage: https://launchpad.net/bibliographer
 
 Package: bibliographer
 Architecture: any
-Depends: libgtk2.0-cil (>=2.3.9), libglib2.0-cil (>= 2.3.9), libgnome2.24-cil (>= 2.3.9), libgconf2.24-cil (>=2.3.9) | libgconf2.0-cil (>=2.3.9), libmono2.0-cil, mono-runtime, antiword, poppler-utils
+Depends: ${misc:Depends}, libgtk3.0-cil (>=2.99.0), libglib3.0-cil (>= 2.99.0), libatk3.0-cil (>=2.99.0), libcairo1.10-cil (>=2.99.0), libgdk3.0-cil (>=2.99.0), libgio3.0-cil (>=2.99.0), libmono-sqlite4.0-cil, libnewtonsoft-json5.0-cil, libpango3.0-cil (>=2.99.0), mono-runtime, antiword, poppler-utils
 Recommends: texlive-base
-Description: A bibliographic database management tool
+Description: Bibliography database management tool
  Bibliographer is a bibtex bibliography database editor which 
  aims to be easy to use. Its features include linking files to
  your records with indexing and searching support.
