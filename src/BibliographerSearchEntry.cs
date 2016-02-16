@@ -33,7 +33,7 @@ namespace bibliographer
 
         public SearchEntry ()
         {
-            WidthRequest = 200;
+            WidthRequest = 300;
             
             Gtk.Menu searchMenu = Menu;
             
