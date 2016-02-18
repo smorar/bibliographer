@@ -30,27 +30,27 @@ namespace bibliographer
     public class LitTreeView : Gtk.TreeView
     {
         protected Gtk.TreeModelSort sorter;
-        protected GLib.Settings columnsIconSettings;
-        protected GLib.Settings columnsAuthorSettings;
-        protected GLib.Settings columnsTitleSettings;
-        protected GLib.Settings columnsYearSettings;
-        protected GLib.Settings columnsJournalSettings;
-        protected GLib.Settings columnsBibtexKeySettings;
-        protected GLib.Settings columnsVolumeSettings;
-        protected GLib.Settings columnsPagesSettings;
+        protected BibliographerSettings columnsIconSettings;
+        protected BibliographerSettings columnsAuthorSettings;
+        protected BibliographerSettings columnsTitleSettings;
+        protected BibliographerSettings columnsYearSettings;
+        protected BibliographerSettings columnsJournalSettings;
+        protected BibliographerSettings columnsBibtexKeySettings;
+        protected BibliographerSettings columnsVolumeSettings;
+        protected BibliographerSettings columnsPagesSettings;
 
         public LitTreeView (Gtk.ITreeModel model)
         {
             sorter = new Gtk.TreeModelSort (model);
 
-            columnsIconSettings = new GLib.Settings ("apps.bibliographer.columns.icon");
-            columnsAuthorSettings = new GLib.Settings ("apps.bibliographer.columns.author");
-            columnsTitleSettings = new GLib.Settings ("apps.bibliographer.columns.title");
-            columnsYearSettings = new GLib.Settings ("apps.bibliographer.columns.year");
-            columnsJournalSettings = new GLib.Settings ("apps.bibliographer.columns.journal");
-            columnsBibtexKeySettings = new GLib.Settings ("apps.bibliographer.columns.bibtexkey");
-            columnsVolumeSettings = new GLib.Settings ("apps.bibliographer.columns.volume");
-            columnsPagesSettings = new GLib.Settings ("apps.bibliographer.columns.pages");
+            columnsIconSettings = new BibliographerSettings ("apps.bibliographer.columns.icon");
+            columnsAuthorSettings = new BibliographerSettings ("apps.bibliographer.columns.author");
+            columnsTitleSettings = new BibliographerSettings ("apps.bibliographer.columns.title");
+            columnsYearSettings = new BibliographerSettings ("apps.bibliographer.columns.year");
+            columnsJournalSettings = new BibliographerSettings ("apps.bibliographer.columns.journal");
+            columnsBibtexKeySettings = new BibliographerSettings ("apps.bibliographer.columns.bibtexkey");
+            columnsVolumeSettings = new BibliographerSettings ("apps.bibliographer.columns.volume");
+            columnsPagesSettings = new BibliographerSettings ("apps.bibliographer.columns.pages");
 
             columnsIconSettings.Changed += OnColumnsSettingsChanged;
             columnsAuthorSettings.Changed += OnColumnsSettingsChanged;

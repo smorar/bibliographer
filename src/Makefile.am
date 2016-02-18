@@ -22,6 +22,7 @@ SOURCES = 								\
 	$(srcdir)/BibliographerLitTreeView.cs		\
 	$(srcdir)/BibliographerMainWindow.cs		\
 	$(srcdir)/BibliographerSearchEntry.cs		\
+	$(srcdir)/BibliographerSettings.cs		\
 	$(srcdir)/BibliographerSidePaneTreeView.cs	\
 	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/Cache.cs				\

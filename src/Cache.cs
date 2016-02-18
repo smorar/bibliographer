@@ -75,13 +75,13 @@ namespace bibliographer
         public static string AddToCache (string section, string key)
         {
 
-            GLib.Settings settings;
+            BibliographerSettings settings;
             keySection kSection;
             cacheSection cSection;
             Random random;
             string datadir, filename;
 
-            settings = new GLib.Settings ("apps.bibliographer");
+            settings = new BibliographerSettings ("apps.bibliographer");
 
             kSection = LookupKey (section, key);
             if (kSection != null)
@@ -209,12 +209,12 @@ namespace bibliographer
 
         static void LoadCacheData ()
         {
-            GLib.Settings settings;
+            BibliographerSettings settings;
             cacheSection curSection;
             StreamReader stream;
             string datadir;
 
-            settings = new GLib.Settings ("apps.bibliographer");
+            settings = new BibliographerSettings ("apps.bibliographer");
             datadir = settings.GetString ("data-directory");
 
             sections = new ArrayList ();
@@ -278,10 +278,10 @@ namespace bibliographer
 
         static void SaveCacheData ()
         {
-            GLib.Settings settings;
+            BibliographerSettings settings;
             string datadir;
 
-            settings = new GLib.Settings ("apps.bibliographer");
+            settings = new BibliographerSettings ("apps.bibliographer");
             datadir = settings.GetString ("data-directory");
 
 			cleanup_invalid_dirs();

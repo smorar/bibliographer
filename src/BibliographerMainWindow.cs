@@ -78,9 +78,9 @@ namespace bibliographer
         protected LitTreeView litTreeView;
         protected SidePaneTreeView sidePaneTreeView;
         protected Notebook notebookFields;
-        protected GLib.Settings windowSettings;
-        protected GLib.Settings sidebarSettings;
-        protected GLib.Settings filehandlingSettings;
+        protected BibliographerSettings windowSettings;
+        protected BibliographerSettings sidebarSettings;
+        protected BibliographerSettings filehandlingSettings;
         protected LookupRecordData lookupRecordData;
 
         bool modified;
@@ -115,9 +115,9 @@ namespace bibliographer
                 gui.Autoconnect (this);
 
                 // TODO: move window and derived settings into apps.bibliographer.window
-                windowSettings = new GLib.Settings ("apps.bibliographer");
-                sidebarSettings = new GLib.Settings ("apps.bibliographer.sidebar");
-                filehandlingSettings = new GLib.Settings ("apps.bibliographer.filehandling");
+                windowSettings = new BibliographerSettings ("apps.bibliographer");
+                sidebarSettings = new BibliographerSettings ("apps.bibliographer.sidebar");
+                filehandlingSettings = new BibliographerSettings ("apps.bibliographer.filehandling");
 
                 if (windowSettings.GetString ("data-directory") == "") {
                     // Set default data directory if none exists

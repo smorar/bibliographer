@@ -57,6 +57,7 @@
     <Compile Include="src\BibliographerMainWindow.cs">
       <LogicalName>BibliographerGladeUI</LogicalName>
     </Compile>
+    <Compile Include="src\BibliographerSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="COPYING" />

@@ -94,12 +94,12 @@ namespace bibliographer
 
         static StringArrayList GetTextualExtractor (object mimeType)
         {
-            GLib.Settings settings;
+            BibliographerSettings settings;
             string[] extractors;
             StringArrayList extractor;
 
             extractor = new StringArrayList ();
-            settings = new GLib.Settings ("apps.bibliographer.index");
+            settings = new BibliographerSettings ("apps.bibliographer.index");
             extractors = settings.GetStrv ("textual-extractor");
 
             if (extractors.Length == 0) {
