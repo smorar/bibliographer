@@ -157,7 +157,10 @@ namespace bibliographer
             keySection kSection = LookupKey (section, key);
             if (kSection != null) {
                 cacheSection cSection = LookupSection (section);
-                Mono.Unix.Native.Syscall.unlink (kSection.filename);
+                if (System.IO.File.Exists(kSection.filename))
+                {
+                    System.IO.File.Delete(kSection.filename);
+                }
                 cSection.keys.Remove (kSection);
                 if (cSection.keys.Count == 0)
                     sections.Remove (cSection);

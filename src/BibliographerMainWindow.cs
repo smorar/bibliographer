@@ -26,7 +26,6 @@
 using System;
 using System.Collections;
 using Gtk;
-using GLib;
 using libbibby;
 
 namespace bibliographer
@@ -121,7 +120,14 @@ namespace bibliographer
 
                 if (windowSettings.GetString ("data-directory") == "") {
                     // Set default data directory if none exists
-                    windowSettings.SetString ("data-directory", Environment.GetEnvironmentVariable ("HOME") + "/.local/share/bibliographer/");
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        windowSettings.SetString("data-directory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\bibliographer");
+                    }
+                    else
+                    {
+                        windowSettings.SetString ("data-directory", Environment.GetEnvironmentVariable ("HOME") + "/.local/share/bibliographer/");
+                    }
                 }
 
                 am = new AlterationMonitor ();
@@ -237,6 +243,7 @@ namespace bibliographer
                 window.StateChanged += OnWindowStateChanged;
                 window.SizeAllocated += OnWindowSizeAllocated;
 
+                window.Icon = new Gdk.Pixbuf(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("bibliographer.png"));
                 title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (), 
                                                                      typeof(System.Reflection.AssemblyTitleAttribute));
                 application_name = title.Title;
@@ -537,7 +544,7 @@ namespace bibliographer
                                     textEntry.Text = record.GetField (fieldName);
                                 tableReq.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                                 textEntry.field = fieldName;
-                                textEntry.Changed += OnFieldChanged;
+                                textEntry.FocusOutEvent += OnFieldChanged;
                             }
                         }
                         if (subNumItems == 0)
@@ -558,7 +565,7 @@ namespace bibliographer
                                 textEntry.Text = record.GetField (recordType.fields [i]);
                             tableOpt.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                             textEntry.field = recordType.fields [i];
-                            textEntry.Changed += OnFieldChanged;
+                            textEntry.FocusOutEvent += OnFieldChanged;
                         }
                     }
                     opt.PackStart (tableOpt, false, false, 5);
@@ -598,7 +605,7 @@ namespace bibliographer
                         if (record.HasField (fieldName))
                             textEntry.Text = record.GetField (fieldName);
                         textEntry.field = fieldName;
-                        textEntry.Changed += OnFieldChanged;
+                        textEntry.FocusOutEvent += OnFieldChanged;
                         tableOther.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                         var removeButton = new FieldButton ();
                         removeButton.Label = "Remove field";
@@ -656,7 +663,7 @@ namespace bibliographer
                 if (record.HasURI ())
                     uriEntry.Text = record.GetURI ();
                 uriEntry.field = BibtexRecord.BibtexFieldName.URI;
-                uriEntry.Changed += OnFieldChanged;
+                uriEntry.FocusOutEvent += OnFieldChanged;
                 uriHBox.PackStart (uriEntry, false, false, 5);
                 var uriBrowseButton = new Button ("Browse");
                 uriBrowseButton.Activated += OnURIBrowseClicked;
@@ -1595,7 +1602,7 @@ namespace bibliographer
             record = (BibtexRecord)litTreeView.Model.GetValue (iter, 0);
             //For each file
             foreach (string u in uri_list) {
-                if (u.Length > 0) {
+                if (u.Length > 0 && u != "\0") {
                     Debug.WriteLine (5, "Associating file '" + u + "' with entry '" + record.GetKey () + "'");
                     record.SetField (BibtexRecord.BibtexFieldName.URI, u);
                     // TODO: disable debugging info

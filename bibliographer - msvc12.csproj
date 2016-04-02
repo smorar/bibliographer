@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6E33C38D-EB37-4588-9EB5-F076434C7D51}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>bibliographer</RootNamespace>
+    <AssemblyName>bibliographer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Execution>
+      <Execution clr-version="Net_1_1" />
+    </Execution>
+    <Commandlineparameters>--debug=true --debug_level=5</Commandlineparameters>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Execution>
+      <Execution clr-version="Net_1_1" />
+    </Execution>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\AboutBox.cs" />
+    <Compile Include="src\BibliographerStartup.cs" />
+    <Compile Include="src\SidePaneTreeStore.cs" />
+    <Compile Include="src\Debug.cs" />
+    <Compile Include="src\LitListStore.cs" />
+    <Compile Include="src\BibliographerChooseColumns.cs" />
+    <Compile Include="src\widgets\SearchEntry.cs" />
+    <Compile Include="src\BibliographerSearchEntry.cs" />
+    <Compile Include="src\BibliographerLitTreeView.cs" />
+    <Compile Include="src\BibliographerSidePaneTreeView.cs" />
+    <Compile Include="src\StringOps.cs" />
+    <Compile Include="src\Alteration.cs" />
+    <Compile Include="src\LookupRecordData.cs" />
+    <Compile Include="src\Tri.cs" />
+    <Compile Include="src\FileIndexer.cs" />
+    <Compile Include="src\Cache.cs" />
+    <Compile Include="src\ThumbGen.cs" />
+    <Compile Include="src\BibliographerMainWindow.cs">
+      <LogicalName>BibliographerGladeUI</LogicalName>
+    </Compile>
+    <Compile Include="src\BibliographerSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="COPYING" />
+    <None Include="AUTHORS" />
+    <None Include="ChangeLog" />
+    <None Include="NEWS" />
+    <None Include="packages.config" />
+    <None Include="README" />
+    <None Include="TODO" />
+    <None Include="resources\error.png" />
+    <None Include="resources\apps.bibliographer.gschema.xml" />
+    <None Include="configure.ac" />
+    <None Include="Makefile.am" />
+    <None Include="src\Makefile.am" />
+    <None Include="resources\bibliographer.desktop">
+      <DeployService-TargetDirectoryId>Linux.DesktopApplications</DeployService-TargetDirectoryId>
+    </None>
+    <None Include="resources\bibliographer.man" />
+    <None Include="debian\control" />
+    <None Include="debian\watch" />
+    <None Include="debian\rules" />
+    <None Include="debian\docs" />
+    <None Include="debian\dirs" />
+    <None Include="debian\copyright" />
+    <None Include="debian\compat" />
+    <None Include="debian\changelog" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\bibliographer.png">
+      <LogicalName>bibliographer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\bibliographer.glade">
+      <LogicalName>bibliographer.glade</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="atk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\atk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="cairo-sharp, Version=1.10.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\cairo-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\gdk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gio-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\gio-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\glib-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gtk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\gtk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="pango-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\gtk-build\gtk\Win32\bin\pango-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\usr\lib\cli\Newtonsoft.Json-5.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="libbibby - msvc12.csproj">
+      <Project>{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}</Project>
+      <Name>libbibby</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

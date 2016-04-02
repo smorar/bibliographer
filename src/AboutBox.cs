@@ -41,7 +41,9 @@ namespace bibliographer
             string[] authors = { "Sameer Morar <smorar@gmail.com>", "Carl Hultquist <chultquist@gmail.com>" };
             
             Authors = authors;
-            Logo = new Gdk.Pixbuf (null, "bibliographer.png");
+
+            Logo = new Gdk.Pixbuf(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("bibliographer.png"));
+
             Copyright = copyright.Copyright;
             Comments = description.Description;
             ProgramName = title.Title;

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{43AE7B15-4926-4AF9-BEE4-12B297BD95D0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>libbibby</RootNamespace>
+    <AssemblyName>libbibby</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="libbibby\resources\bibtex_fields">
+      <LogicalName>bibtex_fields</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="libbibby\resources\bibtex_records">
+      <LogicalName>bibtex_records</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="libbibby\AssemblyInfo.cs" />
+    <Compile Include="libbibby\BibtexCustomData.cs" />
+    <Compile Include="libbibby\BibtexCustomDataFields.cs" />
+    <Compile Include="libbibby\BibtexCustomRecordField.cs" />
+    <Compile Include="libbibby\BibtexRecord.cs" />
+    <Compile Include="libbibby\BibtexRecordField.cs" />
+    <Compile Include="libbibby\BibtexRecordFieldType.cs" />
+    <Compile Include="libbibby\BibtexRecordFieldTypeLibrary.cs" />
+    <Compile Include="libbibby\BibtexRecords.cs" />
+    <Compile Include="libbibby\BibtexRecordType.cs" />
+    <Compile Include="libbibby\BibtexRecordTypeLibrary.cs" />
+    <Compile Include="libbibby\Debug.cs" />
+    <Compile Include="libbibby\IntArrayList.cs" />
+    <Compile Include="libbibby\StringArrayList.cs" />
+    <Compile Include="libbibby\tests\BibtexRecordTest.cs" />
+    <Compile Include="libbibby\tests\BibtexRecordsTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>packages\NUnit.3.2.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="libbibby\Makefile.am" />
+  </ItemGroup>
+</Project>

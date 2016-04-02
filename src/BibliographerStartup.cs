@@ -38,7 +38,7 @@ namespace bibliographer
         public static void SetProcessName (string name)
         {
             if (Prctl (15,             /* PR_SET_NAME */Encoding.ASCII.GetBytes (name + "\0"), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) != 0) {
-                throw new ApplicationException ("Error setting process name: " + Mono.Unix.Native.Stdlib.GetLastError ());
+                throw new ApplicationException ("Error setting process name.");
             }
         }
     }
@@ -82,9 +82,18 @@ namespace bibliographer
                 }
             }
             
-            Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_records");
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\bibliographer\\bibtex_records");
+                Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\bibliographer\\bibtex_fields");
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/bibtex_records");
+                Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/bibtex_fields");
+            }
+
             BibtexRecordTypeLibrary.Load ();
-            Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetEnvironmentVariable ("HOME") + "/.config/bibliographer/bibtex_fields");
             BibtexRecordFieldTypeLibrary.Load ();
             
             Cache.Initialise ();
