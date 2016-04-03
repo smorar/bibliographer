@@ -525,7 +525,7 @@ namespace bibliographer
                     for (int i = 1; i < recordType.fields.Count; i++) {
                         int subNumItems = 0;
                         for (int j = 0; j < recordType.fields.Count; j++) {
-                            if (recordType.optional [j] == i) {
+                            if ((recordType.optional [j] == i) && (recordType.optional[j] != 0) ){
                                 subNumItems++;
                                 if (subNumItems > 1) {
                                     numItems += 2;
@@ -544,7 +544,7 @@ namespace bibliographer
                                     textEntry.Text = record.GetField (fieldName);
                                 tableReq.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                                 textEntry.field = fieldName;
-                                textEntry.FocusOutEvent += OnFieldChanged;
+                                textEntry.Changed += OnFieldChanged;
                             }
                         }
                         if (subNumItems == 0)
@@ -565,7 +565,7 @@ namespace bibliographer
                                 textEntry.Text = record.GetField (recordType.fields [i]);
                             tableOpt.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                             textEntry.field = recordType.fields [i];
-                            textEntry.FocusOutEvent += OnFieldChanged;
+                            textEntry.Changed += OnFieldChanged;
                         }
                     }
                     opt.PackStart (tableOpt, false, false, 5);
@@ -605,7 +605,7 @@ namespace bibliographer
                         if (record.HasField (fieldName))
                             textEntry.Text = record.GetField (fieldName);
                         textEntry.field = fieldName;
-                        textEntry.FocusOutEvent += OnFieldChanged;
+                        textEntry.Changed += OnFieldChanged;
                         tableOther.Attach (textEntry, 1, 2, numItems - 1, numItems, AttachOptions.Expand | AttachOptions.Fill, 0, 5, 5);
                         var removeButton = new FieldButton ();
                         removeButton.Label = "Remove field";
@@ -1047,9 +1047,11 @@ namespace bibliographer
             if (litTreeView.Selection.GetSelected (out model, out iter)) {
                 var entry = (FieldEntry)o;
                 var record = (BibtexRecord)model.GetValue (iter, 0);
-                record.SetField (entry.field, entry.Text);
-                model.EmitRowChanged (model.GetPath (iter), iter);
-                BibtexGenerateKeySetStatus ();
+                if (record.GetField (entry.field) != entry.Text) {
+                    record.SetField (entry.field, entry.Text);
+                    model.EmitRowChanged (model.GetPath (iter), iter);
+                    BibtexGenerateKeySetStatus ();
+                }
             }
         }
 
@@ -1424,14 +1426,6 @@ namespace bibliographer
 
         protected void OnRecordModified (object sender, EventArgs e)
         {
-//            var record = (BibtexRecord)sender;
-//            if (comboRecordType.ActiveText != record.RecordType) {
-//                comboRecordType.Active = BibtexRecordTypeLibrary.Index (record.RecordType);
-//            }
-//            if (entryReqBibtexKey.Text == "") {
-//                buttonBibtexKeyGenerate.Activate ();
-//            }
-            ReconstructTabs ();
             ReconstructDetails();
         }
 
