@@ -126,10 +126,10 @@ namespace bibliographer
             RunOnMainThread.Run (this, "LookupData", null);
         }
 
-        private void LookupData ()
+        void LookupData ()
         {
             // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
-
+            System.Console.WriteLine("LookupData");
             string doi = record.GetField (BibtexRecord.BibtexFieldName.DOI);
 
             string url = "http://api.crossref.org/works/" + doi;
@@ -217,11 +217,10 @@ namespace bibliographer
 
         bool Go ()
         {
-            methodClass.GetType ().InvokeMember (methodName, 
-                System.Reflection.BindingFlags.Default | 
-                System.Reflection.BindingFlags.Public | 
-                System.Reflection.BindingFlags.NonPublic | 
-                System.Reflection.BindingFlags.InvokeMethod, 
+            (methodClass.GetType()).InvokeMember(methodName,
+                System.Reflection.BindingFlags.InvokeMethod | 
+                System.Reflection.BindingFlags.Instance | 
+                System.Reflection.BindingFlags.NonPublic,
                 null, methodClass, arguments);
             return false;
         }

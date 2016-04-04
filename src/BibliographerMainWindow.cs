@@ -957,21 +957,22 @@ namespace bibliographer
         protected void OnBibtexRecordURIAdded (object o, EventArgs a)
         {
             var record = (BibtexRecord)o;
-            if (am.Altered (record)) {
+            //if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI added");
                 // Add record to get re-indexed
                 am.SubscribeRecord (record);
-            }
+            //}
         }
 
         protected void OnBibtexRecordURIModified (object o, EventArgs a)
         {
+            //TODO: Is this necessary? - the record with a previous URI should still be monitored by the alteration monitor
             var record = (BibtexRecord)o;
-            if (am.Altered (record)) {
+            //if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI modified");
                 // Add record to get re-indexed
                 am.SubscribeRecord (record);
-            }
+            //}
         }
 
         protected void OnComboRecordTypeChanged (object o, EventArgs a)
