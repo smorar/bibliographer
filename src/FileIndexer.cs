@@ -175,7 +175,7 @@ namespace bibliographer
                 Debug.WriteLine (5, "extractor options are {0}", extractor_options);
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    Environment.SetEnvironmentVariable("HOME", "C:\\gtk-build\\gtk\\Win32\\bin");
+                    Environment.SetEnvironmentVariable("HOME", AppDomain.CurrentDomain.BaseDirectory);
                 }
                 textualData = GetProcessOutput (extractor[0], extractor_options);
             }
