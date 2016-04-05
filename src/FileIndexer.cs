@@ -103,14 +103,24 @@ namespace bibliographer
             extractors = settings.GetStrv ("textual-extractor");
 
             if (extractors.Length == 0) {
-                // Default extractors for Gnu/Linux systems
                 ArrayList newExtractors;
                 newExtractors = new ArrayList();
 
-                newExtractors.Add ("application/pdf:pdftotext:{0} -");
-                newExtractors.Add ("application/msword:antiword:{0}");
-                newExtractors.Add ("application/postscript:pstotext:{0}");
-                newExtractors.Add ("text/plain:cat:{0}");
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    // Default extractors for Windows systems
+                    newExtractors.Add(".pdf:pdftotext:{0} -");
+                    newExtractors.Add(".doc:antiword:{0}");
+                    newExtractors.Add(".docx:opc_text:{0}");
+                }
+                else
+                {
+                    // Default extractors for Gnu/Linux systems
+                    newExtractors.Add("application/pdf:pdftotext:{0} -");
+                    newExtractors.Add("application/msword:antiword:{0}");
+                    newExtractors.Add("application/postscript:pstotext:{0}");
+                    newExtractors.Add("text/plain:cat:{0}");
+                }
 
                 //TODO: Add default extractors for other systems
 
@@ -163,6 +173,10 @@ namespace bibliographer
 				string extractor_options;
                 extractor_options = String.Format (extractor[1], '"' + uri.LocalPath + '"');
                 Debug.WriteLine (5, "extractor options are {0}", extractor_options);
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    Environment.SetEnvironmentVariable("HOME", "C:\\gtk-build\\gtk\\Win32\\bin");
+                }
                 textualData = GetProcessOutput (extractor[0], extractor_options);
             }
             
@@ -179,8 +193,9 @@ namespace bibliographer
                     //while (Gtk.Application.EventsPending ())
                     //    Gtk.Application.RunIteration ();
                     String data = textualDataArray [line].ToLower ();
-                    data = Regex.Replace (data, "[^\\w\\.@-]", " ");
-                    data = Regex.Replace (data, "[\\d]", " ");
+                    data = Regex.Replace(data, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", String.Empty);
+                    //data = Regex.Replace(data, "[^\\w\\.@-]", String.Empty);
+                    data = Regex.Replace (data, "[\\d]", String.Empty);
                     //System.Console.WriteLine(data);
                     String[] tokens = data.Split (' ');
                     foreach (String token in tokens)

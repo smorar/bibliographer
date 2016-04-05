@@ -103,7 +103,7 @@ namespace bibliographer
             datadir = settings.GetString ("data-directory");
             random = new Random ();
             do {
-                filename = datadir + "cache/";
+                filename = datadir + "/cache/";
 
                 const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 for (int i = 0; i < 20; i++)
@@ -122,10 +122,10 @@ namespace bibliographer
                         Debug.WriteLine (10, e2.Message);
                     }
                     try {
-                        Directory.CreateDirectory (datadir + "cache");
+                        Directory.CreateDirectory (datadir + "/cache");
                     } catch (Exception e2) {
                         Debug.WriteLine (10, e2.Message);
-                        Debug.WriteLine (1, "Failed to create directory {0}", datadir + "cache");
+                        Debug.WriteLine (1, "Failed to create directory {0}", datadir + "/cache");
                     }
                 } catch (IOException e) {
                     Debug.WriteLine (10, e.Message);
@@ -223,7 +223,7 @@ namespace bibliographer
             sections = new ArrayList ();
 
             try {
-                stream = new StreamReader (new FileStream (datadir + "cachedata", FileMode.Open, FileAccess.Read));
+                stream = new StreamReader (new FileStream (datadir + "/cachedata", FileMode.Open, FileAccess.Read));
                 
                 // cache opened! let's read some data...
                 curSection = null;
@@ -291,7 +291,7 @@ namespace bibliographer
 			
             try {
                 Monitor.Enter (sections);
-                var stream = new StreamWriter (new FileStream (datadir + "cachedata", FileMode.OpenOrCreate, FileAccess.Write));
+                var stream = new StreamWriter (new FileStream (datadir + "/cachedata", FileMode.OpenOrCreate, FileAccess.Write));
                 
                 for (int section = 0; section < sections.Count; section++) {
                     stream.WriteLine ("[{0}]", ((cacheSection)sections[section]).section);
