@@ -129,7 +129,10 @@ namespace bibliographer
                 }
             }
             
-            Debug.WriteLine (5, "textual extractor determined: " + extractor[0]);
+            if (extractor.Count > 0)
+            {
+                Debug.WriteLine(5, "textual extractor determined: " + extractor[0]);
+            }
             
             return extractor;
         }

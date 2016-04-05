@@ -31,108 +31,48 @@ namespace bibliographer
 
     public static class ThumbGen
     {
-
-        public static Pixbuf Gen (string uriString)
-        {
-            // No URI, so just exit
-            
-            if (!(string.IsNullOrEmpty (uriString))) {
-                Console.WriteLine ("Conversion of thumbgen still reqd for GTK3");
-//                GLib.FileIcon()
-//                var mimeType = new Gnome.Vfs.MimeType (uri);
-//                var thumbFactory = new Gnome.ThumbnailFactory (Gnome.ThumbnailSize.Normal);
-//
-//                if (thumbFactory.CanThumbnail (uriString, mimeType.Name, DateTime.Now)) {
-//                    //      System.Console.WriteLine("Generating a thumbnail");
-//                    return thumbFactory.GenerateThumbnail (uriString, mimeType.Name);
-//                } else {
-//                    // try to get the default icon for the file's mime type
-//                    Gtk.IconTheme theme = Gtk.IconTheme.Default;l
-//                    Gnome.IconLookupResultFlags result;
-//                    String iconName = Gnome.Icon.Lookup (theme, null, null, null, new Gnome.Vfs.FileInfo (), mimeType.Name, Gnome.IconLookupFlags.None, out result);
-//                    Debug.WriteLine (5, "Gnome.Icon.Lookup result: {0}", result);
-//                    if (iconName == null) {
-//                        iconName = "gnome-fs-regular";
-//                    }
-//                    Debug.WriteLine (5, "IconName is: {0}", iconName);
-//                    Gtk.IconInfo iconInfo = theme.LookupIcon (iconName, 48, Gtk.IconLookupFlags.UseBuiltin);
-//                    string iconPath = iconInfo.Filename;
-//                    if (iconPath != null) {
-//                        Debug.WriteLine (5, "IconPath: {0}", iconPath);
-//                        return new Pixbuf (iconPath);
-//                    } else {
-//                        // just go blank
-                        return null;
-//                    }
-//                }
-            } else {
-                return null;
-            }
-        }
-
-        public static void Gen (BibtexRecord record)
+        public static bool getThumbnail(BibtexRecord record)
         {
             Pixbuf smallThumbnail, largeThumbnail;
-            string cacheKey;
             Uri uri;
             GLib.IFile file;
             GLib.FileInfo fileInfo;
             string pixbufPath;
 
-            if ((!record.HasCustomDataField ("smallThumbnail")) || (!record.HasCustomDataField ("largeThumbnail"))) {
+            if ((!record.HasCustomDataField("smallThumbnail")) || (!record.HasCustomDataField("largeThumbnail")))
+            {
                 // No thumbnail - so generate it and index
 
-                if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
-                    cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
-                    record.SetCustomDataField ("cacheKey", cacheKey);
-
+                if (record.HasCustomDataField("bibliographer_last_uri") && record.HasCustomDataField("bibliographer_last_md5"))
+                {
                     // Check if Nautilus has generated a thumbnail for this file
                     uri = new Uri(record.GetURI());
-                    file = GLib.FileFactory.NewForUri (uri);
+                    file = GLib.FileFactory.NewForUri(uri);
 
-                    fileInfo = file.QueryInfo ("*", GLib.FileQueryInfoFlags.None, null);
-                    pixbufPath = fileInfo.GetAttributeByteString ("thumbnail::path");
+                    fileInfo = file.QueryInfo("*", GLib.FileQueryInfoFlags.None, null);
+                    pixbufPath = fileInfo.GetAttributeByteString("thumbnail::path");
 
-                    if (pixbufPath != "" || pixbufPath != null) {
-                        largeThumbnail = new Pixbuf (pixbufPath);
-                    } else {
-                        // No existing thumbnail. Try to generate one ourselves
-                        largeThumbnail = Gen (record.GetURI ());
+                    if (pixbufPath != "" && pixbufPath != null)
+                    {
+                        largeThumbnail = new Pixbuf(pixbufPath);
+                        smallThumbnail = ((Pixbuf)largeThumbnail.Clone()).ScaleSimple(20, 20, InterpType.Bilinear);
+
+                        record.SetCustomDataField("smallThumbnail", smallThumbnail);
+                        record.SetCustomDataField("largeThumbnail", largeThumbnail);
+
+                        // Thumbnails exist and have now been stored in the BibtexRecord instance
+                        return true;
                     }
-
-                    smallThumbnail = ((Pixbuf) largeThumbnail.Clone()).ScaleSimple (20, 20, InterpType.Bilinear);
-
-                    // TODO: set large thumbnail to existing thumbnail path if it exists instead of re-saving here
-                    largeThumbnail.Save (Cache.Filename("small_thumb",cacheKey), "png");
-                    smallThumbnail.Save (Cache.Filename("large_thumb",cacheKey), "png");
-
-                    record.SetCustomDataField ("smallThumbnail", smallThumbnail);
-                    record.SetCustomDataField ("largeThumbnail", largeThumbnail);
                 }
-            } else {
-                // thumbnails exist - load
-                cacheKey = (string)record.GetCustomDataField ("cacheKey");
-
-                // Load cachekey if it hasn't been loaded yet
-				if (!record.HasCustomDataField ("smallThumbnail")) {
-					try {
-						record.SetCustomDataField ("smallThumbnail", new Pixbuf (Cache.CachedFile ("small_thumb", cacheKey)));
-					} catch (Exception) {
-						// probably a corrupt cache file
-						// delete it and try again :-)
-						Cache.RemoveFromCache ("small_thumb", cacheKey);
-					}
-				}
-				if (!record.HasCustomDataField ("largeThumbnail")) {
-					try {
-						record.SetCustomDataField ("largeThumbnail", new Pixbuf (Cache.CachedFile ("large_thumb", cacheKey)));
-					} catch (Exception) {
-						// probably a corrupt cache file
-						// delete it and try again :-)
-						Cache.RemoveFromCache ("large_thumb", cacheKey);
-					}
-				}
             }
+            else
+            {
+                // Thumbnails exist and are stored in the BibtexRecord instance
+                return true;
+            }
+
+            // Catch all other conditions. No existing thumbnail.
+            return false;
         }
     }
 }

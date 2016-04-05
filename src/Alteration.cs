@@ -258,7 +258,12 @@ namespace bibliographer
                         Monitor.Exit (thumbGenQueue);
                         //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
-                            ThumbGen.Gen(record);
+                            //ThumbGen.Gen(record);
+                            if(!ThumbGen.getThumbnail(record))
+                            {
+                                Console.WriteLine("Thumbnail does not exist");
+                            }
+
                         } catch (Exception e) {
                             Console.WriteLine ("Unknown exception caught with thumbGen");
                             Console.WriteLine (e.Message);

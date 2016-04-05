@@ -377,6 +377,8 @@ namespace bibliographer
 
 			if (System.IO.File.Exists (uri.LocalPath)) {
                 
+                
+
                 bool uncertain;
                 string result;
                 byte data;
@@ -384,21 +386,33 @@ namespace bibliographer
 
                 data_size = 0;
 
-                result = GLib.ContentType.Guess(uri.ToString(), out data, data_size, out uncertain);
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    // TODO: Does this work under linux?
+                    System.Diagnostics.Process.Start(@uri.ToString());
+                }
+                else
+                {
 
-                if (result != null & result != "" & !uncertain){
-                    
-                    GLib.IAppInfo app;
+                    result = GLib.ContentType.Guess(uri.ToString(), out data, data_size, out uncertain);
 
-                    app = GLib.AppInfoAdapter.GetDefaultForType (result, true);
+                    if (result != null & result != "" & !uncertain)
+                    {
 
-                    if (app != null){
-                        
-                        GLib.AppLaunchContext appContext;
 
-                        appContext = new GLib.AppLaunchContext ();
-                        app.LaunchUris (list, appContext);
-                        return;
+                        GLib.IAppInfo app;
+
+                        app = GLib.AppInfoAdapter.GetDefaultForType(result, true);
+
+                        if (app != null)
+                        {
+
+                            GLib.AppLaunchContext appContext;
+
+                            appContext = new GLib.AppLaunchContext();
+                            app.LaunchUris(list, appContext);
+                            return;
+                        }
                     }
                 }
             } else {
