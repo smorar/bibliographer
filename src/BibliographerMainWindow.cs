@@ -59,6 +59,7 @@ namespace bibliographer
         protected Box RecordEditor;
 
         protected SearchEntry searchEntry;
+        protected Entry tempEntry;
 
         protected BibtexRecords bibtexRecords;
         protected SidePaneTreeStore sidePaneStore;
@@ -316,8 +317,21 @@ namespace bibliographer
 
                 // Search entry
                 searchEntry = new SearchEntry ();
-                searchEntry.Changed += OnFilterEntryChanged;
-                searchHBox.Add (searchEntry);
+                // TODO: Fix searchEntry
+                //searchEntry.SearchChanged += OnFilterEntryChanged;
+                //searchHBox.Add (searchEntry);
+                var tempLabel = new Label();
+                tempLabel.Text = "Search: ";
+                searchHBox.Add(tempLabel);
+                tempEntry = new Entry();
+                tempEntry.WidthChars = 40;
+                tempEntry.Changed += OnFilterEntryChanged;
+                searchHBox.Add(tempEntry);
+                var tempButton = new Button();
+                tempButton.Relief = Gtk.ReliefStyle.None;
+                tempButton.Label = "Clear";
+                tempButton.Clicked += TempButton_Clicked;
+                searchHBox.Add(tempButton);
                 searchHBox.Expand = true;
 
                 UpdateMenuFileHistory ();
@@ -335,6 +349,11 @@ namespace bibliographer
             {
                 Console.WriteLine ("GUI configuration file not found.\n" + e.Message);
             }
+        }
+
+        void TempButton_Clicked (object sender, EventArgs e)
+        {
+            tempEntry.Text = "";
         }
 
         void BibtexGenerateKeySetStatus ()
@@ -416,20 +435,20 @@ namespace bibliographer
                 }
             }
 
-            if (string.IsNullOrEmpty (searchEntry.Text))
+            if (string.IsNullOrEmpty (searchEntry.Text) && string.IsNullOrEmpty(tempEntry.Text))
                 return true;
 
             var record = (BibtexRecord)model.GetValue (iter, 0);
 
             if (record != null) {
-                if (record.SearchRecord (searchEntry.Text, sfield))
+                if (record.SearchRecord (searchEntry.Text, sfield) && record.SearchRecord(tempEntry.Text, sfield))
                     return true;
                 else {
                     if ((sfield == BibtexSearchField.All) || (sfield == BibtexSearchField.Article)) {
                         var index = (Tri)record.GetCustomDataField ("indexData");
                         if (index != null) {
                             //System.Console.WriteLine("Index tri data: " + index.ToString());
-                            if (index.IsSubString (searchEntry.Text))
+                            if (index.IsSubString (searchEntry.Text) && index.IsSubString(tempEntry.Text))
                                 return true;
                         }
                     }
@@ -1224,6 +1243,7 @@ namespace bibliographer
 
             // Clear search
             searchEntry.Clear ();
+            tempEntry.Text = "";
 
             if (bibtexRecords == null) {
                 bibtexRecords = new BibtexRecords ();
@@ -1507,6 +1527,7 @@ namespace bibliographer
         protected void OnFilterEntryChanged (object sender, EventArgs e)
         {
             // Filter when the filter entry text has changed
+            //System.Console.WriteLine("OnFilterEntryChanged");
             modelFilter.Refilter ();
         }
 
