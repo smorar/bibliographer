@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Threading;
 using System.IO;
 
 namespace libbibby
@@ -76,11 +77,17 @@ namespace libbibby
 
         public BibtexRecord this[int index] {
             get { return ((BibtexRecord)(List[index])); }
-            set { List[index] = value; }
+            set {
+                Monitor.Enter (this);
+                List[index] = value; 
+                Monitor.Exit (this);
+                }
         }
 
         public int Add (BibtexRecord record)
         {
+            Monitor.Enter (this);
+
             record.UriAdded += OnRecordURIAdded;
             record.UriUpdated += OnRecordURIModified;
             record.RecordModified += OnRecordModified;
@@ -92,11 +99,16 @@ namespace libbibby
             
             //System.Console.WriteLine ("RecordsModified event emitted: Add {0}", record.GetKey ());
             this.OnRecordsModified (new EventArgs ());
+
+            Monitor.Exit (this);
+
             return ret;
         }
 
         public void Insert (int index, BibtexRecord record)
         {
+            Monitor.Enter (this);
+
             record.UriAdded += OnRecordURIAdded;
             record.UriUpdated += OnRecordURIModified;
             record.RecordModified += OnRecordModified;
@@ -107,16 +119,22 @@ namespace libbibby
             
             //System.Console.WriteLine ("RecordsModified event emitted: Insert");
             this.OnRecordsModified (new EventArgs ());
+
+            Monitor.Exit (this);
         }
 
         public void Remove (BibtexRecord record)
         {
+            Monitor.Enter (this);
+
             List.Remove (record);
             //System.Console.WriteLine ("RecordsDeleted event emitted: Remove");
             this.OnRecordDeleted (record, new EventArgs ());
             
             //System.Console.WriteLine ("RecordsModified event emitted: Remove");
             this.OnRecordsModified (new EventArgs ());
+
+            Monitor.Exit (this);
         }
 
         public bool Contains (BibtexRecord record)
@@ -200,7 +218,7 @@ namespace libbibby
             //TODO: Check for other filetypes, and invoke other parsers (eg. endnote)
             BibtexRecords bibtexRecords = ParseBibtex (stream);
             stream.Close ();
-            
+
             return bibtexRecords;
         }
 
