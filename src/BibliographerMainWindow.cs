@@ -43,6 +43,8 @@ namespace bibliographer
 
         protected ScrolledWindow scrolledwindowSidePaneScrolledWindow;
 
+        protected Statusbar bibliographerStatusBar;
+
         protected CheckMenuItem MenuViewSidebar;
         protected CheckMenuItem MenuViewRecordDetails;
         protected CheckMenuItem MenuFullScreen;
@@ -80,7 +82,6 @@ namespace bibliographer
         protected BibliographerSettings windowSettings;
         protected BibliographerSettings sidebarSettings;
         protected BibliographerSettings filehandlingSettings;
-        protected LookupRecordData lookupRecordData;
 
         bool modified;
         bool new_selected_record;
@@ -131,8 +132,6 @@ namespace bibliographer
                 }
 
                 am = new AlterationMonitor ();
-
-                lookupRecordData = new LookupRecordData ();
 
                 // Set up main window defaults
 
@@ -207,6 +206,8 @@ namespace bibliographer
                 lblBibtexKey = (Label)gui.GetObject ("lblBibtexKey");
                 RecordEditor = (Box)gui.GetObject ("RecordEditor");
                 RecordView = (Box)gui.GetObject ("RecordView");
+
+                bibliographerStatusBar = (Statusbar)gui.GetObject("bibliographerStatusBar");
 
                 MenuFileNew.Activated += OnFileNewActivated;
                 MenuFileOpen.Activated += OnFileOpenActivated;
@@ -733,7 +734,7 @@ namespace bibliographer
             this.file_name = file_name;
 
             am.FlushQueues ();
-            am.SubscribeRecords (bibtexRecords);
+            am.SubscribeAlteredRecords (bibtexRecords);
 
             FileUnmodified ();
             // Disable editing of opened document
@@ -800,7 +801,7 @@ namespace bibliographer
                 if (!bibtexRecords.HasURI (fileUri.ToString())) {
                     Debug.WriteLine (5, "Adding new record with URI: {0}", fileUri.ToString());
                     var record = new BibtexRecord ();
-                    record.DoiAdded += lookupRecordData.LookupDOI;
+                    record.DoiAdded += OnDOIRecordAdded;
                     record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
@@ -977,7 +978,7 @@ namespace bibliographer
             //if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI added");
                 // Add record to get re-indexed
-                am.SubscribeRecord (record);
+                am.SubscribeAlteredRecord (record);
             //}
         }
 
@@ -988,7 +989,7 @@ namespace bibliographer
             //if (am.Altered (record)) {
                 //System.Console.WriteLine("Record altered: URI modified");
                 // Add record to get re-indexed
-                am.SubscribeRecord (record);
+                am.SubscribeAlteredRecord (record);
             //}
         }
 
@@ -1253,7 +1254,7 @@ namespace bibliographer
 
             var record = new BibtexRecord ();
             //System.Console.WriteLine ("Calling Add");
-            record.DoiAdded += lookupRecordData.LookupDOI;
+            record.DoiAdded += OnDOIRecordAdded;
             record.RecordModified += OnRecordModified;
             bibtexRecords.Add (record);
 
@@ -1263,7 +1264,7 @@ namespace bibliographer
 
             BibtexGenerateKeySetStatus ();
 
-            am.SubscribeRecord (record);
+            am.SubscribeAlteredRecord (record);
         }
 
         protected void OnRemoveRecordActivated (object sender, EventArgs e)
@@ -1330,7 +1331,7 @@ namespace bibliographer
 
                     BibtexGenerateKeySetStatus ();
 
-                    am.SubscribeRecord (record);
+                    am.SubscribeAlteredRecord (record);
                 } catch (ParseException except) {
                     Debug.WriteLine (1, "Parse exception: {0}", except.GetReason ());
                 }
@@ -1359,7 +1360,7 @@ namespace bibliographer
 
                     BibtexGenerateKeySetStatus ();
 
-                    am.SubscribeRecord (record);
+                    am.SubscribeAlteredRecord (record);
                 } catch (ParseException except) {
                     Debug.WriteLine (1, "Parse exception: {0}", except.GetReason ());
                 }
@@ -1622,7 +1623,7 @@ namespace bibliographer
                     // TODO: disable debugging info
                     //Console.WriteLine("Importing: " + u);
                     //bibtexRecord record = new bibtexRecord(store, u);
-                    //record.DoiAdded += lookupRecordData.LookupDOI;
+                    record.DoiAdded += OnDOIRecordAdded;
                     //record.RecordModified += OnRecordModified;
                 }
             }
@@ -1637,6 +1638,12 @@ namespace bibliographer
                 windowSettings.SetInt ("window-width", a.Allocation.Width);
                 windowSettings.SetInt ("window-height", a.Allocation.Height);
             }
+        }
+
+        protected void OnDOIRecordAdded (object o, EventArgs e)
+        {
+            var record = (BibtexRecord) o;
+            am.SubscribeRecordForDOILookup (record);
         }
 
         protected void OnWindowStateChanged (object o, StateChangedArgs a)
