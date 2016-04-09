@@ -39,30 +39,30 @@ namespace libbibby
 
         public string ToBibtexString ()
         {
-            StringBuilder fieldString = new StringBuilder ();
+            var fieldString = new StringBuilder ();
             
-            if (!(this.fieldValue == "" || this.fieldValue == null)) {
+            if (!(string.IsNullOrEmpty (fieldValue))) {
                 fieldString.Append ('\t');
-                fieldString.Append (this.fieldName);
+                fieldString.Append (fieldName);
                 fieldString.Append (" = {");
-                if (this.fieldValue.Length > 4000) {
+                if (fieldValue.Length > 4000) {
                     // split the field over several lines to make this file
                     // work happily with Bibtex. The choice of 4000 is fairly
                     // arbitrary; Bibtex's limit is 5000 so we just stay a bit
                     // below the radar :-)
-                    int lineCount = this.fieldValue.Length / 4000 + ((this.fieldValue.Length % 4000) == 0 ? 0 : 1);
+                    int lineCount = fieldValue.Length / 4000 + ((fieldValue.Length % 4000) == 0 ? 0 : 1);
                     fieldString.Append ("\n");
                     for (int i = 0; i < lineCount; i++) {
                         fieldString.Append ("\t\t");
                         if ((i + 1) < lineCount)
-                            fieldString.Append (this.fieldValue.Substring (i * 4000, 4000));
+                            fieldString.Append (fieldValue.Substring (i * 4000, 4000));
                         else
-                            fieldString.Append (this.fieldValue.Substring (i * 4000));
+                            fieldString.Append (fieldValue.Substring (i * 4000));
                         fieldString.Append ("\n");
                     }
                     fieldString.Append ("\t");
                 } else
-                    fieldString.Append (this.fieldValue);
+                    fieldString.Append (fieldValue);
                 fieldString.Append ("},\n");
             }
             return fieldString.ToString ();

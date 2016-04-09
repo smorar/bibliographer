@@ -55,13 +55,13 @@ namespace libbibby
 
         public void Sort ()
         {
-            this.InnerList.Sort ();
+            InnerList.Sort ();
         }
 
         public override string ToString ()
         {
             string output = "[";
-            for (int i = 0; i < this.Count; i++) {
+            for (int i = 0; i < Count; i++) {
                 if (i == 0)
                     output = output + List[i];
                 else

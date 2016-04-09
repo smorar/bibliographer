@@ -70,16 +70,17 @@ namespace libbibby
         {
             // TODO: possibly make this safer (in case of crash during write?)
             
-            StreamWriter stream = null;
+            StreamWriter stream;
+            stream = null;
             try {
                 stream = new StreamWriter (Filename);
                 if (stream == null) {
                     Debug.WriteLine (1, "Argh, couldn't open the file!");
                 }
-            } catch (System.IO.DirectoryNotFoundException e) {
+            } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
-                Debug.WriteLine (1, "Directory {0} not found!", System.IO.Path.GetDirectoryName(Filename));
-                System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(Filename));
+                Debug.WriteLine (1, "Directory {0} not found!", Path.GetDirectoryName(Filename));
+                Directory.CreateDirectory (Path.GetDirectoryName(Filename));
             }
             
             if (stream != null) {
@@ -107,15 +108,15 @@ namespace libbibby
                         Debug.WriteLine (1, "Argh, couldn't open the file!");
                     }
                     break;
-                } catch (System.IO.DirectoryNotFoundException e) {
+                } catch (DirectoryNotFoundException e) {
                     Debug.WriteLine (10, e.Message);
-                    Debug.WriteLine (1, "Directory {0} not found! Creating it...", System.IO.Path.GetDirectoryName(Filename));
-                    System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(Filename));
-                } catch (System.IO.FileNotFoundException e) {
+                    Debug.WriteLine (1, "Directory {0} not found! Creating it...", Path.GetDirectoryName(Filename));
+                    Directory.CreateDirectory (Path.GetDirectoryName(Filename));
+                } catch (FileNotFoundException e) {
                     Debug.WriteLine (10, e.Message);
                     Debug.WriteLine (1, "File {0} not found! Instantiating it...", Filename);
-                    System.IO.Stream recStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibtex_fields");
-                    System.IO.FileStream outRecStream = new FileStream (Filename, FileMode.CreateNew);
+                    Stream recStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibtex_fields");
+                    FileStream outRecStream = new FileStream (Filename, FileMode.CreateNew);
                     byte[] data = new byte[recStream.Length];
                     recStream.Read (data, 0, (int)recStream.Length);
                     recStream.Close ();

@@ -32,7 +32,7 @@ namespace libbibby
 {
     public class ParseException : Exception
     {
-        private string reason;
+        string reason;
 
         public ParseException (string reason)
         {
@@ -109,23 +109,23 @@ namespace libbibby
 
         }
 
-        private string recordType;
+        string recordType;
 
-        public event System.EventHandler RecordModified;
-        public event System.EventHandler FieldAdded;
-        public event System.EventHandler FieldDeleted;
-        public event System.EventHandler UriAdded;
-        public event System.EventHandler UriUpdated;
-        public event System.EventHandler DoiAdded;
-        public event System.EventHandler DoiUpdated;
+        public event EventHandler RecordModified;
+        public event EventHandler FieldAdded;
+        public event EventHandler FieldDeleted;
+        public event EventHandler UriAdded;
+        public event EventHandler UriUpdated;
+        public event EventHandler DoiAdded;
+        public event EventHandler DoiUpdated;
 
-        private string comment;
-        private string recordKey;
-        private ArrayList recordFields;
+        string comment;
+        string recordKey;
+        public ArrayList recordFields;
 
         // Custom Data - for associating data with the record
         // NB!! This data is not, and should not be serialised
-        private BibtexCustomDataFields customData = new BibtexCustomDataFields ();
+        BibtexCustomDataFields customData = new BibtexCustomDataFields ();
 
         public BibtexRecord (string recordType, string recordKey, ArrayList recordFields)
         {
@@ -139,9 +139,9 @@ namespace libbibby
         public BibtexRecord ()
         {
             Monitor.Enter (this);
-            this.recordType = "";
-            this.recordKey = "";
-            this.recordFields = new ArrayList ();
+            recordType = "";
+            recordKey = "";
+            recordFields = new ArrayList ();
             Monitor.Exit (this);
         }
 
@@ -152,13 +152,13 @@ namespace libbibby
 
         public BibtexRecord (string s)
         {
-            StringReader reader = new StringReader (s);
+            var reader = new StringReader (s);
             CreateFromStream (reader);
         }
 
         public ArrayList RecordFields {
             get {
-                ArrayList list = new ArrayList ();
+                var list = new ArrayList ();
                 if (recordFields != null)
                     for (int record = 0; record < recordFields.Count; record++)
                         if (!((BibtexRecordField)recordFields[record]).fieldName.StartsWith ("bibliographer_"))
@@ -170,18 +170,18 @@ namespace libbibby
         public void SetKey (string key)
         {
             Monitor.Enter (this);
-            if (this.recordKey != key) {
+            if (recordKey != key) {
                 Debug.WriteLine (5, "Key set: {0}", key);
-                this.recordKey = key;
+                recordKey = key;
                 //System.Console.WriteLine ("RecordModified event emitted: SetKey");
-                this.OnRecordModified (new EventArgs ());
+                OnRecordModified (new EventArgs ());
             }
             Monitor.Enter (this);
         }
 
         public string GetKey ()
         {
-            return this.recordKey;
+            return recordKey;
         }
 
         protected virtual void OnRecordModified (EventArgs e)
@@ -240,7 +240,7 @@ namespace libbibby
                 Debug.WriteLine (5, "RecordType changed from {0} to {1}", recordType, value);
                 recordType = value;
                 Monitor.Exit (this);
-                this.OnRecordModified (new EventArgs ());
+                OnRecordModified (new EventArgs ());
             }
         }
 
@@ -285,20 +285,20 @@ namespace libbibby
                             Monitor.Exit (this);
                             if (field == BibtexRecord.BibtexFieldName.URI) {
                                 //System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
-                                if (HasURI() == true)
-                                    this.OnUriUpdated (new EventArgs ());
+                                if (HasURI())
+                                    OnUriUpdated (new EventArgs ());
                                 else
-                                    this.OnUriAdded (new EventArgs ());
+                                    OnUriAdded (new EventArgs ());
                             } else if (field == BibtexRecord.BibtexFieldName.DOI) {
-                                if (HasDOI () == true)
-                                    this.OnDoiUpdated (new EventArgs ());
+                                if (HasDOI ())
+                                    OnDoiUpdated (new EventArgs ());
                                 else {
                                     Console.WriteLine ("DOI added to record");
-                                    this.OnDoiAdded (new EventArgs ());
+                                    OnDoiAdded (new EventArgs ());
                                 }
                             }
                             //Console.WriteLine ("Record modified event emitted: SetField {0}", field);
-                            this.OnRecordModified (new EventArgs ());
+                            OnRecordModified (new EventArgs ());
                         }
                         return;
                     }
@@ -309,16 +309,16 @@ namespace libbibby
 
                 recordFields.Add (new BibtexRecordField (field, content));
                 //System.Console.WriteLine ("OnFieldAdded event emitted: SetField {0}", field);
-                this.OnFieldAdded (new EventArgs ());
+                OnFieldAdded (new EventArgs ());
                 //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
-                this.OnRecordModified (new EventArgs ());
+                OnRecordModified (new EventArgs ());
 
                 if (field == BibtexRecord.BibtexFieldName.URI) {
                     //System.Console.WriteLine ("OnUriAdded event emitted: SetField {0}", field);
-                    this.OnUriAdded (new EventArgs ());
+                    OnUriAdded (new EventArgs ());
                 }
                 if (field == BibtexRecord.BibtexFieldName.DOI) {
-                    this.OnDoiAdded (new EventArgs ());
+                    OnDoiAdded (new EventArgs ());
                 }
             }
         }
@@ -340,9 +340,9 @@ namespace libbibby
                         recordFields.RemoveAt (i);
                         Monitor.Exit (this);
                         //System.Console.WriteLine ("OnFieldDeleted event emitted: RemoveField");
-                        this.OnFieldDeleted (new EventArgs ());
+                        OnFieldDeleted (new EventArgs ());
                         //System.Console.WriteLine ("OnRecordModified event emitted: RemoveField");
-                        this.OnRecordModified(new EventArgs());
+                        OnRecordModified(new EventArgs());
                         return;
                     }
             Monitor.Exit (this);
@@ -354,10 +354,7 @@ namespace libbibby
             if (!HasField (BibtexRecord.BibtexFieldName.URI))
                 return null;
             String uriString = GetField (BibtexRecord.BibtexFieldName.URI).Replace ('\n', ' ').Trim ();
-            if (uriString == null || uriString == "")
-                return null;
-            else
-                return uriString;
+            return string.IsNullOrEmpty (uriString) ? null : uriString;
         }
 
         public string GetDOI ()
@@ -365,13 +362,10 @@ namespace libbibby
             if (!HasField (BibtexRecord.BibtexFieldName.DOI))
                 return null;
             String doiString = GetField (BibtexRecord.BibtexFieldName.DOI);
-            if (doiString == null || doiString == "")
-                return null;
-            else
-                return doiString;
+            return string.IsNullOrEmpty (doiString) ? null : doiString;
         }
 
-        private void ConsumeWhitespace (TextReader stream)
+        static void ConsumeWhitespace (TextReader stream)
         {
             do {
                 switch (stream.Peek ()) {
@@ -388,10 +382,10 @@ namespace libbibby
             } while (true);
         }
 
-        private string ConsumeComment (TextReader stream)
+        static string ConsumeComment (TextReader stream)
         {
             ConsumeWhitespace (stream);
-            StringBuilder result = new StringBuilder ();
+            var result = new StringBuilder ();
 
             do {
                 int next = stream.Read ();
@@ -406,11 +400,11 @@ namespace libbibby
             return result.ToString ();
         }
 
-        private string ConsumeId (TextReader stream)
+        static string ConsumeId (TextReader stream)
         {
             // munch whitespace before and after identifier
             ConsumeWhitespace (stream);
-            StringBuilder result = new StringBuilder ();
+            var result = new StringBuilder ();
 
             do {
                 int next = stream.Peek ();
@@ -427,7 +421,7 @@ namespace libbibby
             return result.ToString ();
         }
 
-        private string ConsumeUntilFieldEnd (TextReader stream)
+        static string ConsumeUntilFieldEnd (TextReader stream)
         {
             // consumes data from the stream until
             // a comma is hit, maintaining a bracket
@@ -443,7 +437,7 @@ namespace libbibby
 
             ConsumeWhitespace (stream);
 
-            StringBuilder result = new StringBuilder ();
+            var result = new StringBuilder ();
 
             int bracketCount = 0;
             bool usingQuotes = false;
@@ -451,7 +445,8 @@ namespace libbibby
             bool precSlash = false;
             bool die = false;
             if (stream.Peek () == '{')
-                usingBrackets = true; else if (stream.Peek () == '"')
+                usingBrackets = true; 
+            else if (stream.Peek () == '"')
                 usingQuotes = true;
             do {
                 if (bracketCount == 0) {
@@ -462,8 +457,6 @@ namespace libbibby
                         break;
                     case '}':
                         die = true;
-                        break;
-                    default:
                         break;
                     }
                     if (die)
@@ -487,14 +480,11 @@ namespace libbibby
                         bracketCount = (bracketCount == 0) ? 1 : 0;
                     break;
                 case '\\':
-                    if (!precSlash)
-                        nextSlash = true;
+                    nextSlash |= !precSlash;
                     break;
                 case '\n':
                 case '\r':
                     next = ' ';
-                    break;
-                default:
                     break;
                 }
                 precSlash = nextSlash;
@@ -506,23 +496,23 @@ namespace libbibby
             return content;
         }
 
-        private void CreateFromStream (TextReader stream)
+        void CreateFromStream (TextReader stream)
         {
             // reads in a BibTeX record from the given
             // stream, throwing an exception if there's
             // any kind of problem
 
             // tex comments in bibtex files above current record to current record
-            this.comment = "";
+            comment = "";
             while (stream.Peek () == '%') {
-                this.comment += ConsumeComment (stream);
-                this.comment += "\n";
+                comment += ConsumeComment (stream);
+                comment += "\n";
                 ConsumeWhitespace (stream);
             }
 
             while (stream.Peek () == '#') {
-                this.comment += ConsumeComment (stream);
-                this.comment += "\n";
+                comment += ConsumeComment (stream);
+                comment += "\n";
                 ConsumeWhitespace (stream);
             }
 
@@ -605,22 +595,22 @@ namespace libbibby
 
         public string ToBibtexString ()
         {
-            StringBuilder bibtexString = new StringBuilder ();
+            var bibtexString = new StringBuilder ();
 
-            if (this.comment != null) {
-                bibtexString.Append (this.comment);
+            if (comment != null) {
+                bibtexString.Append (comment);
             }
-            if ((this.recordType != null) && (this.recordType != "") && (this.recordFields != null)) {
+            if (!string.IsNullOrEmpty (recordType) && (recordFields != null)) {
                 bibtexString.Append ('@');
-                bibtexString.Append (this.recordType);
-                if (this.recordType == "comment") {
-                    bibtexString.Append ("{" + this.recordKey + "}\n");
+                bibtexString.Append (recordType);
+                if (recordType == "comment") {
+                    bibtexString.Append ("{" + recordKey + "}\n");
                 } else {
                     bibtexString.Append ('{');
                     // bibtexkey
-                    bibtexString.Append (this.recordKey);
+                    bibtexString.Append (recordKey);
                     bibtexString.Append (",\n");
-                    IEnumerator iter = this.recordFields.GetEnumerator ();
+                    IEnumerator iter = recordFields.GetEnumerator ();
                     while (iter.MoveNext ()) {
                         bibtexString.Append (((BibtexRecordField)iter.Current).ToBibtexString ());
                     }
@@ -635,7 +625,7 @@ namespace libbibby
         // If the text is found, returns true, else returns false
         public bool SearchRecord (string text, BibtexSearchField sField)
         {
-            ArrayList results = new ArrayList ();
+            var results = new ArrayList ();
 
             if (recordType == "comment")
             {
@@ -646,22 +636,17 @@ namespace libbibby
             // split text into tokens
             string[] tokens = text.Split (' ');
 
-            for (int j = 0; j < tokens.Length; j++) {
-                string textitem = (string)tokens[j];
+            foreach (var textitem in tokens) {
                 bool result = false;
-
                 // Checking if the record contains the search string
                 for (int i = 0; i < recordFields.Count; i++) {
-                    BibtexRecordField recordField = (BibtexRecordField)recordFields[i];
-
+                    var recordField = (BibtexRecordField)recordFields [i];
                     if ((sField == BibtexSearchField.All) || ((recordField.fieldName.ToLower () == "author") && (sField == BibtexSearchField.Author)) || ((recordField.fieldName.ToLower () == "title") && (sField == BibtexSearchField.Title))) {
                         if ((recordField.fieldName.ToLower ().IndexOf ("bibliographer") < 0) && (recordField.fieldValue != null)) {
-                            if (recordField.fieldValue.ToLower ().IndexOf (textitem) > -1)
-                                result = true;
+                            result |= recordField.fieldValue.ToLower ().IndexOf (textitem) > -1;
                         }
                     }
                 }
-
                 if (result)
                     results.Add (true);
                 else
@@ -676,7 +661,7 @@ namespace libbibby
 
         public string GetAuthorsString ()
         {
-            StringArrayList authors = this.GetAuthors ();
+            StringArrayList authors = GetAuthors ();
             string authorstring = "";
             for (int i = 0; i < authors.Count; i++) {
                 authorstring = authorstring + authors[i];
@@ -699,7 +684,7 @@ namespace libbibby
                         authorString = authorString.Trim ();
                         //System.Console.WriteLine(authorString);
 
-                        string delim = " and ";
+                        const string delim = " and ";
                         int j = 0;
                         int next;
                         string author;
@@ -763,51 +748,38 @@ namespace libbibby
 
         public bool HasDOI()
         {
-            if ((this.GetDOI () != null) && (this.GetDOI () != ""))
-                return true;
-            return false;
+            return !string.IsNullOrEmpty (GetDOI ());
         }
 
         public bool HasDOI(string doi)
         {
-            if (this.GetField (BibtexRecord.BibtexFieldName.DOI) == doi)
-                return true;
-            return false;
+            return GetField (BibtexRecord.BibtexFieldName.DOI) == doi;
         }
 
         public bool HasURI ()
         {
-            if ((this.GetURI () != null) && (this.GetURI () != ""))
-                return true;
-            return false;
+            return !string.IsNullOrEmpty (GetURI ());
         }
 
 
         public bool HasURI (string uri)
         {
-            if (this.GetField (BibtexRecord.BibtexFieldName.URI) == uri)
-                return true;
-            return false;
+            return GetField (BibtexRecord.BibtexFieldName.URI) == uri;
         }
 
         public bool HasCustomDataField (string field)
         {
-            if (customData.HasField (field))
-                return true;
-            return false;
+            return customData.HasField (field);
         }
 
         public object GetCustomDataField (string field)
         {
-            if (customData.HasField (field)) {
-                return customData.GetField (field);
-            } else
-                return null;
+            return customData.HasField (field) ? customData.GetField (field) : null;
         }
 
         public void SetCustomDataField (string field, object data)
         {
-            Monitor.Exit (this);
+            Monitor.Enter (this);
             bool present = false;
             foreach (BibtexCustomData customDataField in customData) {
                 if (customDataField.GetFieldName () == field) {
@@ -815,7 +787,7 @@ namespace libbibby
                     present = true;
                 }
             }
-            if (present == false)
+            if (!present)
                 customData.Add (new BibtexCustomData (field, data));
             Monitor.Exit (this);
         }

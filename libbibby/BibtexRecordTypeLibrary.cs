@@ -30,7 +30,7 @@ namespace libbibby
 {
     public static class BibtexRecordTypeLibrary
     {
-        private static ArrayList records;
+        static ArrayList records;
 
         public static int Count ()
         {
@@ -53,15 +53,14 @@ namespace libbibby
         public static BibtexRecordType Get (string name)
         {
             int index = Index (name);
-            if (index == -1)
-                return null;
-            return (BibtexRecordType)records[index];
+            return index == -1 ? null : (BibtexRecordType)records [index];
         }
 
         public static BibtexRecordType GetWithIndex (int index)
         {
-            if (index < 0 || index >= records.Count)
+            if (index < 0 || index >= records.Count) {
                 return null;
+            }
             return (BibtexRecordType)records[index];
         }
 
@@ -70,28 +69,29 @@ namespace libbibby
             records.Add (record);
         }
 
-        public static string Filename = System.Environment.GetEnvironmentVariable ("BIBTEX_TYPE_LIB");
+        public static string Filename = Environment.GetEnvironmentVariable ("BIBTEX_TYPE_LIB");
 
         public static void Save ()
         {
             // TODO: possibly make this safer (in case of crash during write?)
             
-            StreamWriter stream = null;
+            StreamWriter stream;
+            stream = null;
             try {
                 stream = new StreamWriter (Filename);
                 if (stream == null) {
                     Debug.WriteLine (1, "Argh, couldn't open the file!");
                 }
-            } catch (System.IO.DirectoryNotFoundException e) {
+            } catch (DirectoryNotFoundException e) {
                 Debug.WriteLine (10, e.Message);
-                Debug.WriteLine (1, "Directory {0} not found!", System.IO.Path.GetDirectoryName(Filename));
-                System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(Filename));
+                Debug.WriteLine (1, "Directory {0} not found!", Path.GetDirectoryName(Filename));
+                Directory.CreateDirectory (Path.GetDirectoryName(Filename));
             }
             // catch some other exception if file can't be opened due to permission problems or something
             if (stream != null) {
                 // good to go
                 for (int i = 0; i < records.Count; i++) {
-                    BibtexRecordType record = (BibtexRecordType)records[i];
+                    var record = (BibtexRecordType)records[i];
                     stream.WriteLine (record.name);
                     stream.WriteLine (record.description);
                     stream.WriteLine (record.spec ? 1 : 0);
@@ -118,32 +118,34 @@ namespace libbibby
             records = new ArrayList ();
             
             StreamReader stream = null;
-            do {
+            while (true) {
                 try {
                     stream = new StreamReader (Filename);
                     if (stream == null) {
                         Debug.WriteLine (1, "Argh, couldn't open the file!");
                     }
                     break;
-                } catch (System.IO.DirectoryNotFoundException e) {
+                }
+                catch (DirectoryNotFoundException e) {
                     Debug.WriteLine (10, e.Message);
-                    Debug.WriteLine (1, "Directory {0} not found! Creating it...", System.IO.Path.GetDirectoryName(Filename));
-                    System.IO.Directory.CreateDirectory (System.IO.Path.GetDirectoryName(Filename));
-                } catch (System.IO.FileNotFoundException e) {
+                    Debug.WriteLine (1, "Directory {0} not found! Creating it...", Path.GetDirectoryName (Filename));
+                    Directory.CreateDirectory (Path.GetDirectoryName (Filename));
+                }
+                catch (FileNotFoundException e) {
                     Debug.WriteLine (10, e.Message);
                     Debug.WriteLine (1, "File {0} not found! Instantiating it...", Filename);
-                    System.IO.Stream recStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibtex_records");
-                    System.IO.FileStream outRecStream = new FileStream (Filename, FileMode.CreateNew);
-                    byte[] data = new byte[recStream.Length];
+                    Stream recStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibtex_records");
+                    var outRecStream = new FileStream (Filename, FileMode.CreateNew);
+                    var data = new byte[recStream.Length];
                     recStream.Read (data, 0, (int)recStream.Length);
                     recStream.Close ();
                     outRecStream.Write (data, 0, data.Length);
                     outRecStream.Close ();
                 }
-            } while (true);
+            }
             
             if (stream != null) {
-                do {
+                while (true) {
                     string recordName = stream.ReadLine ();
                     if (recordName == null) {
                         // end of file
@@ -165,23 +167,21 @@ namespace libbibby
                     string[] required = temp.Split (',');
                     stream.ReadLine ();
                     // blank line between records
-                    BibtexRecordType record = new BibtexRecordType ();
+                    var record = new BibtexRecordType ();
                     record.name = recordName;
                     record.description = description;
-                    record.spec = (System.Convert.ToInt32 (spec) == 1);
-                    StringArrayList sarray = new StringArrayList ();
+                    record.spec = (Convert.ToInt32 (spec) == 1);
+                    var sarray = new StringArrayList ();
                     for (int i = 0; i < fields.Length; i++)
-                        sarray.Add (fields[i]);
+                        sarray.Add (fields [i]);
                     record.fields = sarray;
                     IntArrayList iarray = new IntArrayList ();
                     for (int i = 0; i < required.Length; i++)
-                        iarray.Add (System.Convert.ToInt32 (required[i]));
+                        iarray.Add (Convert.ToInt32 (required [i]));
                     record.optional = iarray;
-                    
                     records.Add (record);
-                    
                     Debug.WriteLine (5, "Read in info for record '" + recordName + "'");
-                } while (true);
+                }
                 stream.Close ();
             }
         }

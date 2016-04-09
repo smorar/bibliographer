@@ -28,13 +28,9 @@ namespace libbibby
 {
     public class BibtexCustomDataFields : ArrayList
     {
-        public BibtexCustomDataFields ()
-        {
-        }
-
         public bool HasField (string field)
         {
-            if (this.Count > 0) {
+            if (Count > 0) {
                 foreach (BibtexCustomData customDataField in this) {
                     if (customDataField.GetFieldName () == field)
                         return true;
@@ -45,7 +41,7 @@ namespace libbibby
 
         public object GetField (string field)
         {
-            if (this.Count > 0) {
+            if (Count > 0) {
                 foreach (BibtexCustomData customDataField in this) {
                     if (customDataField.GetFieldName () == field)
                         return customDataField.GetData ();

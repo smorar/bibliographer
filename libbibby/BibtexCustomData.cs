@@ -27,28 +27,28 @@ namespace libbibby
 
     public class BibtexCustomData
     {
-        private string fieldName;
-        private object fieldData;
+        string fieldName;
+        object fieldData;
 
         public BibtexCustomData (string fieldName, object fieldValue)
         {
             this.fieldName = fieldName;
-            this.fieldData = fieldValue;
+            fieldData = fieldValue;
         }
 
         public string GetFieldName ()
         {
-            return this.fieldName;
+            return fieldName;
         }
 
         public object GetData ()
         {
-            return this.fieldData;
+            return fieldData;
         }
 
         public void SetData (object data)
         {
-            this.fieldData = data;
+            fieldData = data;
         }
     }
 }

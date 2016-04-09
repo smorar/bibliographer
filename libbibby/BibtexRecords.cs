@@ -30,12 +30,12 @@ namespace libbibby
 {
     public class BibtexRecords : System.Collections.CollectionBase
     {
-        public event System.EventHandler RecordAdded;
-        public event System.EventHandler RecordDeleted;
-        public event System.EventHandler RecordsModified;
-        public event System.EventHandler RecordModified;
-        public event System.EventHandler RecordURIAdded;
-        public event System.EventHandler RecordURIModified;
+        public event EventHandler RecordAdded;
+        public event EventHandler RecordDeleted;
+        public event EventHandler RecordsModified;
+        public event EventHandler RecordModified;
+        public event EventHandler RecordURIAdded;
+        public event EventHandler RecordURIModified;
 
         protected virtual void OnRecordAdded (object o, EventArgs e)
         {
@@ -95,10 +95,10 @@ namespace libbibby
             int ret = List.Add (record);
             
             //System.Console.WriteLine ("RecordAdded event emitted: Add {0}", record.GetKey ());
-            this.OnRecordAdded (record, new EventArgs ());
+            OnRecordAdded (record, new EventArgs ());
             
             //System.Console.WriteLine ("RecordsModified event emitted: Add {0}", record.GetKey ());
-            this.OnRecordsModified (new EventArgs ());
+            OnRecordsModified (new EventArgs ());
 
             Monitor.Exit (this);
 
@@ -115,10 +115,10 @@ namespace libbibby
 
             List.Insert (index, record);
             //System.Console.WriteLine ("RecordAdded event emitted: Insert");
-            this.OnRecordAdded (record, new EventArgs ());
+            OnRecordAdded (record, new EventArgs ());
             
             //System.Console.WriteLine ("RecordsModified event emitted: Insert");
-            this.OnRecordsModified (new EventArgs ());
+            OnRecordsModified (new EventArgs ());
 
             Monitor.Exit (this);
         }
@@ -129,10 +129,10 @@ namespace libbibby
 
             List.Remove (record);
             //System.Console.WriteLine ("RecordsDeleted event emitted: Remove");
-            this.OnRecordDeleted (record, new EventArgs ());
+            OnRecordDeleted (record, new EventArgs ());
             
             //System.Console.WriteLine ("RecordsModified event emitted: Remove");
-            this.OnRecordsModified (new EventArgs ());
+            OnRecordsModified (new EventArgs ());
 
             Monitor.Exit (this);
         }
@@ -145,8 +145,8 @@ namespace libbibby
         // getAuthors method is to get a list of all of the authors for the side bar
         public StringArrayList GetAuthors ()
         {
-            StringArrayList authorList = new StringArrayList ();
-            for (int i = 0; i < this.Count; i++) {
+            var authorList = new StringArrayList ();
+            for (int i = 0; i < Count; i++) {
                 StringArrayList recordAuthors = ((BibtexRecord)List[i]).GetAuthors ();
                 // TODO: Parse recordAuthors array list and add to authorList if it is not currently in the list
                 for (int j = 0; j < recordAuthors.Count; j++) {
@@ -161,8 +161,8 @@ namespace libbibby
 
         public StringArrayList GetYears ()
         {
-            StringArrayList years = new StringArrayList ();
-            for (int i = 0; i < this.Count; i++) {
+            var years = new StringArrayList ();
+            for (int i = 0; i < Count; i++) {
                 string year = ((BibtexRecord)List[i]).GetYear ();
                 // TODO: Parse recordAuthors array list and add to authorList if it is not currently in the list
                 if (!years.Contains (year)) {
@@ -175,8 +175,8 @@ namespace libbibby
 
         public StringArrayList GetJournals ()
         {
-            StringArrayList journals = new StringArrayList ();
-            for (int i = 0; i < this.Count; i++) {
+            var journals = new StringArrayList ();
+            for (int i = 0; i < Count; i++) {
                 string journal = ((BibtexRecord)List[i]).GetJournal ();
                 // TODO: Parse recordAuthors array list and add to authorList if it is not currently in the list
                 if (!journals.Contains (journal)) {
@@ -191,8 +191,8 @@ namespace libbibby
         {
             string output = "";
             
-            for (int i = 0; i < this.Count; i++) {
-                output = output + ((BibtexRecord)this.List[i]).ToBibtexString ();
+            for (int i = 0; i < Count; i++) {
+                output = output + ((BibtexRecord)List[i]).ToBibtexString ();
             }
             return output;
         }
@@ -200,7 +200,7 @@ namespace libbibby
         public void Save (string filename)
         {
             // Save to file
-            StreamWriter output = new StreamWriter (filename);
+            var output = new StreamWriter (filename);
 
 //            IEnumerator iter = this.GetEnumerator();
 //            while(iter.MoveNext())
@@ -208,13 +208,13 @@ namespace libbibby
 //                output.Write(((BibtexRecord)iter.Current).ToBibtexString());
 //            }
 
-            output.Write (this.ToBibtexString ());
+            output.Write (ToBibtexString ());
             output.Close ();
         }
 
         public static BibtexRecords Open (string filename)
         {
-            StreamReader stream = new StreamReader (filename);
+            var stream = new StreamReader (filename);
             //TODO: Check for other filetypes, and invoke other parsers (eg. endnote)
             BibtexRecords bibtexRecords = ParseBibtex (stream);
             stream.Close ();
@@ -222,9 +222,9 @@ namespace libbibby
             return bibtexRecords;
         }
 
-        private static BibtexRecords ParseBibtex (StreamReader stream)
+        static BibtexRecords ParseBibtex (StreamReader stream)
         {
-            BibtexRecords bibtexRecords = new BibtexRecords ();
+            var bibtexRecords = new BibtexRecords ();
             
             int count = 1;
             while (stream.Peek () != -1) {
@@ -244,8 +244,8 @@ namespace libbibby
 
         public bool HasURI (string uri)
         {
-            for (int i = 0; i < this.Count; i++) {
-                BibtexRecord record = (BibtexRecord)List[i];
+            for (int i = 0; i < Count; i++) {
+                var record = (BibtexRecord)List[i];
                 if (record.HasURI (uri))
                     return true;
             }
