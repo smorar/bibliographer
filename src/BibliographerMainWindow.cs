@@ -38,7 +38,6 @@ namespace bibliographer
         protected Viewport viewportOptional;
         protected Viewport viewportOther;
         protected Viewport viewportBibliographerData;
-        protected Viewport scrolledwindowSidePaneViewport;
         protected Paned scrolledwindowSidePane;
         protected Box recordDetailsView;
 
@@ -158,7 +157,7 @@ namespace bibliographer
                 ToolButton ToolRemoveRecord;
 
 
-                Viewport scrolledwindowTreeViewViewport;
+                ScrolledWindow scrolledwindowTreeView;
                 Box searchHBox;
 
                 window = (Window)gui.GetObject ("bibliographer.BibliographerMainWindow");
@@ -190,8 +189,7 @@ namespace bibliographer
                 EditRecordsAction = (RadioMenuItem)gui.GetObject ("EditRecordsAction");
                 ToggleEditRecords = (ToggleButton)gui.GetObject ("ToggleEditRecords");
 
-                scrolledwindowTreeViewViewport = (Viewport)gui.GetObject ("scrolledwindowTreeViewViewport");
-                scrolledwindowSidePaneViewport = (Viewport)gui.GetObject ("scrolledwindowSidePaneViewport");
+                scrolledwindowTreeView = (ScrolledWindow)gui.GetObject ("scrolledwindowTreeView");
                 scrolledwindowSidePaneScrolledWindow = (ScrolledWindow)gui.GetObject ("scrolledwindowSidePaneScrolledWindow");
                 scrolledwindowSidePane = (Paned)gui.GetObject ("scrolledwindowSidePane");
                 viewportRequired = (Viewport)gui.GetObject ("viewportRequired");
@@ -281,8 +279,8 @@ namespace bibliographer
 
                 // Setup and add the LitTreeView
                 litTreeView = new LitTreeView (fieldFilter);
-                scrolledwindowTreeViewViewport.Add (litTreeView);
-                scrolledwindowTreeViewViewport.Visible = true;
+                scrolledwindowTreeView.Add (litTreeView);
+                scrolledwindowTreeView.Visible = true;
                 litTreeView.ShowAll ();
                 // LitTreeView callbacks
                 litTreeView.Selection.Changed += OnLitTreeViewSelectionChanged;
@@ -293,7 +291,7 @@ namespace bibliographer
                 sidePaneStore.SetSortColumnId (0, SortType.Ascending);
 
                 sidePaneTreeView = new SidePaneTreeView (sidePaneStore);
-                scrolledwindowSidePaneViewport.Add (sidePaneTreeView);
+                scrolledwindowSidePaneScrolledWindow.Add (sidePaneTreeView);
                 // SidePaneTreeView callbacks
                 sidePaneTreeView.Selection.Changed += OnSidePaneTreeSelectionChanged;
 
