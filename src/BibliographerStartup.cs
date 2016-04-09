@@ -108,6 +108,7 @@ namespace bibliographer
                 window.am.thumbGenThread.Start ();
                 window.am.indexerThread.Start ();
                 window.am.alterationMonitorThread.Start ();
+                window.am.doiQueryThread.Start();
 
                 Gtk.Application.Run ();
 
@@ -117,6 +118,8 @@ namespace bibliographer
                 window.am.indexerThread.Join ();
                 window.am.thumbGenThread.Abort ();
                 window.am.thumbGenThread.Join ();
+                window.am.doiQueryThread.Abort();
+                window.am.doiQueryThread.Join();
 
             }
             catch (NullReferenceException e)

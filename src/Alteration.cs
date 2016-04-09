@@ -32,10 +32,8 @@ namespace bibliographer
 {
     public class AlterationMonitor
     {
-		public Thread indexerThread;
-		public Thread alterationMonitorThread;
-		public Thread thumbGenThread;
-        Queue indexerQueue, alterationMonitorQueue, thumbGenQueue;
+		public Thread indexerThread, alterationMonitorThread, thumbGenThread, doiQueryThread;
+        Queue indexerQueue, alterationMonitorQueue, thumbGenQueue, doiQueryQueue;
         protected DateTime lastCheck;
 
         public AlterationMonitor ()
@@ -48,6 +46,9 @@ namespace bibliographer
 
             thumbGenThread = new Thread (new ThreadStart (ThumbGenThread));
             thumbGenQueue = new Queue ();
+
+            doiQueryThread = new Thread (new ThreadStart (DoiQueryThread));
+            doiQueryQueue = new Queue ();
 
         }
 
@@ -227,21 +228,73 @@ namespace bibliographer
             thumbGenQueue.Clear ();
             Monitor.Exit (thumbGenQueue);
 
+            Monitor.Enter (doiQueryQueue);
+            doiQueryQueue.Clear ();
+            Monitor.Exit (doiQueryQueue);
+
         }
 
-        public void SubscribeRecords (BibtexRecords records)
+        public void SubscribeAlteredRecords (BibtexRecords records)
         {
             Monitor.Enter (alterationMonitorQueue);
             foreach (BibtexRecord record in records)
+                if (!alterationMonitorQueue.Contains(records))
+                   alterationMonitorQueue.Enqueue (record);
+            Monitor.Exit (alterationMonitorQueue);
+        }
+
+        public void SubscribeAlteredRecord (BibtexRecord record)
+        {
+            Monitor.Enter (alterationMonitorQueue);
+            if (!alterationMonitorQueue.Contains(record))
                 alterationMonitorQueue.Enqueue (record);
             Monitor.Exit (alterationMonitorQueue);
         }
 
-        public void SubscribeRecord (BibtexRecord record)
+        public void SubscribeRecordForDOILookup (BibtexRecord record)
         {
-            Monitor.Enter (alterationMonitorQueue);
-            alterationMonitorQueue.Enqueue (record);
-            Monitor.Exit (alterationMonitorQueue);
+            Monitor.Enter (doiQueryQueue);
+            if (!doiQueryQueue.Contains(record))
+                doiQueryQueue.Enqueue (record);
+            Monitor.Exit (doiQueryQueue);
+        }
+
+        public void DoiQueryThread ()
+        {
+            Debug.WriteLine (5, "DoiQuery thread started");
+            try{
+                do
+                {
+                    Monitor.Enter(doiQueryQueue);
+                    while(doiQueryQueue.Count > 0)
+                    {
+                        var record = (BibtexRecord)doiQueryQueue.Dequeue();
+                        Monitor.Exit (doiQueryQueue);
+
+                        try 
+                        {
+                            if(record.HasDOI())
+                            {
+                                Console.WriteLine("DoiQueryThread: LookupDOIData - " + record.ToString());
+                                LookupRecordData.LookupDOIData(record);
+                            }
+                        } 
+                        catch (Exception e) 
+                        {
+                            Console.WriteLine ("Unknown exception caught with doiQuery");
+                            Console.WriteLine (e.Message);
+                            Console.WriteLine (e.StackTrace);
+                        }
+
+                        Monitor.Enter (doiQueryQueue);
+                    }
+                    Monitor.Exit(doiQueryQueue);
+                    Thread.Sleep(100);
+                }while (true);
+            }
+            catch(ThreadAbortException) {
+                Debug.WriteLine (5, "DoiQuery thread terminated");
+            }
         }
 
         public void ThumbGenThread ()
@@ -259,6 +312,7 @@ namespace bibliographer
                         //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
                             //ThumbGen.Gen(record);
+                            Console.WriteLine("ThumbGenThread: Check if record has a thumbnail - " + record.ToString());
                             if(!ThumbGen.getThumbnail(record))
                             {
                                 Console.WriteLine("Thumbnail does not exist");
@@ -292,6 +346,7 @@ namespace bibliographer
                         Monitor.Exit (indexerQueue);
                         //System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
                         try {
+                            Console.WriteLine("IndexerQueue: Indexing record - " + record.ToString());
                             FileIndexer.Index (record);
                         } catch (Exception e) {
                             Console.WriteLine ("Unknown exception caught with indexer");
@@ -323,7 +378,7 @@ namespace bibliographer
                         // FIXME: if continuous monitoring is enabled, then
                         // the entry should be requeued
                         if (Altered (record)) {
-                            //Console.WriteLine("Alteration thread loop processing " + record.GetKey());
+                            Console.WriteLine("AlterationThread: processing - " + record.ToString());
                             // Enqueue record for re-indexing
                             Monitor.Enter (indexerQueue);
                             indexerQueue.Enqueue (record);

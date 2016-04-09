@@ -782,7 +782,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="statusbar1">
+          <object class="GtkStatusbar" id="bibliographerStatusBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_start">10</property>

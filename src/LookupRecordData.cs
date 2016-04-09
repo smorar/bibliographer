@@ -115,114 +115,57 @@ namespace bibliographer
 
     public class LookupRecordData
     {
-        protected BibtexRecord record;
-
-        public void LookupDOI (object o, EventArgs e)
+        public static void LookupDOIData (BibtexRecord record)
         {
-            if (e == null)
-                throw new ArgumentNullException ("e");
-            
-            record = (BibtexRecord) o;
-            RunOnMainThread.Run (this, "LookupData", null);
-        }
-
-        void LookupData ()
-        {
-            // Call this method in a thread, as it will lock up the application until a HttpWebRequest is completed
-            System.Console.WriteLine("LookupData");
+            //System.Console.WriteLine ("LookupData");
             string doi = record.GetField (BibtexRecord.BibtexFieldName.DOI);
-
             string url = "http://api.crossref.org/works/" + doi;
-            Debug.WriteLine(5, "Looking up data for {0} from {1}", doi, url);
-            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
+            Debug.WriteLine (5, "Looking up data for {0} from {1}", doi, url);
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create (url);
             try {
-
                 System.IO.StreamReader reader;
                 string jsonString;
-
-                var response = (System.Net.HttpWebResponse)request.GetResponse();
-                System.IO.Stream resStream = response.GetResponseStream();
-                reader = new System.IO.StreamReader(resStream);
-                jsonString = reader.ReadToEnd();
-
-                try{
-
-                    jsonDOIWork jsonObj = JsonConvert.DeserializeObject<jsonDOIWork>(jsonString);
+                var response = (System.Net.HttpWebResponse)request.GetResponse ();
+                System.IO.Stream resStream = response.GetResponseStream ();
+                reader = new System.IO.StreamReader (resStream);
+                jsonString = reader.ReadToEnd ();
+                try {
+                    jsonDOIWork jsonObj = JsonConvert.DeserializeObject<jsonDOIWork> (jsonString);
                     jsonDOIWorkMessageDateTime date;
-
                     string authorString;
                     authorString = "";
-
-                    foreach (jsonDOIWorkMessageAuthor author in jsonObj.message.author)
-                    {
-                        if (authorString == "")
-                        {
+                    foreach (jsonDOIWorkMessageAuthor author in jsonObj.message.author) {
+                        if (authorString == "") {
                             authorString = author.family + ", " + author.given;
-                        } else
-                        {
+                        }
+                        else {
                             authorString = authorString + " and " + author.family + ", " + author.given;
                         }
                     }
-                    if (jsonObj.message.type == "journal-article"){
-                        
+                    if (jsonObj.message.type == "journal-article") {
                         record.RecordType = "article";
-                        record.SetField(BibtexRecord.BibtexFieldName.Journal, jsonObj.message.containerTitle[0]);
-                        record.SetField(BibtexRecord.BibtexFieldName.Volume, jsonObj.message.volume);
-                        record.SetField(BibtexRecord.BibtexFieldName.Number, jsonObj.message.issue);
-                        record.SetField(BibtexRecord.BibtexFieldName.Pages, jsonObj.message.page);
+                        record.SetField (BibtexRecord.BibtexFieldName.Journal, jsonObj.message.containerTitle [0]);
+                        record.SetField (BibtexRecord.BibtexFieldName.Volume, jsonObj.message.volume);
+                        record.SetField (BibtexRecord.BibtexFieldName.Number, jsonObj.message.issue);
+                        record.SetField (BibtexRecord.BibtexFieldName.Pages, jsonObj.message.page);
                     }
-                    record.SetField(BibtexRecord.BibtexFieldName.Author, authorString);
-                    record.SetField(BibtexRecord.BibtexFieldName.Title, jsonObj.message.title[0]);
-
+                    record.SetField (BibtexRecord.BibtexFieldName.Author, authorString);
+                    record.SetField (BibtexRecord.BibtexFieldName.Title, jsonObj.message.title [0]);
                     date = jsonObj.message.issued;
-
-                    record.SetField(BibtexRecord.BibtexFieldName.Year, date.dateParts[0,0].ToString());
-                    record.SetField(BibtexRecord.BibtexFieldName.Month, date.dateParts[0,1].ToString());
+                    record.SetField (BibtexRecord.BibtexFieldName.Year, date.dateParts [0, 0].ToString ());
+                    record.SetField (BibtexRecord.BibtexFieldName.Month, date.dateParts [0, 1].ToString ());
                     // TODO: generate bibtex key
-
                 }
                 catch {
-                    Debug.WriteLine(2, "Unhandled exception when parsing JSON string from {0}", doi, url);
+                    Debug.WriteLine (2, "Unhandled exception when parsing JSON string from {0}", doi, url);
                 }
-
             }
-            catch (System.Net.WebException e)
-            {
-                Debug.WriteLine(2, e.Message);
+            catch (System.Net.WebException e) {
+                Debug.WriteLine (2, e.Message);
             }
             catch {
-                Debug.WriteLine(2, "Unhandled exception when looking up {0} from {1}", doi, url);
+                Debug.WriteLine (2, "Unhandled exception when looking up {0} from {1}", doi, url);
             }
-        }
-    }
-
-    public class RunOnMainThread
-    {
-        readonly object methodClass;
-        readonly string methodName;
-        readonly object[] arguments;
-
-        public RunOnMainThread (object methodClass, string methodName, object[] arguments)
-        {
-            this.methodClass = methodClass;
-            this.methodName = methodName;
-            this.arguments = arguments;
-            GLib.Idle.Add (new GLib.IdleHandler (Go));
-        }
-
-        public static void Run (object methodClass, string methodName, object[] arguments)
-        {
-            new RunOnMainThread (methodClass, methodName, arguments);
-        }
-
-        bool Go ()
-        {
-            (methodClass.GetType()).InvokeMember(methodName,
-                System.Reflection.BindingFlags.InvokeMethod | 
-                System.Reflection.BindingFlags.Instance | 
-                System.Reflection.BindingFlags.NonPublic,
-                null, methodClass, arguments);
-            return false;
         }
     }
 }
