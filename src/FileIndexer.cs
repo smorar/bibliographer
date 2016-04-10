@@ -325,7 +325,7 @@ namespace bibliographer
             if (stringDataArray != null) {
                 for (int line = 0; line < stringDataArray.Count; line++) {
                     String lineData = stringDataArray [line].ToLower ();
-                    Console.WriteLine(lineData);
+                    //Console.WriteLine(lineData);
                     if ((lineData.IndexOf ("doi:") >= 0) || (lineData.IndexOf("http://dx.doi.org/") >= 0)) {
                         int idx1;
                         idx1 = 0;

@@ -806,8 +806,7 @@ namespace bibliographer
                     bibtexRecords.Add (record);
 
                     // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
-                    //System.Console.WriteLine("Setting URI: {0}", uri);
-                    record.SetURI (fileUri.ToString());
+                    record.SetField (BibtexRecord.BibtexFieldName.URI, fileUri.ToString ());
                 }
             }
         }

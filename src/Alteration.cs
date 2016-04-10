@@ -271,19 +271,22 @@ namespace bibliographer
                         var record = (BibtexRecord)doiQueryQueue.Dequeue();
                         Monitor.Exit (doiQueryQueue);
 
-                        try 
+                        if (record != null)
                         {
-                            if(record.HasDOI())
+                            try 
                             {
-                                Console.WriteLine("DoiQueryThread: LookupDOIData - " + record.ToString());
-                                LookupRecordData.LookupDOIData(record);
+                                if(record.HasDOI())
+                                {
+                                    Console.WriteLine("DoiQueryThread: LookupDOIData - " + record.ToString());
+                                    LookupRecordData.LookupDOIData(record);
+                                }
+                            } 
+                            catch (Exception e) 
+                            {
+                                Console.WriteLine ("Unknown exception caught with doiQuery");
+                                Console.WriteLine (e.Message);
+                                Console.WriteLine (e.StackTrace);
                             }
-                        } 
-                        catch (Exception e) 
-                        {
-                            Console.WriteLine ("Unknown exception caught with doiQuery");
-                            Console.WriteLine (e.Message);
-                            Console.WriteLine (e.StackTrace);
                         }
 
                         Monitor.Enter (doiQueryQueue);

@@ -99,16 +99,15 @@ namespace bibliographer
             Cache.Initialise ();
 
 			Gtk.Application.Init ();
-            try
-            {
-			    window = new BibliographerMainWindow ();
+            try {
+                window = new BibliographerMainWindow ();
                 if (filename != "")
                     window.FileOpen (filename);
 
                 window.am.thumbGenThread.Start ();
                 window.am.indexerThread.Start ();
                 window.am.alterationMonitorThread.Start ();
-                window.am.doiQueryThread.Start();
+                window.am.doiQueryThread.Start ();
 
                 Gtk.Application.Run ();
 
@@ -118,13 +117,13 @@ namespace bibliographer
                 window.am.indexerThread.Join ();
                 window.am.thumbGenThread.Abort ();
                 window.am.thumbGenThread.Join ();
-                window.am.doiQueryThread.Abort();
-                window.am.doiQueryThread.Join();
+                window.am.doiQueryThread.Abort ();
+                window.am.doiQueryThread.Join ();
 
-            }
-            catch (NullReferenceException e)
-            {
+            } catch (NullReferenceException e) {
                 Console.WriteLine ("Bibliographer window not initialized.\n" + e.Message);
+            } catch {
+                Console.WriteLine ("Unhandled exception in main thread.");
             }
         }
     }

@@ -130,18 +130,22 @@ namespace libbibby
         public BibtexRecord (string recordType, string recordKey, ArrayList recordFields)
         {
             Monitor.Enter (this);
+
             this.recordType = recordType;
             this.recordKey = recordKey;
             this.recordFields = recordFields;
+
             Monitor.Exit (this);
         }
 
         public BibtexRecord ()
         {
             Monitor.Enter (this);
+
             recordType = "";
             recordKey = "";
             recordFields = new ArrayList ();
+
             Monitor.Exit (this);
         }
 
@@ -169,14 +173,16 @@ namespace libbibby
 
         public void SetKey (string key)
         {
-            Monitor.Enter (this);
             if (recordKey != key) {
+                Monitor.Enter (this);
+
                 Debug.WriteLine (5, "Key set: {0}", key);
                 recordKey = key;
-                //System.Console.WriteLine ("RecordModified event emitted: SetKey");
+
+                Monitor.Exit (this);
+
                 OnRecordModified (new EventArgs ());
             }
-            Monitor.Enter (this);
         }
 
         public string GetKey ()
@@ -237,9 +243,12 @@ namespace libbibby
             get { return recordType; }
             set {
                 Monitor.Enter (this);
+
                 Debug.WriteLine (5, "RecordType changed from {0} to {1}", recordType, value);
                 recordType = value;
+
                 Monitor.Exit (this);
+
                 OnRecordModified (new EventArgs ());
             }
         }
@@ -270,21 +279,21 @@ namespace libbibby
 
         public void SetField (string field, string content)
         {
-            //Console.WriteLine ("SetField: " + field);
+            Debug.WriteLine (5, "SetField: " + field);
             if (recordFields != null) {
                 for (int i = 0; i < recordFields.Count; i++) {
-                    //if ((HasURI() == false) && (field == BibtexRecord.BibtexFieldName.URI))
-                    //    this.OnUriAdded (new EventArgs());
                     if (String.Compare (((BibtexRecordField)recordFields[i]).fieldName, field, true) == 0) {
                         // Check if the field has _actually_ changed
                         if (content != ((BibtexRecordField)recordFields[i]).fieldValue) {
-                            //Console.WriteLine("Field: {0} updated with content: {1}", field, content);
-                            Debug.WriteLine (5, "Field: {0} updated with content: {1}", field, content);
+
                             Monitor.Enter (this);
+
+                            Debug.WriteLine (5, "Field: {0} updated with content: {1}", field, content);
                             ((BibtexRecordField)recordFields[i]).fieldValue = content;
+
                             Monitor.Exit (this);
+
                             if (field == BibtexRecord.BibtexFieldName.URI) {
-                                //System.Console.WriteLine ("Uri updated event emitted: SetField {0}", field);
                                 if (HasURI())
                                     OnUriUpdated (new EventArgs ());
                                 else
@@ -293,7 +302,6 @@ namespace libbibby
                                 if (HasDOI ())
                                     OnDoiUpdated (new EventArgs ());
                                 else {
-                                    Console.WriteLine ("DOI added to record");
                                     OnDoiAdded (new EventArgs ());
                                 }
                             }
@@ -305,16 +313,17 @@ namespace libbibby
                 }
 
                 // Field doesn't exist, so add it
-                Debug.WriteLine (5, "Field: {0} added with content: {1}", field, content);
+                Monitor.Enter (this);
 
+                Debug.WriteLine (5, "Field: {0} added with content: {1}", field, content);
                 recordFields.Add (new BibtexRecordField (field, content));
-                //System.Console.WriteLine ("OnFieldAdded event emitted: SetField {0}", field);
+
+                Monitor.Exit (this);
+
                 OnFieldAdded (new EventArgs ());
-                //System.Console.WriteLine ("Record modified event emitted: SetField {0}", field);
                 OnRecordModified (new EventArgs ());
 
                 if (field == BibtexRecord.BibtexFieldName.URI) {
-                    //System.Console.WriteLine ("OnUriAdded event emitted: SetField {0}", field);
                     OnUriAdded (new EventArgs ());
                 }
                 if (field == BibtexRecord.BibtexFieldName.DOI) {
@@ -323,29 +332,23 @@ namespace libbibby
             }
         }
 
-        public void SetURI (string uri)
-        {
-            Monitor.Enter (this);
-            SetField(BibtexRecord.BibtexFieldName.URI, uri);
-            Monitor.Exit (this);
-        }
-
         public void RemoveField (string field)
         {
-            Monitor.Enter (this);
             if (recordFields != null)
                 for (int i = 0; i < recordFields.Count; i++)
                     if (String.Compare (((BibtexRecordField)recordFields[i]).fieldName, field, true) == 0) {
+                        
+                        Monitor.Enter (this);
+
                         Debug.WriteLine (5, "Field: {0} removed from RecordField", field);
                         recordFields.RemoveAt (i);
+
                         Monitor.Exit (this);
-                        //System.Console.WriteLine ("OnFieldDeleted event emitted: RemoveField");
+
                         OnFieldDeleted (new EventArgs ());
-                        //System.Console.WriteLine ("OnRecordModified event emitted: RemoveField");
                         OnRecordModified(new EventArgs());
                         return;
                     }
-            Monitor.Exit (this);
             return;
         }
 
@@ -779,7 +782,7 @@ namespace libbibby
 
         public void SetCustomDataField (string field, object data)
         {
-            Monitor.Enter (this);
+
             bool present = false;
             foreach (BibtexCustomData customDataField in customData) {
                 if (customDataField.GetFieldName () == field) {
@@ -787,14 +790,17 @@ namespace libbibby
                     present = true;
                 }
             }
-            if (!present)
+            if (!present) {
+                Monitor.Enter (this);
+
                 customData.Add (new BibtexCustomData (field, data));
-            Monitor.Exit (this);
+
+                Monitor.Exit (this);
+            }
         }
 
         public void RemoveCustomDataField(string field)
         {
-            Monitor.Enter (this);
             BibtexCustomData removeField = null;
 
             foreach (BibtexCustomData customDataField in customData) {
@@ -802,9 +808,13 @@ namespace libbibby
                     removeField = customDataField;
                 }
             }
-            if (removeField != null)
-                customData.Remove(removeField);
-            Monitor.Exit (this);
+            if (removeField != null) {
+                Monitor.Enter (this);
+
+                customData.Remove (removeField);
+
+                Monitor.Exit (this);
+            }
         }
 
     }
