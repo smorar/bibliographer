@@ -116,7 +116,6 @@ namespace bibliographer
     {
         public static void LookupDOIData (BibtexRecord record)
         {
-            //System.Console.WriteLine ("LookupData");
             string doi = record.GetField (BibtexRecord.BibtexFieldName.DOI);
             string url = "http://api.crossref.org/works/" + doi;
             Debug.WriteLine (5, "Looking up data for {0} from {1}", doi, url);
@@ -142,13 +141,14 @@ namespace bibliographer
                         }
                     }
                     if (jsonObj.message.type == "journal-article") {
+                        Debug.WriteLine(5, "Setting field values for article: " + doi);
                         record.RecordType = "article";
                         record.SetField (BibtexRecord.BibtexFieldName.Journal, jsonObj.message.containerTitle [0]);
                         record.SetField (BibtexRecord.BibtexFieldName.Volume, jsonObj.message.volume);
                         record.SetField (BibtexRecord.BibtexFieldName.Number, jsonObj.message.issue);
                         record.SetField (BibtexRecord.BibtexFieldName.Pages, jsonObj.message.page);
                     }
-                    record.SetField (BibtexRecord.BibtexFieldName.Author, authorString);
+                    record.SetField(BibtexRecord.BibtexFieldName.Author, authorString);
                     record.SetField (BibtexRecord.BibtexFieldName.Title, jsonObj.message.title [0]);
                     date = jsonObj.message.issued;
                     record.SetField (BibtexRecord.BibtexFieldName.Year, date.dateParts [0, 0].ToString ());

@@ -38,9 +38,6 @@ namespace bibliographer
         {
             var result = new StringArrayList ();
             
-            //    Console.WriteLine("Command: " + command);
-            //    Console.WriteLine("args: " + args);
-            
             var proc = new Process ();
             proc.EnableRaisingEvents = false;
             proc.StartInfo.FileName = command;
@@ -177,7 +174,9 @@ namespace bibliographer
                 {
                     Environment.SetEnvironmentVariable("HOME", AppDomain.CurrentDomain.BaseDirectory);
                 }
+                Debug.WriteLine(5, "Extracting text using: " + extractor[0]);
                 textualData = GetProcessOutput (extractor[0], extractor_options);
+                Debug.WriteLine(5, "Finished extracting text using: " + extractor[0]);
             }
             
             return textualData;
@@ -188,20 +187,15 @@ namespace bibliographer
             var index = new Tri ();
             
             if (textualDataArray != null) {
-                //System.Console.WriteLine("Converted textual data is as follows:\n---\n");
                 for (int line = 0; line < textualDataArray.Count; line++) {
-                    //while (Gtk.Application.EventsPending ())
-                    //    Gtk.Application.RunIteration ();
                     String data = textualDataArray [line].ToLower ();
                     data = Regex.Replace(data, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", String.Empty);
                     //data = Regex.Replace(data, "[^\\w\\.@-]", String.Empty);
                     data = Regex.Replace (data, "[\\d]", String.Empty);
-                    //System.Console.WriteLine(data);
                     String[] tokens = data.Split (' ');
                     foreach (String token in tokens)
                         index.AddString (token);
                 }
-                //System.Console.WriteLine("\n---");
             } else
                 Debug.WriteLine (5, "Got null back for index data :-(");
             
@@ -210,7 +204,7 @@ namespace bibliographer
 
         public static void Index (BibtexRecord record)
         {
-            //Console.WriteLine("Indexing " + record.GetKey());
+            Debug.WriteLine(5, "Indexing " + record.GetKey());
             Tri index;
             string cacheKey, doi;
             Uri uri;
@@ -276,15 +270,15 @@ namespace bibliographer
 
                 record.SetCustomDataField ("indexData", index);
                 if (doi != null) {
-                    Console.WriteLine("Setting DOI: {0}", doi);
+                    Debug.WriteLine(5, "Setting DOI: {0}", doi);
                     record.SetField (BibtexRecord.BibtexFieldName.DOI, doi);
-                    Console.WriteLine ("Finished setting DOI field");
+                    Debug.WriteLine (5, "Finished setting DOI field");
                 } else {
                     Debug.WriteLine(5, "No DOI record found");
                 }
             } else {
                 // cachekey exists - load
-                //System.Console.WriteLine("Loading cached index data for record: {0}", record.GetKey());
+                Debug.WriteLine(5, "Loading cached index data for record: {0}", record.GetKey());
 
                 cacheKey = (string)record.GetCustomDataField ("cacheKey");
 
@@ -292,7 +286,6 @@ namespace bibliographer
 				if (!record.HasCustomDataField ("indexData")) {
 
 					string cacheFile = Cache.CachedFile ("index_data", cacheKey);
-					//System.Console.WriteLine(cacheFile);
 
 					var istream = new StreamReader (new FileStream (cacheFile, FileMode.Open, FileAccess.Read));
 					index = new Tri (istream.ReadToEnd ());
@@ -325,7 +318,6 @@ namespace bibliographer
             if (stringDataArray != null) {
                 for (int line = 0; line < stringDataArray.Count; line++) {
                     String lineData = stringDataArray [line].ToLower ();
-                    //Console.WriteLine(lineData);
                     if ((lineData.IndexOf ("doi:") >= 0) || (lineData.IndexOf("http://dx.doi.org/") >= 0)) {
                         int idx1;
                         idx1 = 0;

@@ -277,7 +277,6 @@ namespace bibliographer
                             {
                                 if(record.HasDOI())
                                 {
-                                    Console.WriteLine("DoiQueryThread: LookupDOIData - " + record.ToString());
                                     LookupRecordData.LookupDOIData(record);
                                 }
                             } 
@@ -302,7 +301,6 @@ namespace bibliographer
 
         public void ThumbGenThread ()
         {
-            //System.Console.WriteLine("ThumbGen thread started");
             Debug.WriteLine (5, "ThumbGen thread started");
             try {
                  do{
@@ -312,13 +310,12 @@ namespace bibliographer
                         var record = (BibtexRecord)thumbGenQueue.Dequeue ();
 
                         Monitor.Exit (thumbGenQueue);
-                        //System.Console.WriteLine("ThumbGen thread loop processing " + record.GetKey());
                         try {
                             //ThumbGen.Gen(record);
-                            Console.WriteLine("ThumbGenThread: Check if record has a thumbnail - " + record.ToString());
+                            Debug.WriteLine(5, "ThumbGenThread: Check if record has a thumbnail - " + record.ToString());
                             if(!ThumbGen.getThumbnail(record))
                             {
-                                Console.WriteLine("Thumbnail does not exist");
+                                Debug.WriteLine(5, "Thumbnail does not exist");
                             }
 
                         } catch (Exception e) {
@@ -347,9 +344,8 @@ namespace bibliographer
                         var record = (BibtexRecord)indexerQueue.Dequeue ();
                         
                         Monitor.Exit (indexerQueue);
-                        //System.Console.WriteLine("Indexer thread loop processing " + record.GetKey());
                         try {
-                            Console.WriteLine("IndexerQueue: Indexing record - " + record.ToString());
+                            Debug.WriteLine(5, "IndexerQueue: Indexing record - " + record.GetURI());
                             FileIndexer.Index (record);
                         } catch (Exception e) {
                             Console.WriteLine ("Unknown exception caught with indexer");
@@ -381,14 +377,16 @@ namespace bibliographer
                         // FIXME: if continuous monitoring is enabled, then
                         // the entry should be requeued
                         if (Altered (record)) {
-                            Console.WriteLine("AlterationThread: processing - " + record.ToString());
+                            Debug.WriteLine(5, "AlterationThread: processing - " + record.GetURI());
                             // Enqueue record for re-indexing
                             Monitor.Enter (indexerQueue);
-                            indexerQueue.Enqueue (record);
+                            if (!indexerQueue.Contains(record))
+                                indexerQueue.Enqueue (record);
                             Monitor.Exit (indexerQueue);
                             // Enqueue record for regeneration of its thumbnail
                             Monitor.Enter (thumbGenQueue);
-                            thumbGenQueue.Enqueue (record);
+                            if (!thumbGenQueue.Contains(record))
+                                thumbGenQueue.Enqueue (record);
                             Monitor.Exit (thumbGenQueue);
                         } else if (
                                    (record.HasURI()) &&
@@ -398,24 +396,25 @@ namespace bibliographer
 							       (!record.HasCustomDataField ("indexData"))
                                    )
                         {
-                            //System.Console.WriteLine("Alteration thread loop processing " + record.GetKey());
                             // Enqueue record for re-indexing
                             Monitor.Enter (indexerQueue);
-                            indexerQueue.Enqueue (record);
+                            if (!indexerQueue.Contains(record))
+                                indexerQueue.Enqueue(record);
                             Monitor.Exit (indexerQueue);
                             // Enqueue record for regeneration of its thumbnail
                             Monitor.Enter (thumbGenQueue);
-                            thumbGenQueue.Enqueue (record);
+                            if (!thumbGenQueue.Contains(record))
+                                thumbGenQueue.Enqueue(record);
                             Monitor.Exit (thumbGenQueue);
                         }
-                        Thread.Sleep (100);
                         Monitor.Enter (alterationMonitorQueue);
                         // enqueue record if it has a uri
-                        if (record.HasURI())
+                        if (record.HasURI() && !alterationMonitorQueue.Contains(record))
                             alterationMonitorQueue.Enqueue (record);
+                        Thread.Sleep(100);
                     }
                     Monitor.Exit (alterationMonitorQueue);
-                    Thread.Sleep (100);
+                    Thread.Sleep(100);
                 } while (true);
             } catch (ThreadAbortException) {
                 Debug.WriteLine (5, "Alteration monitor thread terminated");

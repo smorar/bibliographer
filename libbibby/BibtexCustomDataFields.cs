@@ -30,11 +30,11 @@ namespace libbibby
     {
         public bool HasField (string field)
         {
-            if (Count > 0) {
-                foreach (BibtexCustomData customDataField in this) {
-                    if (customDataField.GetFieldName () == field)
-                        return true;
-                }
+            for (int i = 0; i < Count; i++)
+            {
+                var customDataField = (BibtexCustomData)this[i];
+                if (customDataField.GetFieldName() == field)
+                    return true;
             }
             return false;
         }

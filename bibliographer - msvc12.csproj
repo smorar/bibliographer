@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6E33C38D-EB37-4588-9EB5-F076434C7D51}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>bibliographer</RootNamespace>
     <AssemblyName>bibliographer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>

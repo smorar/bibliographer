@@ -104,13 +104,14 @@ namespace bibliographer
                 if (filename != "")
                     window.FileOpen (filename);
 
+                window.am.alterationMonitorThread.Start ();
                 window.am.thumbGenThread.Start ();
                 window.am.indexerThread.Start ();
-                window.am.alterationMonitorThread.Start ();
                 window.am.doiQueryThread.Start ();
 
                 Gtk.Application.Run ();
 
+                window.am.FlushQueues();
                 window.am.alterationMonitorThread.Abort ();
                 window.am.alterationMonitorThread.Join ();
                 window.am.indexerThread.Abort ();

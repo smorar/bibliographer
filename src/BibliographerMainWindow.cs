@@ -414,7 +414,6 @@ namespace bibliographer
                             return record.GetField (column.ToLower ()) == filter;
                         }
                     }
-                    //System.Console.WriteLine(column + " -> " + filter);
                 }
             }
 
@@ -446,7 +445,7 @@ namespace bibliographer
                     if ((sfield == BibtexSearchField.All) || (sfield == BibtexSearchField.Article)) {
                         var index = (Tri)record.GetCustomDataField ("indexData");
                         if (index != null) {
-                            //System.Console.WriteLine("Index tri data: " + index.ToString());
+                            Debug.WriteLine(10, "Index tri data: " + index.ToString());
                             if (index.IsSubString (searchEntry.Text) && index.IsSubString(tempEntry.Text))
                                 return true;
                         }
@@ -520,7 +519,6 @@ namespace bibliographer
                     entryReqBibtexKey.Sensitive = true;
                     BibtexGenerateKeySetStatus ();
                 }
-                //  Console.WriteLine("Combo box active: " + comboRecordType.Active);
 
                 var record = (BibtexRecord)model.GetValue (iter, 0);
                 uint numItems;
@@ -716,7 +714,7 @@ namespace bibliographer
 
         void FileModified ()
         {
-            //System.Console.WriteLine ("File modified setting file_name: {0}", file_name);
+            Debug.WriteLine (5, "File modified setting file_name: {0}", file_name);
             window.Title = application_name + " - " + file_name + "*";
             modified = true;
         }
@@ -768,7 +766,10 @@ namespace bibliographer
             fileSaveDialog.Filter = new FileFilter ();
             fileSaveDialog.Filter.AddPattern ("*.bib");
 
-            fileSaveDialog.SetCurrentFolder (filehandlingSettings.GetString ("bib-browse-path"));
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                fileSaveDialog.SetCurrentFolder(filehandlingSettings.GetString("bib-browse-path"));
+            }
 
             var response = (ResponseType)fileSaveDialog.Run ();
 
@@ -795,20 +796,22 @@ namespace bibliographer
             //double fraction = 1.0 / System.Convert.ToDouble(files.Length);
 
             foreach (string file in files) {
-                while (Gtk.Application.EventsPending ())
-                    Gtk.Application.RunIteration ();
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(file);
                 Uri fileUri = new Uri(file);
                 if (!bibtexRecords.HasURI (fileUri.ToString())) {
                     Debug.WriteLine (5, "Adding new record with URI: {0}", fileUri.ToString());
                     var record = new BibtexRecord ();
                     record.DoiAdded += OnDOIRecordAdded;
-                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
+                    // Set the title to the filename
+                    record.SetField(BibtexRecord.BibtexFieldName.Title, fileName);
                     // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
                     record.SetField (BibtexRecord.BibtexFieldName.URI, fileUri.ToString ());
                 }
+                Debug.WriteLine(5, "Inserted file: " + file);
             }
+            Debug.WriteLine(5, "InsertFilesInDir completed");
         }
 
         void UpdateRecordTypeCombo ()
@@ -854,7 +857,6 @@ namespace bibliographer
                 bumpEnd--;
             if (history.Count < max && bumpEnd == history.Count)
                 history.Add ("");
-            //System.Console.WriteLine("bumpEnd set to {0}", bumpEnd);
             for (int cur = bumpEnd; cur > 0; cur--) {
                 history[cur] = history[cur - 1];
             }
@@ -974,22 +976,14 @@ namespace bibliographer
         protected void OnBibtexRecordURIAdded (object o, EventArgs a)
         {
             var record = (BibtexRecord)o;
-            //if (am.Altered (record)) {
-                //System.Console.WriteLine("Record altered: URI added");
-                // Add record to get re-indexed
-                am.SubscribeAlteredRecord (record);
-            //}
+            am.SubscribeAlteredRecord (record);
         }
 
         protected void OnBibtexRecordURIModified (object o, EventArgs a)
         {
             //TODO: Is this necessary? - the record with a previous URI should still be monitored by the alteration monitor
             var record = (BibtexRecord)o;
-            //if (am.Altered (record)) {
-                //System.Console.WriteLine("Record altered: URI modified");
-                // Add record to get re-indexed
-                am.SubscribeAlteredRecord (record);
-            //}
+            am.SubscribeAlteredRecord (record);
         }
 
         protected void OnComboRecordTypeChanged (object o, EventArgs a)
@@ -1157,7 +1151,10 @@ namespace bibliographer
                 }
                 else {
                     // Else, query config for stored path
-                    fileOpenDialog.SetCurrentFolder (filehandlingSettings.GetString ("uri-browse-path"));
+                    if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                    {
+                        fileOpenDialog.SetCurrentFolder(filehandlingSettings.GetString("uri-browse-path"));
+                    }
                 }
 
                 var result = (ResponseType)fileOpenDialog.Run ();
@@ -1187,7 +1184,10 @@ namespace bibliographer
             fileOpenDialog.Filter.AddPattern ("*.bib");
 
             // query config for stored path
-            fileOpenDialog.SetCurrentFolder (filehandlingSettings.GetString ("bib-browse-path"));
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                fileOpenDialog.SetCurrentFolder(filehandlingSettings.GetString("bib-browse-path"));
+            }
 
             var result = (ResponseType)fileOpenDialog.Run ();
 
@@ -1252,9 +1252,7 @@ namespace bibliographer
             }
 
             var record = new BibtexRecord ();
-            //System.Console.WriteLine ("Calling Add");
             record.DoiAdded += OnDOIRecordAdded;
-            record.RecordModified += OnRecordModified;
             bibtexRecords.Add (record);
 
             fieldFilter.IterNthChild (out litTreeViewIter, fieldFilter.IterNChildren ()-1);
@@ -1322,7 +1320,6 @@ namespace bibliographer
             if (result == ResponseType.Ok) {
                 try {
                     var record = new BibtexRecord (BibtexTextBuffer.Text);
-                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1351,7 +1348,6 @@ namespace bibliographer
             if (clipboard.WaitIsTextAvailable()) {
                 try{
                     var record = new BibtexRecord (clipboard.WaitForText());
-                    record.RecordModified += OnRecordModified;
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1383,7 +1379,16 @@ namespace bibliographer
             folderImportDialog.AddButton ("Ok", ResponseType.Ok);
 
             // query config for stored path
-            folderImportDialog.SetCurrentFolder(filehandlingSettings.GetString("bib-import-path"));
+            string importPath = filehandlingSettings.GetString("bib-import-path");
+
+            if (!System.IO.Directory.Exists(importPath))
+            {
+                if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                {
+                    folderImportDialog.SetCurrentFolder(importPath);
+                }
+            }
+
 
             var response = (ResponseType)folderImportDialog.Run ();
 
@@ -1403,7 +1408,7 @@ namespace bibliographer
             }
 
             folderImportDialog.Destroy ();
-
+            Debug.WriteLine(5, "folderImportDialog destroyed.");
         }
 
         protected void OnToggleSideBarActivated (object sender, EventArgs e)
@@ -1443,11 +1448,6 @@ namespace bibliographer
             }
         }
 
-        protected void OnRecordModified (object sender, EventArgs e)
-        {
-            ReconstructDetails();
-        }
-
         protected void OnRadioEditRecordsActivated (object sender, EventArgs e)
         {
             if (EditRecordsAction.Active) {
@@ -1470,7 +1470,6 @@ namespace bibliographer
 
         protected void OnLitTreeViewSelectionChanged (object o, EventArgs a)
         {
-            //Console.WriteLine("Selection changed");
             TreeIter iter;
             ITreeModel model;
 
@@ -1525,13 +1524,13 @@ namespace bibliographer
         protected void OnFilterEntryChanged (object sender, EventArgs e)
         {
             // Filter when the filter entry text has changed
-            //System.Console.WriteLine("OnFilterEntryChanged");
+            Debug.WriteLine(5, "OnFilterEntryChanged");
             modelFilter.Refilter ();
         }
 
         protected void OnButtonBibtexKeyGenerateClicked (object sender, EventArgs e)
         {
-            //System.Console.WriteLine("Generate a Bibtex Key");
+            Debug.WriteLine(5, "Generate a Bibtex Key");
 
             TreeIter iter;
             ITreeModel model;
@@ -1545,7 +1544,7 @@ namespace bibliographer
                 string authors = record.HasField ("author") ? (record.GetField ("author").ToLower ()).Trim () : "";
                 string year = record.HasField ("year") ? record.GetField ("year").Trim () : "";
 
-                //System.Console.WriteLine("authors: " + authors);
+                Debug.WriteLine(5,"authors: " + authors);
 
                 authors = authors.Replace (" and ", "&");
                 string[] authorarray = authors.Split (("&").ToCharArray ());
@@ -1553,16 +1552,16 @@ namespace bibliographer
                 if (authorarray.Length > 0) {
                     var authorsurname = new StringArrayList ();
                     foreach (string author in authorarray) {
-                        //System.Console.WriteLine(author);
+                        Debug.WriteLine(5,author);
                         // Deal with format of "Surname, Firstname ..."
                         if (author.IndexOf (",") > 0) {
                             string[] authorname = author.Split (',');
-                            //System.Console.WriteLine("Surname: " + authorname[0]);
+                            Debug.WriteLine(5,"Surname: " + authorname[0]);
                             authorsurname.Add (authorname[0]);
                             // Deal with format of "Firstname ... Surname"
                         } else {
                             string[] authorname = author.Split (' ');
-                            //System.Console.WriteLine("Surname: " + authorname[authorname.Length - 1]);
+                            Debug.WriteLine(5,"Surname: " + authorname[authorname.Length - 1]);
                             authorsurname.Add (authorname[authorname.Length - 1]);
                         }
                     }
@@ -1620,13 +1619,10 @@ namespace bibliographer
                     Debug.WriteLine (5, "Associating file '" + u + "' with entry '" + record.GetKey () + "'");
                     record.SetField (BibtexRecord.BibtexFieldName.URI, u);
                     // TODO: disable debugging info
-                    //Console.WriteLine("Importing: " + u);
-                    //bibtexRecord record = new bibtexRecord(store, u);
+                    Debug.WriteLine(5, "Importing: " + u);
                     record.DoiAdded += OnDOIRecordAdded;
-                    //record.RecordModified += OnRecordModified;
                 }
             }
-            //if (litTreeView.Selection.GetSelected(out model, out check) && (iter == check))
             ReconstructTabs ();
             ReconstructDetails ();
         }
