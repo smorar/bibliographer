@@ -23,6 +23,7 @@
 //
 
 using System.Runtime.Serialization;
+using System.Net;
 using libbibby;
 using Newtonsoft.Json;
 
@@ -119,22 +120,25 @@ namespace bibliographer
             string doi = record.GetField (BibtexRecord.BibtexFieldName.DOI);
             string url = "http://api.crossref.org/works/" + doi;
             Debug.WriteLine (5, "Looking up data for {0} from {1}", doi, url);
-            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create (url);
+            var request = (HttpWebRequest)WebRequest.Create (url);
+            request.Timeout = 30000;
             try {
                 System.IO.StreamReader reader;
                 string jsonString;
-                var response = (System.Net.HttpWebResponse)request.GetResponse ();
+                var response = (HttpWebResponse)request.GetResponse ();
                 System.IO.Stream resStream = response.GetResponseStream ();
                 reader = new System.IO.StreamReader (resStream);
                 jsonString = reader.ReadToEnd ();
                 try {
                     jsonDOIWork jsonObj = JsonConvert.DeserializeObject<jsonDOIWork> (jsonString);
                     jsonDOIWorkMessageDateTime date;
-                    string authorString;
+                    string authorString, bibtexKeyString;
                     authorString = "";
+                    bibtexKeyString = "";
                     foreach (jsonDOIWorkMessageAuthor author in jsonObj.message.author) {
                         if (authorString == "") {
                             authorString = author.family + ", " + author.given;
+                            bibtexKeyString = author.family;
                         }
                         else {
                             authorString = authorString + " and " + author.family + ", " + author.given;
@@ -153,13 +157,17 @@ namespace bibliographer
                     date = jsonObj.message.issued;
                     record.SetField (BibtexRecord.BibtexFieldName.Year, date.dateParts [0, 0].ToString ());
                     record.SetField (BibtexRecord.BibtexFieldName.Month, date.dateParts [0, 1].ToString ());
-                    // TODO: generate bibtex key
+
+                    if (bibtexKeyString.Length > 0){
+                        bibtexKeyString = bibtexKeyString + "_" + date.dateParts [0, 0].ToString () + "_" + (string) record.GetCustomDataField ("bibliographer_last_md5");
+                        record.SetKey(bibtexKeyString);
+                    }
                 }
                 catch {
                     Debug.WriteLine (2, "Unhandled exception when parsing JSON string from {0}", doi, url);
                 }
             }
-            catch (System.Net.WebException e) {
+            catch (WebException e) {
                 Debug.WriteLine (2, e.Message);
             }
             catch {

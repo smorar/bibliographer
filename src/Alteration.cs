@@ -109,10 +109,7 @@ namespace bibliographer
             lastCheck = DateTime.Now;
 
             String size = (string)record.GetCustomDataField ("bibliographer_last_size") ?? "";
-            String mtime = (string) record.GetCustomDataField ("bibliographer_last_mtime");
-			if (mtime == null) {
-				mtime = "";
-			}
+            String mtime = (string)record.GetCustomDataField ("bibliographer_last_mtime") ?? "";
             String md5 = (string) record.GetCustomDataField ("bibliographer_last_md5");
             String newSize = "";
 
@@ -312,7 +309,7 @@ namespace bibliographer
                         Monitor.Exit (thumbGenQueue);
                         try {
                             //ThumbGen.Gen(record);
-                            Debug.WriteLine(5, "ThumbGenThread: Check if record has a thumbnail - " + record.ToString());
+                            Debug.WriteLine(5, "ThumbGenThread: Check if record has a thumbnail - " + record);
                             if(!ThumbGen.getThumbnail(record))
                             {
                                 Debug.WriteLine(5, "Thumbnail does not exist");

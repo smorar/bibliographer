@@ -299,8 +299,13 @@ namespace libbibby
                                 else
                                     OnUriAdded (new EventArgs ());
                             } else if (field == BibtexRecord.BibtexFieldName.DOI) {
-                                if (HasDOI ())
-                                    OnDoiUpdated (new EventArgs ());
+                                if (HasDOI ()) {
+                                    if (GetField (BibtexRecord.BibtexFieldName.DOI) != content) {
+                                        OnDoiUpdated (new EventArgs ());
+                                    } else {
+                                        return;
+                                    }
+                                }
                                 else {
                                     OnDoiAdded (new EventArgs ());
                                 }

@@ -78,6 +78,7 @@ namespace bibliographer
 
         protected LitTreeView litTreeView;
         protected SidePaneTreeView sidePaneTreeView;
+        protected ScrolledWindow scrolledwindowTreeView;
         protected Notebook notebookFields;
         protected BibliographerSettings windowSettings;
         protected BibliographerSettings sidebarSettings;
@@ -156,7 +157,6 @@ namespace bibliographer
                 ToolButton ToolRemoveRecord;
 
 
-                ScrolledWindow scrolledwindowTreeView;
                 Box searchHBox;
 
                 window = (Window)gui.GetObject ("bibliographer.BibliographerMainWindow");
@@ -239,6 +239,7 @@ namespace bibliographer
                 buttonBibtexKeyGenerate.Activated += OnButtonBibtexKeyGenerateClicked;
                 comboRecordType.Changed += OnComboRecordTypeChanged;
 
+                window.DestroyEvent += OnWindowDestroyEvent;
                 window.DeleteEvent += OnWindowDeleteEvent;
                 window.StateChanged += OnWindowStateChanged;
                 window.SizeAllocated += OnWindowSizeAllocated;
@@ -802,8 +803,9 @@ namespace bibliographer
                     Debug.WriteLine (5, "Adding new record with URI: {0}", fileUri.ToString());
                     var record = new BibtexRecord ();
                     record.DoiAdded += OnDOIRecordAdded;
-                    bibtexRecords.Add (record);
 
+                    bibtexRecords.Add (record);
+                    record.RecordType = "misc";
                     // Set the title to the filename
                     record.SetField(BibtexRecord.BibtexFieldName.Title, fileName);
                     // Only set the uri field after the record has been added to bibtexRecords, so that the event is caught
@@ -925,7 +927,7 @@ namespace bibliographer
                     return;
             }
 
-            Gtk.Application.Quit ();
+            Application.Quit ();
         }
 
         bool ProcessModifiedData ()
@@ -1034,6 +1036,11 @@ namespace bibliographer
             // Refresh the Article Type field
             FileModified ();
             UpdateRecordTypeCombo ();
+
+            Gdk.Rectangle rect;
+            rect = litTreeView.GetCellArea (null, litTreeView.GetColumn (1));
+            litTreeView.Window.InvalidateRect (rect, true);
+
         }
 
         protected void OnExtraFieldAdded (object o, EventArgs a)
@@ -1513,6 +1520,12 @@ namespace bibliographer
             } else {
                 ViewRecordsAction.Active = true;
             }
+        }
+
+        protected void OnWindowDestroyEvent (object o, DestroyEventArgs args)
+        {
+            args.RetVal = true;
+            Quit ();
         }
 
         protected void OnWindowDeleteEvent (object o, DeleteEventArgs args)

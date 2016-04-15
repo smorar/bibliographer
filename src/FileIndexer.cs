@@ -224,11 +224,13 @@ namespace bibliographer
                 // No cache exists - so generate it and index
                 
                 if (record.HasCustomDataField ("bibliographer_last_uri") && record.HasCustomDataField ("bibliographer_last_md5")) {
+                    // Information for cacheKey exists - use it!
                     cacheKey = record.GetCustomDataField ("bibliographer_last_uri") + "<" + record.GetCustomDataField ("bibliographer_last_md5") + ">";
                     record.SetCustomDataField ("cacheKey", cacheKey);
                 }
                 else
                 {
+                    // Information for cacheKey does not exist - generate it!
                     string uriString = record.GetURI();
                     ulong intSize;
 
@@ -275,6 +277,8 @@ namespace bibliographer
                     Debug.WriteLine (5, "Finished setting DOI field");
                 } else {
                     Debug.WriteLine(5, "No DOI record found");
+                    // Use MD5 as the BibtexKey for this record
+                    record.SetKey ((string)record.GetCustomDataField ("bibliographer_last_md5"));
                 }
             } else {
                 // cachekey exists - load

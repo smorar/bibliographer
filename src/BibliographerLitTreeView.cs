@@ -52,102 +52,133 @@ namespace bibliographer
             columnsVolumeSettings = new BibliographerSettings ("apps.bibliographer.columns.volume");
             columnsPagesSettings = new BibliographerSettings ("apps.bibliographer.columns.pages");
 
-            columnsIconSettings.Changed += OnColumnsSettingsChanged;
-            columnsAuthorSettings.Changed += OnColumnsSettingsChanged;
-            columnsTitleSettings.Changed += OnColumnsSettingsChanged;
-            columnsYearSettings.Changed += OnColumnsSettingsChanged;
-            columnsJournalSettings.Changed += OnColumnsSettingsChanged;
-            columnsBibtexKeySettings.Changed += OnColumnsSettingsChanged;
-            columnsVolumeSettings.Changed += OnColumnsSettingsChanged;
-            columnsPagesSettings.Changed += OnColumnsSettingsChanged;
-
             Model = sorter;
             
-            // TODO: Perform this more elegantly
-            // Possibly, read out fields from the bibtex record spec file
-            // and make a certain set of columns visible by default
-            Gtk.TreeViewColumn[] columnarray;
-            columnarray = new Gtk.TreeViewColumn[8];
-            
-            columnarray[columnsIconSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Icon", new Gtk.CellRendererPixbuf (), "image");
-            columnarray[columnsAuthorSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Author", new Gtk.CellRendererText (), "text");
-            columnarray[columnsTitleSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Title", new Gtk.CellRendererText (), "text");
-            columnarray[columnsYearSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Year", new Gtk.CellRendererText (), "text");
-            columnarray[columnsJournalSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Journal", new Gtk.CellRendererText (), "text");
-            columnarray[columnsBibtexKeySettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Bibtex Key", new Gtk.CellRendererText (), "text");
-            columnarray[columnsVolumeSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Volume", new Gtk.CellRendererText (), "text");
-            columnarray[columnsPagesSettings.GetInt ("order")] = new Gtk.TreeViewColumn ("Pages", new Gtk.CellRendererText (), "text");
+            Gtk.CellRendererPixbuf columnIconRenderer;
+            Gtk.CellRendererText columnAuthorRenderer;
+            Gtk.CellRendererText columnTitleRenderer;
+            Gtk.CellRendererText columnYearRenderer;
+            Gtk.CellRendererText columnJournalRenderer;
+            Gtk.CellRendererText columnBibtexKeyRenderer;
+            Gtk.CellRendererText columnVolumeRenderer;
+            Gtk.CellRendererText columnPagesRenderer;
 
-            foreach (Gtk.TreeViewColumn column in columnarray) {
-                AppendColumn (column);
-            }
+            columnIconRenderer = new Gtk.CellRendererPixbuf ();
+            columnAuthorRenderer = new Gtk.CellRendererText ();
+            columnTitleRenderer = new Gtk.CellRendererText ();
+            columnYearRenderer = new Gtk.CellRendererText ();
+            columnJournalRenderer = new Gtk.CellRendererText ();
+            columnBibtexKeyRenderer = new Gtk.CellRendererText ();
+            columnVolumeRenderer = new Gtk.CellRendererText ();
+            columnPagesRenderer = new Gtk.CellRendererText ();
+
+            AppendColumn ("Icon", columnIconRenderer, "image");
+            AppendColumn ("Author", columnAuthorRenderer, "text");
+            AppendColumn ("Title", columnTitleRenderer, "text");
+            AppendColumn ("Year", columnYearRenderer, "text");
+            AppendColumn ("Journal", columnJournalRenderer, "text");
+            AppendColumn ("Bibtex Key", columnBibtexKeyRenderer, "text");
+            AppendColumn ("Volume", columnVolumeRenderer, "text");
+            AppendColumn ("Pages", columnPagesRenderer, "text");
+
             HeadersClickable = true;
 
 			var textDataFunc = new Gtk.TreeCellDataFunc (RenderColumnTextFromBibtexRecord);
             var pixmapDataFunc = new Gtk.TreeCellDataFunc (RenderColumnPixbufFromBibtexRecord);
 
-            int id = 0;
+            int idx = 0;
             foreach (Gtk.TreeViewColumn column in Columns) {
+                column.Expand = false;
+                column.Reorderable = true;
+                column.Resizable = true;
+                column.Clickable = true;
+
                 if (column.Title == "Icon") {
-					column.Title = "Icon";
+                    column.FixedWidth = columnsIconSettings.GetInt ("width");
+                    column.Visible = columnsIconSettings.GetBoolean ("visible");
 					column.SetCellDataFunc (column.Cells[0], pixmapDataFunc);
                     column.Sizing = Gtk.TreeViewColumnSizing.Fixed;
-                    column.Expand = false;
                     column.Resizable = false;
                     column.Reorderable = false;
                     column.Clickable = false;
                     column.MinWidth = 20;
                 } else if (column.Title == "Author") {
+                    column.FixedWidth = columnsAuthorSettings.GetInt ("width");
+                    column.Visible = columnsAuthorSettings.GetBoolean ("visible");
 					column.SetCellDataFunc (column.Cells[0], textDataFunc);
-                    column.Reorderable = true;
-                    column.Sizing = Gtk.TreeViewColumnSizing.Fixed;
-                    column.Resizable = true;
-                    column.Clickable = true;
-                    column.SortColumnId = id;
-                    sorter.SetSortFunc (id, StringCompareAuthor);
+                    column.SortColumnId = 1;
+                    sorter.SetSortFunc (1, StringCompareAuthor);
                     column.Clicked += OnColumnSort;
-                } else {
-					column.SetCellDataFunc (column.Cells[0], textDataFunc);
-                    column.Reorderable = true;
-                    column.Sizing = Gtk.TreeViewColumnSizing.Fixed;
-                    column.Resizable = true;
-                    column.Clickable = true;
-                    column.SortColumnId = id;
-                    sorter.SetSortFunc (id, StringCompare);
+                    if (column != Columns[columnsAuthorSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsAuthorSettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Title") {
+                    column.Expand = true;
+                    column.FixedWidth = columnsTitleSettings.GetInt ("width");
+                    column.Visible = columnsTitleSettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 2;
+                    sorter.SetSortFunc (2, StringCompare);
                     column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsTitleSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsTitleSettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Year") {
+                    column.FixedWidth = columnsYearSettings.GetInt ("width");
+                    column.Visible = columnsYearSettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 3;
+                    sorter.SetSortFunc (3, StringCompare);
+                    column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsYearSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsYearSettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Journal") {
+                    column.FixedWidth = columnsJournalSettings.GetInt ("width");
+                    column.Visible = columnsJournalSettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 4;
+                    sorter.SetSortFunc (4, StringCompare);
+                    column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsJournalSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsJournalSettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Bibtex Key") {
+                    column.FixedWidth = columnsBibtexKeySettings.GetInt ("width");
+                    column.Visible = columnsBibtexKeySettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 5;
+                    sorter.SetSortFunc (5, StringCompare);
+                    column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsBibtexKeySettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsBibtexKeySettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Volume") {
+                    column.FixedWidth = columnsVolumeSettings.GetInt ("width");
+                    column.Visible = columnsVolumeSettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 6;
+                    sorter.SetSortFunc (6, StringCompare);
+                    column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsVolumeSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsVolumeSettings.GetInt ("order") - 1]);
+                } else if (column.Title == "Pages") {
+                    column.FixedWidth = columnsPagesSettings.GetInt ("width");
+                    column.Visible = columnsPagesSettings.GetBoolean ("visible");
+                    column.SetCellDataFunc (column.Cells[0], textDataFunc);
+                    column.SortColumnId = 7;
+                    sorter.SetSortFunc (7, StringCompare);
+                    column.Clicked += OnColumnSort;
+                    if (column != Columns[columnsPagesSettings.GetInt ("order") - 1])
+                        MoveColumnAfter (column, Columns[columnsPagesSettings.GetInt ("order") - 1]);
                 }
-                id++;
+                idx++;
             }
 
-            RedrawColumns ();
+            //RedrawColumns ();
 
             // Callbacks for the LitTreeView
+            ColumnsChanged += OnColumnsChanged;
             DragMotion += OnDragMotion;
             RowActivated += OnRowActivated;
             DragLeave += OnDragLeave;
             
             Show ();
-        }
-
-        void RedrawColumns()
-        {
-            Columns[columnsIconSettings.GetInt ("order")].Visible = columnsIconSettings.GetBoolean ("visible");
-            Columns[columnsAuthorSettings.GetInt ("order")].Visible = columnsAuthorSettings.GetBoolean ("visible");
-            Columns[columnsTitleSettings.GetInt ("order")].Visible = columnsTitleSettings.GetBoolean ("visible");
-            Columns[columnsYearSettings.GetInt ("order")].Visible = columnsYearSettings.GetBoolean ("visible");
-            Columns[columnsJournalSettings.GetInt ("order")].Visible = columnsJournalSettings.GetBoolean("visible");
-            Columns[columnsBibtexKeySettings.GetInt ("order")].Visible = columnsBibtexKeySettings.GetBoolean ("visible");
-            Columns[columnsVolumeSettings.GetInt ("order")].Visible = columnsVolumeSettings.GetBoolean ("visible");
-            Columns[columnsPagesSettings.GetInt ("order")].Visible = columnsPagesSettings.GetBoolean ("visible");
-
-            Columns[columnsIconSettings.GetInt ("order")].FixedWidth = columnsIconSettings.GetInt ("width");
-            Columns[columnsAuthorSettings.GetInt ("order")].FixedWidth = columnsAuthorSettings.GetInt ("width");
-            Columns[columnsTitleSettings.GetInt ("order")].FixedWidth = columnsTitleSettings.GetInt ("width");
-            Columns[columnsYearSettings.GetInt ("order")].FixedWidth = columnsYearSettings.GetInt ("width");
-            Columns[columnsJournalSettings.GetInt ("order")].FixedWidth = columnsJournalSettings.GetInt("width");
-            Columns[columnsBibtexKeySettings.GetInt ("order")].FixedWidth = columnsBibtexKeySettings.GetInt ("width");
-            Columns[columnsVolumeSettings.GetInt ("order")].FixedWidth = columnsVolumeSettings.GetInt ("width");
-            Columns[columnsPagesSettings.GetInt ("order")].FixedWidth = columnsPagesSettings.GetInt ("width");
         }
 
         static void RenderColumnPixbufFromBibtexRecord (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel model, Gtk.TreeIter iter)
@@ -254,7 +285,7 @@ namespace bibliographer
             else
                 B = "";
             Debug.WriteLine (10, "sortString: {0} Comparing {1} and {2}", sortString, A, B);
-            return String.Compare (A, B);
+            return String.Compare (A.ToLower(), B.ToLower());
         }
 
         public int StringCompareAuthor (Gtk.ITreeModel model, Gtk.TreeIter tia, Gtk.TreeIter tib)
@@ -277,7 +308,7 @@ namespace bibliographer
             else
                 B = "";
             Debug.WriteLine (10, "Comparing {1} and {2}", A, B);
-            return String.Compare (A, B);
+            return String.Compare (A.ToLower(), B.ToLower());
         }
 
         public void SaveColumnsState ()
@@ -333,9 +364,9 @@ namespace bibliographer
         /* CALLBACKS                                                         */
         /* ----------------------------------------------------------------- */
 
-        protected virtual void OnColumnsSettingsChanged (object o, GLib.ChangedArgs args)
+        protected virtual void OnColumnsChanged (object o, EventArgs args)
         {
-            RedrawColumns ();
+            SaveColumnsState ();
         }
 
         protected virtual void OnColumnSort (object o, EventArgs a)
