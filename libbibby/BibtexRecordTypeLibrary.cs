@@ -175,7 +175,7 @@ namespace libbibby
                     for (int i = 0; i < fields.Length; i++)
                         sarray.Add (fields [i]);
                     record.fields = sarray;
-                    IntArrayList iarray = new IntArrayList ();
+                    var iarray = new IntArrayList ();
                     for (int i = 0; i < required.Length; i++)
                         iarray.Add (Convert.ToInt32 (required [i]));
                     record.optional = iarray;

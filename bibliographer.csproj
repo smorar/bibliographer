@@ -58,6 +58,7 @@
       <LogicalName>BibliographerGladeUI</LogicalName>
     </Compile>
     <Compile Include="src\BibliographerSettings.cs" />
+    <Compile Include="src\SuperTri.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="COPYING" />
@@ -125,6 +126,10 @@
     </Reference>
     <Reference Include="atk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-3.0</Package>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

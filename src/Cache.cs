@@ -26,6 +26,7 @@ using System;
 using System.Threading;
 using System.IO;
 using System.Collections;
+using static bibliographer.Debug;
 
 namespace bibliographer
 {
@@ -38,27 +39,23 @@ namespace bibliographer
             LoadCacheData ();
         }
 
-        static cacheSection LookupSection (string section)
+        private static CacheSection LookupSection (string section)
         {
-            var dummySection = new cacheSection (section);
-            int index = sections.BinarySearch (dummySection, new sectionCompare ());
-            if ((index < 0) || (index >= sections.Count)) {
-                return null;
-            }
-            return ((cacheSection)sections[index]);
+            CacheSection dummySection = new CacheSection (section);
+            int index = sections.BinarySearch (dummySection, new SectionCompare ());
+            return (index < 0) || (index >= sections.Count) ? null : (CacheSection)sections [index];
         }
 
-        static keySection LookupKey (string section, string key)
+        private static KeySection LookupKey (string section, string key)
         {
-            cacheSection cSection = LookupSection (section);
-            if (cSection == null)
-                return null;
-            var dummyKey = new keySection (key, "");
-            int index = cSection.keys.BinarySearch (dummyKey, new keyCompare ());
-            if ((index < 0) || (index >= cSection.keys.Count)) {
+            CacheSection cSection = LookupSection (section);
+            if (cSection == null) {
                 return null;
             }
-            return ((keySection)cSection.keys[index]);
+
+            KeySection dummyKey = new KeySection (key, "");
+            int index = cSection.keys.BinarySearch (dummyKey, new KeyCompare ());
+            return (index < 0) || (index >= cSection.keys.Count) ? null : (KeySection)cSection.keys[index];
         }
 
         public static bool IsCached (string section, string key)
@@ -68,7 +65,7 @@ namespace bibliographer
 
         public static string CachedFile (string section, string key)
         {
-            keySection kSection = LookupKey (section, key);
+            KeySection kSection = LookupKey (section, key);
             return kSection == null ? "" : kSection.filename;
         }
 
@@ -76,26 +73,27 @@ namespace bibliographer
         {
 
             BibliographerSettings settings;
-            keySection kSection;
-            cacheSection cSection;
+            KeySection kSection;
+            CacheSection cSection;
             Random random;
             string datadir, filename;
 
             settings = new BibliographerSettings ("apps.bibliographer");
 
             kSection = LookupKey (section, key);
-            if (kSection != null)
+            if (kSection != null) {
                 return kSection.filename;
-            
+            }
+
             cSection = LookupSection (section);
 
             if (cSection == null) {
                 // add a new section
-                sections.Add (new cacheSection (section));
-                sections.Sort (new sectionCompare ());
+                sections.Add (new CacheSection (section));
+                sections.Sort (new SectionCompare ());
                 cSection = LookupSection (section);
                 if (cSection == null) {
-                    Debug.WriteLine (5, "Failing to add a new section in cache, that's messed up... :-(");
+                    WriteLine (5, "Failing to add a new section in cache, that's messed up... :-(");
                     return "";
                 }
             }
@@ -106,36 +104,39 @@ namespace bibliographer
                 filename = datadir + "/cache/";
 
                 const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 20; i++) {
                     filename = filename + chars[random.Next () % chars.Length];
+                }
+
                 bool ok = false;
                 try {
-                    var stream = new FileStream (filename, FileMode.CreateNew, FileAccess.Write);
+                    FileStream stream = new FileStream (filename, FileMode.CreateNew, FileAccess.Write);
                     stream.Close ();
                     ok = true;
                 } catch (DirectoryNotFoundException e) {
-                    Debug.WriteLine (10, e.Message);
+                    WriteLine (10, e.Message);
                     
                     try {
                         Directory.CreateDirectory (datadir);
                     } catch (Exception e2) {
-                        Debug.WriteLine (10, e2.Message);
+                        WriteLine (10, e2.Message);
                     }
                     try {
                         Directory.CreateDirectory (datadir + "/cache");
                     } catch (Exception e2) {
-                        Debug.WriteLine (10, e2.Message);
-                        Debug.WriteLine (1, "Failed to create directory {0}", datadir + "/cache");
+                        WriteLine (10, e2.Message);
+                        WriteLine (1, "Failed to create directory {0}", datadir + "/cache");
                     }
                 } catch (IOException e) {
-                    Debug.WriteLine (10, e.Message);
+                    WriteLine (10, e.Message);
                     // file already exists
                 }
-                if (ok)
+                if (ok) {
                     break;
+                }
             } while (true);
-            cSection.keys.Add (new keySection (key, filename));
-            cSection.keys.Sort (new keyCompare ());
+            cSection.keys.Add (new KeySection (key, filename));
+            cSection.keys.Sort (new KeyCompare ());
             SaveCacheData ();
             return filename;
         }
@@ -154,25 +155,27 @@ namespace bibliographer
 
         public static void RemoveFromCache (string section, string key)
         {
-            keySection kSection = LookupKey (section, key);
+            KeySection kSection = LookupKey (section, key);
             if (kSection != null) {
-                cacheSection cSection = LookupSection (section);
-                if (System.IO.File.Exists(kSection.filename))
+                CacheSection cSection = LookupSection (section);
+                if (File.Exists(kSection.filename))
                 {
-                    System.IO.File.Delete(kSection.filename);
+                    File.Delete(kSection.filename);
                 }
                 cSection.keys.Remove (kSection);
-                if (cSection.keys.Count == 0)
+                if (cSection.keys.Count == 0) {
                     sections.Remove (cSection);
+                }
+
                 SaveCacheData ();
             }
         }
 
         // Private data & functions
 
-        private class keySection
+        private class KeySection
         {
-            public keySection (string _key, string _filename)
+            public KeySection (string _key, string _filename)
             {
                 key = _key;
                 filename = _filename;
@@ -182,17 +185,17 @@ namespace bibliographer
             public string filename;
         }
 
-        private class keyCompare : IComparer
+        private class KeyCompare : IComparer
         {
             public int Compare (object x, object y)
             {
-                return string.Compare (((keySection)x).key, ((keySection)y).key);
+                return string.Compare (((KeySection)x).key, ((KeySection)y).key);
             }
         }
 
-        private class cacheSection
+        private class CacheSection
         {
-            public cacheSection (string _section)
+            public CacheSection (string _section)
             {
                 section = _section;
                 keys = new ArrayList ();
@@ -202,18 +205,18 @@ namespace bibliographer
             public ArrayList keys;
         }
 
-        private class sectionCompare : IComparer
+        private class SectionCompare : IComparer
         {
             public int Compare (object x, object y)
             {
-                return string.Compare (((cacheSection)x).section, ((cacheSection)y).section);
+                return string.Compare (((CacheSection)x).section, ((CacheSection)y).section);
             }
         }
 
-        static void LoadCacheData ()
+        private static void LoadCacheData ()
         {
             BibliographerSettings settings;
-            cacheSection curSection;
+            CacheSection curSection;
             StreamReader stream;
             string datadir;
 
@@ -238,29 +241,29 @@ namespace bibliographer
                             // check that we don't already have this section name
                             bool found = false;
                             for (int i = 0; i < sections.Count; i++) {
-                                if (((cacheSection)sections[i]).section == sectionName) {
+                                if (((CacheSection)sections[i]).section == sectionName) {
                                     found = true;
                                     break;
                                 }
                             }
                             if (found) {
-                                Debug.WriteLine (5, "Duplicate section {0} in cache file!", sectionName);
+                                WriteLine (5, "Duplicate section {0} in cache file!", sectionName);
                                 curSection = null;
                                 continue;
                             }
                             
                             if (curSection != null) {
-                                curSection.keys.Sort (new keyCompare ());
+                                curSection.keys.Sort (new KeyCompare ());
                                 sections.Add (curSection);
                             }
-                            curSection = new cacheSection (sectionName);
+                            curSection = new CacheSection (sectionName);
                         } else {
                             if (curSection == null) {
                                 // no active section, so skip
                                 continue;
                             }
                             string[] fields = line.Split (' ');
-                            curSection.keys.Add (new keySection (fields[0], fields[1]));
+                            curSection.keys.Add (new KeySection (fields[0], fields[1]));
                         }
                     }
                 }
@@ -268,18 +271,18 @@ namespace bibliographer
                 if (curSection != null) {
                     sections.Add (curSection);
                 }
-                sections.Sort (new sectionCompare ());
+                sections.Sort (new SectionCompare ());
             } catch (DirectoryNotFoundException e) {
-                Debug.WriteLine (10, e.Message);
-                Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
+                WriteLine (10, e.Message);
+                WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
                 Directory.CreateDirectory (datadir);
             } catch (FileNotFoundException e) {
-                Debug.WriteLine (10, e.Message);
+                WriteLine (10, e.Message);
                 // no cache, no problem-o :-)
             }
         }
 
-        static void SaveCacheData ()
+        private static void SaveCacheData ()
         {
             BibliographerSettings settings;
             string datadir;
@@ -287,48 +290,48 @@ namespace bibliographer
             settings = new BibliographerSettings ("apps.bibliographer");
             datadir = settings.GetString ("data-directory");
 
-			cleanup_invalid_dirs();
+            Cleanup_invalid_dirs ();
 			
             try {
                 Monitor.Enter (sections);
-                var stream = new StreamWriter (new FileStream (datadir + "/cachedata", FileMode.OpenOrCreate, FileAccess.Write));
+                StreamWriter stream = new StreamWriter (new FileStream (datadir + "/cachedata", FileMode.OpenOrCreate, FileAccess.Write));
                 
                 for (int section = 0; section < sections.Count; section++) {
-                    stream.WriteLine ("[{0}]", ((cacheSection)sections[section]).section);
-                    for (int key = 0; key < ((cacheSection)sections[section]).keys.Count; key++) {
-                        stream.WriteLine ("{0} {1}", ((keySection)((cacheSection)sections[section]).keys[key]).key, ((keySection)((cacheSection)sections[section]).keys[key]).filename);
+                    stream.WriteLine ("[{0}]", ((CacheSection)sections[section]).section);
+                    for (int key = 0; key < ((CacheSection)sections[section]).keys.Count; key++) {
+                        stream.WriteLine ("{0} {1}", ((KeySection)((CacheSection)sections[section]).keys[key]).key, ((KeySection)((CacheSection)sections[section]).keys[key]).filename);
                     }
                 }
                 
                 stream.Close ();
                 Monitor.Exit (sections);
             } catch (DirectoryNotFoundException e) {
-                Debug.WriteLine (10, e.Message);
-                Debug.WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
+                WriteLine (10, e.Message);
+                WriteLine (1, "Directory ~/.local/share/bibliographer/ not found! Creating it...");
                 Directory.CreateDirectory (datadir);
             } catch (Exception e) {
-                Debug.WriteLine (1, "Unhandled exception whilst trying to save cache: {0}", e);
+                WriteLine (1, "Unhandled exception whilst trying to save cache: {0}", e);
             }
         }
-		
-		static void cleanup_invalid_dirs()
+
+        private static void Cleanup_invalid_dirs ()
 		{
 			try
 			{
 				if (Directory.Exists("~/.bibliographer"))
 				{
-					Debug.WriteLine(1, "Deleting old ~/.bibliographer directory");
+                    WriteLine (1, "Deleting old ~/.bibliographer directory");
 					Directory.Delete("~/.bibliographer/");
 				}
 			} catch (DirectoryNotFoundException e)
 			{
-				Debug.WriteLine (1, "Directory not found exception whilst trying to cleanup old directories: {0}", e);
+                WriteLine (1, "Directory not found exception whilst trying to cleanup old directories: {0}", e);
 			} catch (FileNotFoundException e)
 			{
-				Debug.WriteLine (1, "File not found exception whilst trying to cleanup old directories: {0}", e);
+                WriteLine (1, "File not found exception whilst trying to cleanup old directories: {0}", e);
 			} catch (Exception e)
 			{
-				Debug.WriteLine (1, "Unhandled exception whilst trying to cleanup old directories: {0}", e);
+                WriteLine (1, "Unhandled exception whilst trying to cleanup old directories: {0}", e);
 			}
 		}
     }

@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>libbibby</RootNamespace>
     <AssemblyName>libbibby</AssemblyName>
-    <Target Name="Build" DependsOnTargets="$(BuildDependsOn)" Outputs="$(TargetPath)" />
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -57,15 +56,24 @@
     <Compile Include="libbibby\StringArrayList.cs" />
     <Compile Include="libbibby\tests\BibtexRecordTest.cs" />
     <Compile Include="libbibby\tests\BibtexRecordsTest.cs" />
+    <Compile Include="libbibby\tests\DatabaseStoreTest.cs" />
+    <Compile Include="libbibby\DatabaseStoreStatic.cs" />
+    <Compile Include="libbibby\DatabaseStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
       <Package>nunit</Package>
     </Reference>
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Data" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="libbibby\Makefile.am" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

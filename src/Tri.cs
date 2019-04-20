@@ -28,75 +28,76 @@ using System.Text;
 
 namespace bibliographer
 {
-    public class Tri
+    public class TriNode
     {
-        class TriNode
+        public TriNode ()
         {
-            public TriNode ()
-            {
-                hitCount = 0;
-                children = new TriNode[26];
-                for (int i = 0; i < 26; i++)
-                    children[i] = null;
-            }
+            hitCount = 0;
+            children = new TriNode [26];
+            for (int i = 0; i < 26; i++)
+                children [i] = null;
+        }
 
-            public TriNode (String[] s, ref int pos)
-            {
-                if (pos >= s.Length)
-                    return;
-                hitCount = int.Parse (s[pos]);
-                pos++;
-                children = new TriNode[26];
-                for (int i = 0; i < 26; i++) {
-                    if (s[pos] != "")
-                        children[i] = new TriNode (s, ref pos);
-                    else {
-                        children[i] = null;
-                        pos++;
-                    }
+        public TriNode (string [] s, ref int pos)
+        {
+            if (pos >= s.Length)
+                return;
+            hitCount = int.Parse (s [pos]);
+            pos++;
+            children = new TriNode [26];
+            for (int i = 0; i < 26; i++) {
+                if (s [pos] != "")
+                    children [i] = new TriNode (s, ref pos);
+                else {
+                    children [i] = null;
+                    pos++;
                 }
-            }
-
-            public void PrintStringsMatched (String s)
-            {
-                if (hitCount != 0)
-                    Debug.WriteLine (5, s);
-                for (int i = 0; i < 26; i++)
-                    if (children[i] != null)
-                        children[i].PrintStringsMatched (s + ((char)('a' + i)));
-            }
-
-            public TriNode[] children;
-            public int hitCount;
-
-            public override String ToString ()
-            {
-                String result = hitCount.ToString ();
-                for (int i = 0; i < 26; i++) {
-                    result += ",";
-                    if (children[i] != null)
-                        result += children[i].ToString ();
-                }
-                return result;
             }
         }
 
-        TriNode root;
+        public void PrintStringsMatched (string s)
+        {
+            if (hitCount != 0)
+                Debug.WriteLine (5, s);
+            for (int i = 0; i < 26; i++)
+                if (children [i] != null)
+                    children [i].PrintStringsMatched (s + ((char)('a' + i)));
+        }
+
+        public TriNode [] children;
+        public int hitCount;
+
+        public override string ToString ()
+        {
+            string result = hitCount.ToString ();
+            for (int i = 0; i < 26; i++) {
+                result += ",";
+                if (children [i] != null)
+                    result += children [i].ToString ();
+            }
+            return result;
+        }
+    }
+
+    public class Tri
+    {
+
+        public TriNode root;
 
         public Tri ()
         {
             root = new TriNode ();
         }
 
-        public Tri (String s)
+        public Tri (string s)
         {
             int pos = 0;
             root = new TriNode (Decompress (s).Split (','), ref pos);
         }
 
-        public void AddString (String s)
+        public void AddString (string s)
         {
-            String realS = s.ToLower ();
+            string realS = s.ToLower ();
             TriNode curNode = root;
             for (int i = 0; i < realS.Length; i++) {
                 int c = realS[i] - 'a';
@@ -110,9 +111,9 @@ namespace bibliographer
                 curNode.hitCount++;
         }
 
-        public int CountOccurrences (String s)
+        public int CountOccurrences (string s)
         {
-            String realS = s.ToLower ();
+            string realS = s.ToLower ();
             TriNode curNode = root;
             for (int i = 0; i < realS.Length; i++) {
                 int c = realS[i] - 'a';
@@ -125,24 +126,28 @@ namespace bibliographer
             return curNode.hitCount;
         }
 
-        public bool Contains (String s)
+        public bool Contains (string s)
         {
-            String realS = s.ToLower ();
+            string realS = s.ToLower ();
             TriNode curNode = root;
             for (int i = 0; i < realS.Length; i++) {
                 int c = realS[i] - 'a';
-                if ((c < 0) || (c >= 26))
+                if ((c < 0) || (c >= 26)) {
                     continue;
-                if (curNode.children[c] == null)
+                }
+
+                if (curNode.children[c] == null) {
                     return false;
+                }
+
                 curNode = curNode.children[c];
             }
             return curNode.hitCount != 0;
         }
 
-        public bool IsSubString (String s)
+        public bool IsSubString (string s)
         {
-            String realS = s.ToLower ();
+            string realS = s.ToLower ();
             TriNode curNode = root;
             for (int i = 0; i < realS.Length; i++) {
                 int c = realS[i] - 'a';
@@ -160,14 +165,14 @@ namespace bibliographer
             root.PrintStringsMatched ("");
         }
 
-        public override String ToString ()
+        public override string ToString ()
         {
             return Compress (root.ToString ());
         }
 
-        String Compress (String s)
+        string Compress (string s)
         {
-            String[] toks = s.Split (',');
+            string [] toks = s.Split (',');
             var result = new StringBuilder ();
             int pos = 0;
             while (pos < toks.Length) {
@@ -195,7 +200,7 @@ namespace bibliographer
             return result.ToString ();
         }
 
-        String Decompress (String s)
+        string Decompress (string s)
         {
             var wsRemoved = new StringBuilder ();
             for (int i = 0; i < s.Length; i++)
@@ -210,7 +215,7 @@ namespace bibliographer
                     break;
                 }
             s = wsRemoved.ToString ();
-            String[] toks = s.Split (',');
+            string [] toks = s.Split (',');
             var result = new StringBuilder ();
             for (int i = 0; i < toks.Length; i++) {
                 if (toks[i] != "") {
@@ -228,11 +233,11 @@ namespace bibliographer
             return result.ToString ();
         }
 
-        readonly String validChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&()-+";
+        readonly string validChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&()-+";
 
-        String Encode (int x)
+        string Encode (int x)
         {
-            String result = "";
+            string result = "";
             do {
                 result = validChars[x % validChars.Length] + result;
                 x = x / validChars.Length;
@@ -240,7 +245,7 @@ namespace bibliographer
             return result;
         }
 
-        int Decode (String s)
+        int Decode (string s)
         {
             int x = 0;
             for (int i = 0; i < s.Length; i++)

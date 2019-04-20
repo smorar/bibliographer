@@ -26,8 +26,7 @@ using libbibby;
 
 namespace bibliographer
 {
-
-	public class SearchEntry : bibliographer.widget.SearchEntry
+	public class SearchEntry : widget.SearchEntry
     {
         public new event System.EventHandler Changed;
 
@@ -36,11 +35,11 @@ namespace bibliographer
             WidthRequest = 300;
             
             Gtk.Menu searchMenu = Menu;
-            
-            var searchMenuItemAll = new Gtk.RadioMenuItem ("All");
-			var searchMenuItemAuthor = new Gtk.RadioMenuItem (searchMenuItemAll, "Author");
-			var searchMenuItemTitle = new Gtk.RadioMenuItem (searchMenuItemAll, "Title");
-			var searchMenuItemArticle = new Gtk.RadioMenuItem (searchMenuItemAll, "Article");
+
+            Gtk.RadioMenuItem searchMenuItemAll = new Gtk.RadioMenuItem ("All");
+            Gtk.RadioMenuItem searchMenuItemAuthor = new Gtk.RadioMenuItem (searchMenuItemAll, "Author");
+            Gtk.RadioMenuItem searchMenuItemTitle = new Gtk.RadioMenuItem (searchMenuItemAll, "Title");
+            Gtk.RadioMenuItem searchMenuItemArticle = new Gtk.RadioMenuItem (searchMenuItemAll, "Article");
             
             searchMenuItemAll.Data.Add ("searchField", BibtexSearchField.All);
             searchMenuItemAuthor.Data.Add ("searchField", BibtexSearchField.Author);
@@ -68,8 +67,7 @@ namespace bibliographer
 
         protected virtual void OnSearchEntryChanged (object sender, System.EventArgs e)
         {
-            if (Changed != null)
-                Changed (sender, e);
+            Changed?.Invoke (sender, e);
         }
     }
 }

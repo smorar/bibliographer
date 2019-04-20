@@ -49,9 +49,9 @@ namespace bibliographer
 
         static void RenderFilterColumnTextFromBibtexRecords (Gtk.TreeViewColumn column, Gtk.CellRenderer cell, Gtk.ITreeModel model, Gtk.TreeIter iter)
         {
-            //System.Console.WriteLine("Rendering cell");
+            Debug.WriteLine(10, "Rendering cell");
             string val = (string)model.GetValue (iter, 0);
-            //System.Console.WriteLine("Value = " + val);
+            Debug.WriteLine(10, "Value = " + val);
             (cell as Gtk.CellRendererText).Text = StringOps.TeXToUnicode (val);
         }
         

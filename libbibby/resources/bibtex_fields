@@ -22,6 +22,10 @@ chapter
 A chapter number.
 1
 
+doi
+The digital object identifier for this work.
+1
+
 edition
 The edition of a book.
 1

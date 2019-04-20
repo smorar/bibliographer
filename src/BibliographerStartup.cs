@@ -63,7 +63,7 @@ namespace bibliographer
             foreach (string arg in args) {
                 string st = arg.Trim ();
                 
-                if (st.IndexOf ("-") == 0 && st.IndexOf ('=') >= 0) {
+                if (st.IndexOf ("-", StringComparison.CurrentCultureIgnoreCase) == 0 && st.IndexOf ("=", StringComparison.CurrentCultureIgnoreCase) >= 0) {
                     string[] str = st.Split ('=');
                     str[0] = (str[0]).Trim ('-');
                     // Enable debugging
@@ -101,8 +101,6 @@ namespace bibliographer
 			Gtk.Application.Init ();
             try {
                 window = new BibliographerMainWindow ();
-                if (filename != "")
-                    window.FileOpen (filename);
 
                 window.am.alterationMonitorThread.Start ();
                 window.am.thumbGenThread.Start ();
@@ -122,9 +120,7 @@ namespace bibliographer
                 window.am.doiQueryThread.Join ();
 
             } catch (NullReferenceException e) {
-                Console.WriteLine ("Bibliographer window not initialized.\n" + e.Message);
-            } catch {
-                Console.WriteLine ("Unhandled exception in main thread.");
+                Debug.WriteLine (0, "Bibliographer window not initialized.\n" + e.Message);
             }
         }
     }

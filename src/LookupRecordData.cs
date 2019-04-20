@@ -26,152 +26,158 @@ using System.Runtime.Serialization;
 using System.Net;
 using libbibby;
 using Newtonsoft.Json;
+using static bibliographer.Debug;
 
 namespace bibliographer
 {
 
     [DataContract]
-    public class jsonDOIWorkMessageAuthor
+    public class JsonDOIWorkMessageAuthor
     {
         [DataMember]
-        public string[] affiliation {get; set;}
+        public string[] Affiliation {get; set;}
         [DataMember]
-        public string family {get; set;}
+        public string Family {get; set;}
         [DataMember]
-        public string given {get; set;}
+        public string Given {get; set;}
     }
 
     [DataContract]
-    public class jsonDOIWorkMessageDateTime
+    public class JsonDOIWorkMessageDateTime
     {
         [DataMember(Name="date-parts")]
-        public int[,] dateParts { get; set;}
+        public int[,] DateParts { get; set;}
         [DataMember]
-        public long timestamp { get; set;}
+        public long Timestamp { get; set;}
 
     }
 
     [DataContract]
-    public class jsonDOIWorkMessage
+    public class JsonDOIWorkMessage
     {
         [DataMember]
-        public jsonDOIWorkMessageDateTime indexed { get; set;}
+        public JsonDOIWorkMessageDateTime Indexed { get; set;}
         [DataMember(Name="reference-count")]
-        public int referenceCount { get; set;}
+        public int ReferenceCount { get; set;}
         [DataMember]
-        public string publisher { get; set;}
+        public string Publisher { get; set;}
         [DataMember]
         public string DOI { get; set;}
         [DataMember]
-        public string type { get; set;}
+        public string Type { get; set;}
         [DataMember]
-        public string page { get; set;}
+        public string Page { get; set;}
         [DataMember]
-        public string source { get; set;}
+        public string Source { get; set;}
         [DataMember]
-        public string[] title { get; set;}
+        public string[] Title { get; set;}
         [DataMember]
-        public string prefix { get; set;}
+        public string Prefix { get; set;}
         [DataMember]
-        public string issue { get; set;}
+        public string Issue { get; set;}
         [DataMember]
-        public string volume { get; set;}
+        public string Volume { get; set;}
         [DataMember]
-        public jsonDOIWorkMessageAuthor[] author { get; set;}
+        public JsonDOIWorkMessageAuthor[] Author { get; set;}
         [DataMember]
-        public string member { get; set;}
+        public string Member { get; set;}
         [DataMember(Name="container-title")]
-        public string[] containerTitle { get; set;}
+        public string[] ContainerTitle { get; set;}
         [DataMember]
-        public jsonDOIWorkMessageDateTime deposited { get; set;}
+        public JsonDOIWorkMessageDateTime Deposited { get; set;}
         [DataMember]
-        public double score {get; set;}
+        public double Score {get; set;}
         [DataMember]
-        public string[] subtitle {get; set;}
+        public string[] Subtitle {get; set;}
         [DataMember]
-        public jsonDOIWorkMessageDateTime issued {get; set;}
+        public JsonDOIWorkMessageDateTime Issued {get; set;}
         [DataMember(Name="alternative-id")]
-        public string[] alternativeId {get; set;}
+        public string[] AlternativeId {get; set;}
         [DataMember]
         public string URL {get; set;}
         [DataMember]
         public string[] ISSN {get; set;}
         [DataMember]
-        public string[] subject {get; set;}
+        public string[] Subject {get; set;}
     }
 
     [DataContract]
-    public class jsonDOIWork
+    public class JsonDOIWork
     {
         [DataMember]
-        public string status { get; set;}
+        public string Status { get; set;}
         [DataMember(Name="message-type")]
-        public string messageType { get; set;}
+        public string MessageType { get; set;}
         [DataMember(Name="message-version")]
-        public string messageVersion { get; set;}
+        public string MessageVersion { get; set;}
         [DataMember]
-        public jsonDOIWorkMessage message { get; set;}
+        public JsonDOIWorkMessage Message { get; set;}
     }
 
-    public class LookupRecordData
+    public static class LookupRecordData
     {
         public static void LookupDOIData (BibtexRecord record)
         {
             string doi = record.GetField (BibtexRecord.BibtexFieldName.DOI);
             string url = "http://api.crossref.org/works/" + doi;
-            Debug.WriteLine (5, "Looking up data for {0} from {1}", doi, url);
-            var request = (HttpWebRequest)WebRequest.Create (url);
-            request.Timeout = 30000;
+            WriteLine (5, "Looking up data for {0} from {1}", doi, url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create (url);
+            if (request != null) {
+                request.Timeout = 30000;
+            }
+
             try {
                 System.IO.StreamReader reader;
                 string jsonString;
-                var response = (HttpWebResponse)request.GetResponse ();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
                 System.IO.Stream resStream = response.GetResponseStream ();
                 reader = new System.IO.StreamReader (resStream);
                 jsonString = reader.ReadToEnd ();
                 try {
-                    jsonDOIWork jsonObj = JsonConvert.DeserializeObject<jsonDOIWork> (jsonString);
-                    jsonDOIWorkMessageDateTime date;
+                    JsonDOIWork jsonObj = JsonConvert.DeserializeObject<JsonDOIWork> (jsonString);
+                    JsonDOIWorkMessageDateTime date;
                     string authorString, bibtexKeyString;
                     authorString = "";
                     bibtexKeyString = "";
-                    foreach (jsonDOIWorkMessageAuthor author in jsonObj.message.author) {
+                    foreach (JsonDOIWorkMessageAuthor author in jsonObj.Message.Author) {
                         if (authorString == "") {
-                            authorString = author.family + ", " + author.given;
-                            bibtexKeyString = author.family;
+                            authorString = author.Family + ", " + author.Given;
+                            bibtexKeyString = author.Family;
                         }
                         else {
-                            authorString = authorString + " and " + author.family + ", " + author.given;
+                            authorString = authorString + " and " + author.Family + ", " + author.Given;
                         }
                     }
-                    if (jsonObj.message.type == "journal-article") {
-                        Debug.WriteLine(5, "Setting field values for article: " + doi);
+                    if (jsonObj.Message.Type == "journal-article") {
+                        WriteLine (10, "Setting field values for article: " + doi);
                         record.RecordType = "article";
-                        record.SetField (BibtexRecord.BibtexFieldName.Journal, jsonObj.message.containerTitle [0]);
-                        record.SetField (BibtexRecord.BibtexFieldName.Volume, jsonObj.message.volume);
-                        record.SetField (BibtexRecord.BibtexFieldName.Number, jsonObj.message.issue);
-                        record.SetField (BibtexRecord.BibtexFieldName.Pages, jsonObj.message.page);
+                        record.SetField (BibtexRecord.BibtexFieldName.Journal, jsonObj.Message.ContainerTitle [0]);
+                        record.SetField (BibtexRecord.BibtexFieldName.Volume, jsonObj.Message.Volume);
+                        record.SetField (BibtexRecord.BibtexFieldName.Number, jsonObj.Message.Issue);
+                        record.SetField (BibtexRecord.BibtexFieldName.Pages, jsonObj.Message.Page);
                     }
                     record.SetField(BibtexRecord.BibtexFieldName.Author, authorString);
-                    record.SetField (BibtexRecord.BibtexFieldName.Title, jsonObj.message.title [0]);
-                    date = jsonObj.message.issued;
-                    record.SetField (BibtexRecord.BibtexFieldName.Year, date.dateParts [0, 0].ToString ());
-                    record.SetField (BibtexRecord.BibtexFieldName.Month, date.dateParts [0, 1].ToString ());
+                    record.SetField (BibtexRecord.BibtexFieldName.Title, jsonObj.Message.Title [0]);
+                    date = jsonObj.Message.Issued;
+                    record.SetField (BibtexRecord.BibtexFieldName.Year, date.DateParts [0, 0].ToString ());
+                    record.SetField (BibtexRecord.BibtexFieldName.Month, date.DateParts [0, 1].ToString ());
 
                     if (bibtexKeyString.Length > 0){
-                        bibtexKeyString = bibtexKeyString + "_" + date.dateParts [0, 0].ToString () + "_" + (string) record.GetCustomDataField ("bibliographer_last_md5");
+                        bibtexKeyString = bibtexKeyString + "_" + date.DateParts [0, 0].ToString () + "_" + (string) record.GetCustomDataField ("bibliographer_last_md5");
                         record.SetKey(bibtexKeyString);
                     }
                 }
-                catch {
-                    Debug.WriteLine (2, "Unhandled exception when parsing JSON string from {0}", doi, url);
+                catch (System.Exception e) {
+                    WriteLine (1, "Unhandled exception when parsing JSON string from {0}", doi, url);
+                    WriteLine (1, e.Message);
                 }
             }
             catch (WebException e) {
-                Debug.WriteLine (2, e.Message);
+                WriteLine (1, e.Message);
             }
-            catch {
-                Debug.WriteLine (2, "Unhandled exception when looking up {0} from {1}", doi, url);
+            catch (System.Exception e) {
+                WriteLine (1, "Unhandled exception when looking up {0} from {1}", doi, url);
+                WriteLine (1, e.Message);
             }
         }
     }

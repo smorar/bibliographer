@@ -1,33 +1,87 @@
+//
+//  BibtexRecordsTest.cs
+//
+//  Author:
+//       Sameer Morar <smorar@gmail.com>
+//
+//  Copyright (c) 2016 Bibliographer developers
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+//
+
 
 using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace libbibby
 {
 
 
-    [TestFixture()]
+    [TestFixture]
     public class BibtexRecordsTest
     {
 
-        [Test()]
+        string testFilename;
+
+        [SetUp]
+        public void BibtexRecordsSetup ()
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\bibliographer\\bibtex_records");
+                Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\bibliographer\\bibtex_fields");
+                testFilename = Path.GetTempPath() + "\\bibtexrecordstest.sqlite";
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable("BIBTEX_TYPE_LIB", Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/bibtex_records");
+                Environment.SetEnvironmentVariable("BIBTEX_FIELDTYPE_LIB", Environment.GetEnvironmentVariable("HOME") + "/.config/bibliographer/bibtex_fields");
+                testFilename = "/tmp/bibtexrecordstest.sqlite";
+            }
+            BibtexRecordTypeLibrary.Load ();
+            BibtexRecordFieldTypeLibrary.Load ();
+
+            // Delete testfilename if it exists so that we can check correct creation
+            if (File.Exists (testFilename)) {
+                File.Delete (testFilename);
+            }
+            Assert.IsFalse(File.Exists(testFilename),"File: "+testFilename+" exists prior to databaseStore constructor.");
+
+            DatabaseStoreStatic.Initialize (testFilename);
+            Assert.IsTrue (File.Exists (testFilename), "File: "+testFilename+" has been created by the databaseStore constructor.");
+        }
+
+        [Test]
         public void EmptyRecords ()
         {
-            BibtexRecords records = new BibtexRecords();
+            var records = new BibtexRecords();
 
             Assert.IsInstanceOf<BibtexRecords>(records);
             Assert.AreEqual(records.Count, 0);
         }
 
-        [Test()]
+        [Test]
         public void RecordsCompare()
         {
-            BibtexRecords records1 = new BibtexRecords();
-            BibtexRecords records2 = new BibtexRecords();
+            var records1 = new BibtexRecords();
+            var records2 = new BibtexRecords();
 
             Assert.AreNotSame(records1, records2, "Two records instances are not the same");
 
-            BibtexRecord record = new BibtexRecord();
+            var record = new BibtexRecord();
 
             records1.Add(record);
             records2.Add(record);
@@ -35,7 +89,7 @@ namespace libbibby
             Assert.AreNotSame(records1, records2, "Two records instances are not the same when they have the same record stored within them");
         }
 
-        [Test()]
+        [Test]
         public void RecordsEvents()
         {
 
@@ -56,8 +110,8 @@ namespace libbibby
             recordURIAddedCount = 0;
             recordURIModifiedCount = 0;
 
-            BibtexRecords records = new BibtexRecords();
-            BibtexRecord record = new BibtexRecord();
+            var records = new BibtexRecords();
+            var record = new BibtexRecord();
 
             records.RecordAdded += delegate(object sender, EventArgs e) {
                 Assert.AreSame(sender, record, "Delegate sender is the record");
@@ -81,6 +135,7 @@ namespace libbibby
             };
 
             records.RecordsModified += delegate(object sender, EventArgs e) {
+                Assert.AreNotSame(sender, record, "Delegate sender is not the record");
 
                 recordsModified = true;
                 recordsModifiedCount += 1;
@@ -158,7 +213,7 @@ namespace libbibby
             recordURIModifiedCount = 0;
 
 
-            record.SetField(BibtexRecord.BibtexFieldName.URI ,"file://tmp/test");
+            record.SetURI("file://tmp/test");
 
             Assert.IsFalse(recordAdded, "RecordAdded event is not meant to be raised");
             Assert.IsFalse(recordDeleted, "RecordDeleted event is not meant to be raised");
@@ -187,7 +242,7 @@ namespace libbibby
             recordURIModifiedCount = 0;
 
 
-            record.SetField(BibtexRecord.BibtexFieldName.URI ,"file://tmp/test1");
+            record.SetURI("file://tmp/test1");
 
             Assert.IsFalse(recordAdded, "RecordAdded event is not meant to be raised");
             Assert.IsFalse(recordDeleted, "RecordDeleted event is not meant to be raised");
@@ -230,6 +285,14 @@ namespace libbibby
             Assert.AreEqual(0, recordURIAddedCount);
             Assert.AreEqual(0, recordURIModifiedCount);
 
+        }
+
+        [TearDown]
+        public void BibtexRecordsTearDown()
+        {
+            // Clean up after the test
+            File.Delete (testFilename);
+            Assert.IsFalse (File.Exists (testFilename), string.Format ("File: {0} has been deleted after the tests.", testFilename));
         }
     }
 }

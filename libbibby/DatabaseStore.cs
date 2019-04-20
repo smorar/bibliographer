@@ -1,11 +1,10 @@
-//
-//  BibtexCustomData.cs
+﻿//
+//  DatabaseStore.cs
 //
 //  Author:
 //       Sameer Morar <smorar@gmail.com>
-//       Carl Hultquist <chultquist@gmail.com>
 //
-//  Copyright (c) 2005-2015 Bibliographer developers
+//  Copyright (c) 2018 
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -21,34 +20,20 @@
 //  along with this program; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
+using System;
+using Mono.Data.Sqlite;
 
 namespace libbibby
 {
-
-    public class BibtexCustomData
+    public class DatabaseStore
     {
-        private readonly string fieldName;
-        private object fieldData;
+        internal SqliteConnection dbConn;
 
-        public BibtexCustomData (string fieldName, object fieldValue)
+        public DatabaseStore ()
         {
-            this.fieldName = fieldName;
-            fieldData = fieldValue;
-        }
+            string filename = Environment.GetEnvironmentVariable ("BIBLIOGRAPHER_DATABASE");
+            dbConn = new SqliteConnection ("Data Source=" + filename + ";Version=3;pooling=true");
 
-        public string GetFieldName ()
-        {
-            return fieldName;
-        }
-
-        public object GetData ()
-        {
-            return fieldData;
-        }
-
-        public void SetData (object data)
-        {
-            fieldData = data;
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  BibtexCustomDataFields.cs
+//  BibtexCustomData.cs
 //
 //  Author:
 //       Sameer Morar <smorar@gmail.com>
@@ -22,34 +22,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 
-using System.Collections;
+using System.Text;
 
 namespace libbibby
 {
-    public class BibtexCustomDataFields : ArrayList
-    {
-        public bool HasField (string field)
-        {
-            for (int i = 0; i < Count; i++)
-            {
-                BibtexCustomData customDataField = (BibtexCustomData)this[i];
-                if (customDataField.GetFieldName() == field) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
-        public object GetField (string field)
-        {
-            if (Count > 0) {
-                foreach (BibtexCustomData customDataField in this) {
-                    if (customDataField.GetFieldName () == field) {
-                        return customDataField.GetData ();
-                    }
-                }
-            }
-            return null;
-        }
-    }
+	public class fieldData
+	{
+	}
+
 }

@@ -33,7 +33,7 @@ namespace bibliographer
     {
         public static bool getThumbnail(BibtexRecord record)
         {
-            Pixbuf smallThumbnail, largeThumbnail;
+            //Pixbuf smallThumbnail, largeThumbnail;
             Uri uri;
             GLib.IFile file;
             GLib.FileInfo fileInfo;
@@ -54,11 +54,18 @@ namespace bibliographer
 
                     if (pixbufPath != "" && pixbufPath != null)
                     {
-                        largeThumbnail = new Pixbuf(pixbufPath);
-                        smallThumbnail = ((Pixbuf)largeThumbnail.Clone()).ScaleSimple(20, 20, InterpType.Bilinear);
+                        using (Pixbuf lg = new Pixbuf(pixbufPath))
+                        {
+                            record.SetCustomDataField ("largeThumbnail", lg);
+                            using (Pixbuf sm = ((Pixbuf)lg.Clone ()).ScaleSimple (20, 20, InterpType.Bilinear)) {
+                                record.SetCustomDataField ("smallThumbnail", sm);
+                            }
+                        }
+                        //largeThumbnail = new Pixbuf(pixbufPath);
+                        //smallThumbnail = ((Pixbuf)largeThumbnail.Clone()).ScaleSimple(20, 20, InterpType.Bilinear);
 
-                        record.SetCustomDataField("smallThumbnail", smallThumbnail);
-                        record.SetCustomDataField("largeThumbnail", largeThumbnail);
+                        //record.SetCustomDataField("smallThumbnail", smallThumbnail);
+                        //record.SetCustomDataField("largeThumbnail", largeThumbnail);
 
                         // Thumbnails exist and have now been stored in the BibtexRecord instance
                         return true;
