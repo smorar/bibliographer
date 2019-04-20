@@ -19,8 +19,6 @@ Requirements:
 Installation instructions:
 
 From a GIT checkout:
-Requirements:
-
 ```        
 $ ./bootstrap
 $ ./configure
@@ -49,17 +47,17 @@ and, as root:
 ## Future work
 
  * Automatic file management:
- ** Store all literature files in a directory tree. User customisable prefix, then in the following folders, based on type:
+    * Store all literature files in a directory tree. User customisable prefix, then in the following folders, based on type:
     $PREFIX$/Papers, $PREFIX$/Books, $PREFIX$/Thesis, $PREFIX$/Article etc...
- ** Files to be renamed in the following format, based upon database entry:
+    * Files to be renamed in the following format, based upon database entry:
     YEAR - FIRST AUTHOR - TITLE.ext
  * Bibtex + other types of bibliographic database files to be exported by the application.
  * Provide a tagging mechanism to group / classify certain topics together.
  * Literature indexing:
- ** Support for Abiword and OpenOffice documents
+    * Support for Abiword and OpenOffice documents
  * Addition of user meta-data eg. notes, abstracts, reviews
  * Drag and drop support for references:
- ** Be able to drag from list view and drop a reference into a document being edited
+    * Be able to drag from list view and drop a reference into a document being edited
  * Word processor integration with Lyx, Abiword, OpenOffice, MS-Word (Win port)
  * Online literature database searching eg. Medline, ScienceDirect etc...
  * Win32 port
