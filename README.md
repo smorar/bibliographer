@@ -21,30 +21,30 @@ Installation instructions:
 From a GIT checkout:
 Requirements:
 
-'''        
+```        
 $ ./bootstrap
 $ ./configure
 $ make
-'''
+```
 and, as root:
-'''
+```
 # make install
-'''
+```
         
 From a tar.gz release:
-'''
+```
 $ ./configure
 $ make
-'''
+```
 and, as root:
-'''
+```
 # make install
-'''
+```
 
 ## Authors
 
-Sameer Morar <smorar@gmail.com> (present maintaner)
-Carl Hultquist <chultquist@gmail.com>
+ * Sameer Morar <smorar@gmail.com> (present maintaner)
+ * Carl Hultquist <chultquist@gmail.com>
 
 ## Future work
 
