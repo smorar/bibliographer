@@ -62,11 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="COPYING" />
-    <None Include="AUTHORS" />
-    <None Include="ChangeLog" />
-    <None Include="NEWS" />
-    <None Include="README" />
-    <None Include="TODO" />
     <None Include="resources\error.png" />
     <None Include="resources\apps.bibliographer.gschema.xml" />
     <None Include="configure.ac" />
@@ -84,6 +79,7 @@
     <None Include="debian\copyright" />
     <None Include="debian\compat" />
     <None Include="debian\changelog" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\bibliographer.png">
@@ -130,6 +126,7 @@
     <Reference Include="System.Data" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <Package>newtonsoft-json</Package>
     </Reference>
   </ItemGroup>
   <ItemGroup>
