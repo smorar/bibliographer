@@ -33,66 +33,79 @@ namespace bibliographer
 
     public class BibliographerMainWindow
     {
-        protected Window window;
-        protected Viewport viewportRequired;
-        protected Viewport viewportOptional;
-        protected Viewport viewportOther;
-        protected Viewport viewportBibliographerData;
-        protected Paned scrolledwindowSidePane;
-        protected Box recordDetailsView;
-        protected Statusbar bibliographerStatusBar;
-
-        protected ScrolledWindow scrolledwindowSidePaneScrolledWindow;
-
-        protected CheckMenuItem MenuViewSidebar;
-        protected CheckMenuItem MenuViewRecordDetails;
-        protected CheckMenuItem MenuFullScreen;
-        protected RadioMenuItem ViewRecordsAction;
-        protected RadioMenuItem EditRecordsAction;
-        protected ToggleButton ToggleEditRecords;
-
-        protected Image recordIcon;
-        protected Label recordDetails;
-
-        protected Box RecordView;
-        protected Box RecordEditor;
-
-        protected SearchEntry searchEntry;
-        protected Entry tempEntry;
-
-        protected BibtexRecords bibtexRecords;
-        protected SidePaneTreeStore sidePaneStore;
-        protected LitListStore litStore;
-        protected TreeModelFilter modelFilter;
-        protected TreeModelFilter fieldFilter;
-
-        protected ComboBoxText comboRecordType;
-        protected Entry entryReqBibtexKey;
-        protected Button buttonBibtexKeyGenerate;
-        protected Label lblBibtexKey;
-        protected Paned MainVpane;
-
         protected Builder gui;
 
+        // Builder UI elements
+        [Builder.Object] protected Window bibliographerMainWindow;
+        [Builder.Object] protected MenuItem menuFileImportFolder;
+        [Builder.Object] protected MenuItem menuFileQuit;
+        [Builder.Object] protected MenuItem menuEditAddRecord;
+        [Builder.Object] protected MenuItem menuEditRemoveRecord;
+        [Builder.Object] protected MenuItem menuEditAddRecordFromBibtex;
+        [Builder.Object] protected MenuItem menuEditAddRecordClipboard;
+        [Builder.Object] protected MenuItem menuViewColumns;
+        [Builder.Object] protected MenuItem menuHelpAbout;
+        [Builder.Object] protected CheckMenuItem menuViewSidebar;
+        [Builder.Object] protected CheckMenuItem menuViewRecordDetails;
+        [Builder.Object] protected CheckMenuItem menuViewFullScreen;
+        [Builder.Object] protected RadioMenuItem menuViewRecordsAction;
+        [Builder.Object] protected RadioMenuItem menuEditRecordsAction;
+        [Builder.Object] protected ToolButton toolbarAddRecord;
+        [Builder.Object] protected ToolButton toolbarRemoveRecord;
+        [Builder.Object] protected Box searchHBox;
+        [Builder.Object] protected Paned scrolledwindowSidePane;
+        [Builder.Object] protected ScrolledWindow scrolledwindowSidePaneScrolledWindow;
+        [Builder.Object] protected Paned mainVpane;
+        [Builder.Object] protected ScrolledWindow scrolledwindowTreeView;
+        [Builder.Object] protected Box recordDetailsView;
+        [Builder.Object] protected Box recordView;
+        [Builder.Object] protected Image recordIcon;
+        [Builder.Object] protected Label recordDetails;
+        [Builder.Object] protected Box recordEditor;
+        [Builder.Object] protected Label labelBibtexKey;
+        [Builder.Object] protected Entry entryReqBibtexKey;
+        [Builder.Object] protected Button buttonBibtexKeyGenerate;
+        [Builder.Object] protected ComboBoxText comboRecordType;
+        [Builder.Object] protected Notebook notebookFields;
+        [Builder.Object] protected Viewport viewportRequired;
+        [Builder.Object] protected Viewport viewportOptional;
+        [Builder.Object] protected Viewport viewportOther;
+        [Builder.Object] protected Viewport viewportBibliographerData;
+        [Builder.Object] protected ToggleButton toggleEditRecords;
+        [Builder.Object] protected Statusbar statusbarMainWindow;
+        [Builder.Object] protected Dialog dialogBibtexEntry;
+        [Builder.Object] protected TextView textViewBibtexEntryDialog;
+        [Builder.Object] public BibliographerSplashScreen splashScreen;
+
+        // Manually added UI elements
+        protected SearchEntry searchEntry;
+        protected Entry tempEntry;
+        protected TreeModelFilter modelFilter;
+        protected TreeModelFilter fieldFilter;
         protected LitTreeView litTreeView;
         protected SidePaneTreeView sidePaneTreeView;
-        protected ScrolledWindow scrolledwindowTreeView;
-        protected Notebook notebookFields;
+
+        // Bibliographer settings
         protected BibliographerSettings windowSettings;
         protected BibliographerSettings sidebarSettings;
         protected BibliographerSettings filehandlingSettings;
 
-        //        bool modified;
-        private bool new_selected_record;
+        // Data containers
+        protected BibtexRecords bibtexRecords;
+        protected LitListStore litStore;
+        protected SidePaneTreeStore sidePaneStore;
+        protected SuperTri searchData = new SuperTri ();
+        protected List<int> searchResult = new List<int> ();
+
+        // Misc
+        protected bool new_selected_record;
         protected string file_name;
         protected string application_name;
 
         public AlterationMonitor am;
+        public BibliographerSplashScreen sp;
 
         private static TargetEntry [] target_table = { new TargetEntry ("text/uri-list", 0, 0) };
-
-        private SuperTri searchData = new SuperTri ();
-        private List<int> searchResult = new List<int> ();
 
         private class FieldEntry : Entry
         {
@@ -104,15 +117,18 @@ namespace bibliographer
             public string field = "";
         }
 
-        public BibliographerMainWindow ()
+        public BibliographerMainWindow (Builder gui)
         {
+            sp = new BibliographerSplashScreen ();
+            sp.splashThread.Start ();
+            sp.SubscribeSplashMessage ("Building User Interface");
+            while (Application.EventsPending ()) {
+                Application.RunIteration ();
+            }
+
             System.Reflection.AssemblyTitleAttribute title;
 
-            gui = new Builder ();
-            System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.glade");
             try {
-                System.IO.StreamReader reader = new System.IO.StreamReader (guiStream);
-                gui.AddFromString (reader.ReadToEnd ());
                 gui.Autoconnect (this);
 
                 // TODO: move window and derived settings into apps.bibliographer.window
@@ -135,110 +151,56 @@ namespace bibliographer
                 DatabaseStoreStatic.Initialize (dataDirectory + "/" + "bibliographer.sqlite");
 
                 // Set up main window defaults
+                menuFileImportFolder.Activated += OnFileImportFolderActivated;
+                menuFileQuit.Activated += OnFileQuitActivated;
+                menuEditAddRecord.Activated += OnAddRecordActivated;
+                menuEditRemoveRecord.Activated += OnRemoveRecordActivated;
+                menuEditAddRecordFromBibtex.Activated += OnAddRecordFromBibtexActivated;
+                menuEditAddRecordClipboard.Activated += OnAddRecordFromClipboardActivated;
+                menuViewSidebar.Activated += OnToggleSideBarActivated;
+                menuViewRecordDetails.Activated += OnToggleRecordDetailsActivated;
+                menuViewColumns.Activated += OnChooseColumnsActivated;
+                menuViewFullScreen.Activated += OnToggleFullScreenActionActivated;
+                menuHelpAbout.Activated += OnHelpAboutActivated;
 
-                MenuItem MenuFileImportFolder;
-                MenuItem MenuFileQuit;
-                MenuItem MenuEditAddRecord;
-                MenuItem MenuEditRemoveRecord;
-                MenuItem MenuEditAddRecordFromBibtex;
-                MenuItem MenuEditAddRecordClipboard;
-                MenuItem MenuViewColumns;
-                MenuItem MenuHelpAbout;
+                toolbarAddRecord.Clicked += OnAddRecordActivated;
+                toolbarRemoveRecord.Clicked += OnRemoveRecordActivated;
 
-                ToolButton ToolAddRecord;
-                ToolButton ToolRemoveRecord;
-
-
-                Box searchHBox;
-
-                window = (Window)gui.GetObject ("bibliographer.BibliographerMainWindow");
-                MenuFileImportFolder = (MenuItem)gui.GetObject ("FileImportFolder");
-                MenuFileQuit = (MenuItem)gui.GetObject ("FileQuit");
-                MenuEditAddRecord = (MenuItem)gui.GetObject ("EditAddRecord");
-                MenuEditRemoveRecord = (MenuItem)gui.GetObject ("EditRemoveRecord");
-                MenuEditAddRecordFromBibtex = (MenuItem)gui.GetObject ("EditAddRecordFromBibtex");
-                MenuEditAddRecordClipboard = (MenuItem)gui.GetObject ("EditAddRecordClipboard");
-                MenuViewSidebar = (CheckMenuItem)gui.GetObject ("ViewSidebar");
-                MenuViewRecordDetails = (CheckMenuItem)gui.GetObject ("ViewRecordDetails");
-                MenuViewColumns = (MenuItem)gui.GetObject ("ViewColumns");
-                MenuFullScreen = (CheckMenuItem)gui.GetObject ("ViewFullScreen");
-                MenuHelpAbout = (MenuItem)gui.GetObject ("HelpAbout");
-
-                ToolAddRecord = (ToolButton)gui.GetObject ("ToolAddRecord");
-                ToolRemoveRecord = (ToolButton)gui.GetObject ("ToolRemoveRecord");
-
-                ViewRecordsAction = (RadioMenuItem)gui.GetObject ("ViewRecordsAction");
-                EditRecordsAction = (RadioMenuItem)gui.GetObject ("EditRecordsAction");
-                ToggleEditRecords = (ToggleButton)gui.GetObject ("ToggleEditRecords");
-
-                scrolledwindowTreeView = (ScrolledWindow)gui.GetObject ("scrolledwindowTreeView");
-                scrolledwindowSidePaneScrolledWindow = (ScrolledWindow)gui.GetObject ("scrolledwindowSidePaneScrolledWindow");
-                scrolledwindowSidePane = (Paned)gui.GetObject ("scrolledwindowSidePane");
-                viewportRequired = (Viewport)gui.GetObject ("viewportRequired");
-                viewportOptional = (Viewport)gui.GetObject ("viewportOptional");
-                viewportOther = (Viewport)gui.GetObject ("viewportOther");
-                viewportBibliographerData = (Viewport)gui.GetObject ("viewportBibliographerData");
-                notebookFields = (Notebook)gui.GetObject ("notebookFields");
-                recordDetailsView = (Box)gui.GetObject ("recordDetailsView");
-                MainVpane = (Paned)gui.GetObject ("MainVpane");
-
-                comboRecordType = (ComboBoxText)gui.GetObject ("comboRecordType");
-                searchHBox = (Box)gui.GetObject ("searchHBox");
-                entryReqBibtexKey = (Entry)gui.GetObject ("entryReqBibtexKey");
-                buttonBibtexKeyGenerate = (Button)gui.GetObject ("buttonBibtexKeyGenerate");
-                lblBibtexKey = (Label)gui.GetObject ("lblBibtexKey");
-                RecordEditor = (Box)gui.GetObject ("RecordEditor");
-                RecordView = (Box)gui.GetObject ("RecordView");
-
-                bibliographerStatusBar = (Statusbar)gui.GetObject ("bibliographerStatusBar");
-
-                MenuFileImportFolder.Activated += OnFileImportFolderActivated;
-                MenuFileQuit.Activated += OnFileQuitActivated;
-                MenuEditAddRecord.Activated += OnAddRecordActivated;
-                MenuEditRemoveRecord.Activated += OnRemoveRecordActivated;
-                MenuEditAddRecordFromBibtex.Activated += OnAddRecordFromBibtexActivated;
-                MenuEditAddRecordClipboard.Activated += OnAddRecordFromClipboardActivated;
-                MenuViewSidebar.Activated += OnToggleSideBarActivated;
-                MenuViewRecordDetails.Activated += OnToggleRecordDetailsActivated;
-                MenuViewColumns.Activated += OnChooseColumnsActivated;
-                MenuFullScreen.Activated += OnToggleFullScreenActionActivated;
-                MenuHelpAbout.Activated += OnHelpAboutActivated;
-
-                ToolAddRecord.Clicked += OnAddRecordActivated;
-                ToolRemoveRecord.Clicked += OnRemoveRecordActivated;
-
-                ToggleEditRecords.Clicked += OnToggleEditRecordsActivated;
-                EditRecordsAction.Activated += OnRadioEditRecordsActivated;
-                ViewRecordsAction.Activated += OnRadioViewRecordsActivated;
+                toggleEditRecords.Clicked += OnToggleEditRecordsActivated;
+                toggleEditRecords.Toggled += OnToggleEditRecordsActivated;
+                menuEditRecordsAction.Activated += OnRadioEditRecordsActivated;
+                menuViewRecordsAction.Activated += OnRadioViewRecordsActivated;
 
                 buttonBibtexKeyGenerate.Activated += OnButtonBibtexKeyGenerateClicked;
+                buttonBibtexKeyGenerate.Clicked += OnButtonBibtexKeyGenerateClicked;
                 comboRecordType.Changed += OnComboRecordTypeChanged;
+                entryReqBibtexKey.Changed += OnEntryReqBibtexKeyChanged;
 
-                window.DestroyEvent += OnWindowDestroyEvent;
-                window.DeleteEvent += OnWindowDeleteEvent;
-                window.StateChanged += OnWindowStateChanged;
-                window.SizeAllocated += OnWindowSizeAllocated;
+                bibliographerMainWindow.DestroyEvent += OnWindowDestroyEvent;
+                bibliographerMainWindow.DeleteEvent += OnWindowDeleteEvent;
+                bibliographerMainWindow.StateChanged += OnWindowStateChanged;
+                bibliographerMainWindow.SizeAllocated += OnWindowSizeAllocated;
 
-                window.Icon = new Gdk.Pixbuf (System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.png"));
+                bibliographerMainWindow.Icon = new Gdk.Pixbuf (System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.png"));
                 title = (System.Reflection.AssemblyTitleAttribute)Attribute.GetCustomAttribute (System.Reflection.Assembly.GetExecutingAssembly (),
                                                                      typeof (System.Reflection.AssemblyTitleAttribute));
                 application_name = title.Title;
 
-                window.WidthRequest = 800;
-                window.HeightRequest = 600;
+                bibliographerMainWindow.WidthRequest = 800;
+                bibliographerMainWindow.HeightRequest = 600;
 
                 int wdth, hght;
 
                 wdth = windowSettings.GetInt ("window-width");
                 hght = windowSettings.GetInt ("window-height");
 
-                window.Resize (wdth, hght);
+                bibliographerMainWindow.Resize (wdth, hght);
 
                 if (windowSettings.GetBoolean ("window-maximized")) {
-                    window.Maximize ();
+                    bibliographerMainWindow.Maximize ();
                 }
 
-                window.SetPosition (WindowPosition.Center);
+                bibliographerMainWindow.WindowPosition = WindowPosition.Center;
 
                 // Main bibtex view list model
                 bibtexRecords = new BibtexRecords ();
@@ -274,12 +236,12 @@ namespace bibliographer
                 sidePaneTreeView.Selection.Changed += OnSidePaneTreeSelectionChanged;
 
                 if (sidebarSettings.GetBoolean ("visible")) {
-                    MenuViewSidebar.Active = false;
-                    MenuViewSidebar.Activate ();
+                    menuViewSidebar.Active = false;
+                    menuViewSidebar.Activate ();
                 }
 
-                MenuViewRecordDetails.Active = false;
-                MenuViewRecordDetails.Activate ();
+                menuViewRecordDetails.Active = false;
+                menuViewRecordDetails.Activate ();
 
                 // Read cached sidePane width
                 scrolledwindowSidePane.Position = sidebarSettings.GetInt ("width");
@@ -316,12 +278,22 @@ namespace bibliographer
                 searchHBox.Add (tempButton);
                 searchHBox.Expand = true;
 
+                bibliographerMainWindow.Hide ();
+                while (Application.EventsPending ()) {
+                    Application.RunIteration ();
+                }
+
                 LoadDatabase ();
-                ToggleEditRecords.Activate ();
+                toggleEditRecords.Activate();
+                toggleEditRecords.Active = true;
+                toggleEditRecords.Activate ();
+                toggleEditRecords.Active = true;
+
                 ReconstructTabs ();
                 ReconstructDetails ();
                 // Now that we are configured, show the window
-                window.ShowAll ();
+                bibliographerMainWindow.ShowAll ();
+
             } catch (ArgumentNullException e) {
                 WriteLine (0, "GUI configuration file not found.\n" + e.Message);
             }
@@ -416,9 +388,6 @@ namespace bibliographer
 
         public void ReconstructDetails ()
         {
-            recordIcon = (Image)gui.GetObject ("recordIcon");
-            recordDetails = (Label)gui.GetObject ("recordDetails");
-
             // step 1: reset values
             recordIcon.Pixbuf = null;
             recordDetails.Text = null;
@@ -444,12 +413,6 @@ namespace bibliographer
 
         public void ReconstructTabs ()
         {
-
-            viewportRequired = (Viewport)gui.GetObject ("viewportRequired");
-            viewportOptional = (Viewport)gui.GetObject ("viewportOptional");
-            viewportOther = (Viewport)gui.GetObject ("viewportOther");
-            viewportBibliographerData = (Viewport)gui.GetObject ("viewportBibliographerData");
-
             // step 1: reset viewports
             viewportRequired.Forall (viewportRequired.Remove);
             viewportOptional.Forall (viewportOptional.Remove);
@@ -766,8 +729,12 @@ namespace bibliographer
 
         protected void LoadDatabase ()
         {
-            am.FlushQueues ();
+            sp.SubscribeSplashMessage ("Loading records");
+            while (Application.EventsPending ()) {
+                Application.RunIteration ();
+            }
 
+            am.FlushQueues ();
             bibtexRecords = new BibtexRecords ();
 
             bibtexRecords.RecordsModified += OnBibtexRecordsModified;
@@ -776,6 +743,11 @@ namespace bibliographer
 
             litStore.SetBibtexRecords (bibtexRecords);
             sidePaneStore.SetBibtexRecords (bibtexRecords);
+
+            sp.SubscribeSplashMessage ("Loading search index");
+            while (Application.EventsPending ()) {
+                Application.RunIteration ();
+            }
 
             foreach (BibtexRecord record in bibtexRecords) {
                 if (record.HasCustomDataField ("indexData")) {
@@ -786,7 +758,12 @@ namespace bibliographer
                         searchData.AddTri (index, id);
                     }
                 }
+                while (Application.EventsPending ()) {
+                    Application.RunIteration ();
+                }
+
             }
+            sp.SubscribeSplashMessage ("loaded");
         }
 
         /* -----------------------------------------------------------------
@@ -830,11 +807,11 @@ namespace bibliographer
 
                     ((BibtexRecord)model.GetValue (iter, 0)).RecordType = bType;
                     if (bType == "comment") {
-                        lblBibtexKey.Text = "Comment";
+                        labelBibtexKey.Text = "Comment";
                         notebookFields.Visible = false;
                         buttonBibtexKeyGenerate.Visible = false;
                     } else {
-                        lblBibtexKey.Text = "BibTeX Key";
+                        labelBibtexKey.Text = "BibTeX Key";
                         notebookFields.Visible = true;
                         buttonBibtexKeyGenerate.Visible = true;
                     }
@@ -916,7 +893,7 @@ namespace bibliographer
         protected void OnHelpAboutActivated (object sender, EventArgs e)
         {
             AboutBox ab = new AboutBox {
-                TransientFor = window
+                TransientFor = bibliographerMainWindow
             };
             ab.Run ();
             ab.Destroy ();
@@ -941,7 +918,7 @@ namespace bibliographer
             if (litTreeView.Selection.GetSelected (out ITreeModel model, out TreeIter iter)) {
                 BibtexRecord record = (BibtexRecord)model.GetValue (iter, 0);
 
-                FileChooserDialog fileOpenDialog = new FileChooserDialog ("Associate file...", window, FileChooserAction.Open);
+                FileChooserDialog fileOpenDialog = new FileChooserDialog ("Associate file...", bibliographerMainWindow, FileChooserAction.Open);
                 fileOpenDialog.AddButton ("Cancel", ResponseType.Cancel);
                 fileOpenDialog.AddButton ("Ok", ResponseType.Ok);
 
@@ -978,7 +955,7 @@ namespace bibliographer
 
         protected void OnAddRecordActivated (object sender, EventArgs e)
         {
-            WriteLine (5, "Adding a new record");
+            WriteLine (10, "Adding a new record");
             //Debug.WriteLine(5, "Prev rec count: {0}", bibtexRecords.Count);
 
             // Unfilter
@@ -1048,22 +1025,18 @@ namespace bibliographer
         protected void OnAddRecordFromBibtexActivated (object sender, EventArgs e)
         {
             TreeIter iter;
-            Dialog EntryDialog;
             ResponseType result;
-            TextView BibtexTextView;
-            TextBuffer BibtexTextBuffer;
+            TextBuffer textBufferBibtexEntryDialog;
 
-            EntryDialog = (Dialog)gui.GetObject ("BibtexEntryDialog");
-            BibtexTextView = (TextView)gui.GetObject ("BibtexTextView");
-            BibtexTextBuffer = BibtexTextView.Buffer;
-            EntryDialog.AddButton ("Cancel", ResponseType.Cancel);
-            EntryDialog.AddButton ("OK", ResponseType.Ok);
+            textBufferBibtexEntryDialog = textViewBibtexEntryDialog.Buffer;
+            dialogBibtexEntry.AddButton ("Cancel", ResponseType.Cancel);
+            dialogBibtexEntry.AddButton ("OK", ResponseType.Ok);
 
-            result = (ResponseType)EntryDialog.Run ();
+            result = (ResponseType)dialogBibtexEntry.Run ();
 
             if (result == ResponseType.Ok) {
                 try {
-                    BibtexRecord record = new BibtexRecord (BibtexTextBuffer.Text);
+                    BibtexRecord record = new BibtexRecord (textBufferBibtexEntryDialog.Text);
                     bibtexRecords.Add (record);
 
                     iter = litStore.GetIter (record);
@@ -1076,7 +1049,7 @@ namespace bibliographer
                     WriteLine (1, "Parse exception: {0}", except.GetReason ());
                 }
             }
-            EntryDialog.Destroy ();
+            dialogBibtexEntry.Destroy ();
         }
 
         protected void OnAddRecordFromClipboardActivated (object sender, EventArgs e)
@@ -1112,7 +1085,7 @@ namespace bibliographer
 
         protected void OnFileImportFolderActivated (object sender, EventArgs e)
         {
-            FileChooserDialog folderImportDialog = new FileChooserDialog ("Import folder...", window, FileChooserAction.SelectFolder);
+            FileChooserDialog folderImportDialog = new FileChooserDialog ("Import folder...", bibliographerMainWindow, FileChooserAction.SelectFolder);
             folderImportDialog.AddButton ("Cancel", ResponseType.Cancel);
             folderImportDialog.AddButton ("Ok", ResponseType.Ok);
 
@@ -1149,42 +1122,42 @@ namespace bibliographer
 
         protected void OnToggleSideBarActivated (object sender, EventArgs e)
         {
-            scrolledwindowSidePaneScrolledWindow.Visible = MenuViewSidebar.Active;
+            scrolledwindowSidePaneScrolledWindow.Visible = menuViewSidebar.Active;
         }
 
         protected void OnToggleRecordDetailsActivated (object sender, EventArgs e)
         {
-            recordDetailsView.Visible = MenuViewRecordDetails.Active;
+            recordDetailsView.Visible = menuViewRecordDetails.Active;
         }
 
         protected void OnToggleFullScreenActionActivated (object sender, EventArgs e)
         {
 
-            if (MenuFullScreen.Active) {
-                window.Fullscreen ();
+            if (menuViewFullScreen.Active) {
+                bibliographerMainWindow.Fullscreen ();
             } else {
-                window.Unfullscreen ();
+                bibliographerMainWindow.Unfullscreen ();
             }
         }
 
         protected void OnRadioViewRecordsActivated (object sender, EventArgs e)
         {
-            if (ViewRecordsAction.Active) {
-                RecordView.Visible = true;
-                RecordEditor.Visible = false;
-                MainVpane.Position = MainVpane.MaxPosition - 180;
-                ToggleEditRecords.Active = false;
+            if (menuViewRecordsAction.Active) {
+                recordView.Visible = true;
+                recordEditor.Visible = false;
+                mainVpane.Position = mainVpane.MaxPosition - 180;
+                toggleEditRecords.Active = false;
             }
         }
 
         protected void OnRadioEditRecordsActivated (object sender, EventArgs e)
         {
-            if (EditRecordsAction.Active) {
-                RecordView.Visible = false;
-                RecordEditor.Visible = true;
+            if (menuEditRecordsAction.Active) {
+                recordView.Visible = false;
+                recordEditor.Visible = true;
                 ReconstructDetails ();
-                MainVpane.Position = MainVpane.MaxPosition - 350;
-                ToggleEditRecords.Active = true;
+                mainVpane.Position = mainVpane.MaxPosition - 350;
+                toggleEditRecords.Active = true;
             }
         }
 
@@ -1211,11 +1184,11 @@ namespace bibliographer
                 new_selected_record = false;
 
                 if (recordType == "comment") {
-                    lblBibtexKey.Text = "Comment";
+                    labelBibtexKey.Text = "Comment";
                     notebookFields.Visible = false;
                     buttonBibtexKeyGenerate.Visible = false;
                 } else {
-                    lblBibtexKey.Text = "BibTeX Key";
+                    labelBibtexKey.Text = "BibTeX Key";
                     notebookFields.Visible = true;
                     buttonBibtexKeyGenerate.Visible = true;
                 }
@@ -1232,10 +1205,10 @@ namespace bibliographer
 
         protected void OnToggleEditRecordsActivated (object sender, EventArgs e)
         {
-            if (ToggleEditRecords.Active) {
-                EditRecordsAction.Active = true;
+            if (toggleEditRecords.Active) {
+                menuEditRecordsAction.Active = true;
             } else {
-                ViewRecordsAction.Active = true;
+                menuViewRecordsAction.Active = true;
             }
         }
 
@@ -1366,7 +1339,7 @@ namespace bibliographer
 
         protected void OnWindowStateChanged (object o, StateChangedArgs a)
         {
-            Gdk.WindowState state = (Gdk.WindowState)window.State;
+            Gdk.WindowState state = (Gdk.WindowState)bibliographerMainWindow.State;
 
             if (state == Gdk.WindowState.Maximized) {
                 WriteLine (10, "window has been maximized");
@@ -1374,14 +1347,14 @@ namespace bibliographer
             } else {
                 WriteLine (10, "window is not maixmized");
                 windowSettings.SetBoolean ("window-maximized", false);
-                window.Resize (windowSettings.GetInt ("window-width"), windowSettings.GetInt ("window-height"));
+                bibliographerMainWindow.Resize (windowSettings.GetInt ("window-width"), windowSettings.GetInt ("window-height"));
             }
         }
 
         protected void UpdateStatusBarMessage (uint context_id, string message)
         {
-            bibliographerStatusBar.RemoveAll (context_id);
-            bibliographerStatusBar.Push (context_id, message);
+            statusbarMainWindow.RemoveAll (context_id);
+            statusbarMainWindow.Push (context_id, message);
         }
 
     }

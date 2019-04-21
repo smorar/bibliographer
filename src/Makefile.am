@@ -24,6 +24,7 @@ SOURCES = 								\
 	$(srcdir)/BibliographerSearchEntry.cs		\
 	$(srcdir)/BibliographerSettings.cs		\
 	$(srcdir)/BibliographerSidePaneTreeView.cs	\
+    $(srcdir)/bibliographerSplashScreen.cs  \
 	$(srcdir)/BibliographerStartup.cs		\
 	$(srcdir)/Cache.cs				\
 	$(srcdir)/Debug.cs				\
@@ -32,6 +33,7 @@ SOURCES = 								\
 	$(srcdir)/LookupRecordData.cs			\
 	$(srcdir)/SidePaneTreeStore.cs			\
 	$(srcdir)/StringOps.cs				\
+    $(srcdir)/SuperTri.cs               \
 	$(srcdir)/ThumbGen.cs				\
 	$(srcdir)/Tri.cs
 

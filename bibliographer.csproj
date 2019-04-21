@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="src\BibliographerSettings.cs" />
     <Compile Include="src\SuperTri.cs" />
+    <Compile Include="src\BibliographerSplashScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="COPYING" />

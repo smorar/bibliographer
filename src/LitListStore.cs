@@ -77,9 +77,9 @@ namespace bibliographer
             bibtexRecords = btRecords;
             bibtexRecords.RecordAdded += OnRecordAdded;
             bibtexRecords.RecordDeleted += OnRecordDeleted;
-            
+
             foreach (BibtexRecord record in btRecords) {
-                Debug.WriteLine (5, "Inserting record");
+                Debug.WriteLine (10, "Inserting record");
                 Gtk.TreeIter iter = Append ();
                 SetValue (iter, 0, record);
             }

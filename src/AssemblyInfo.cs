@@ -31,11 +31,11 @@ using System.Reflection;
 // you compile.
 
 [assembly: AssemblyTitle("Bibliographer")]
-[assembly: AssemblyDescription("A bibtex editor for the Gnome Desktop")]
+[assembly: AssemblyDescription("A reference and literature management application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright ©2005-2015 Bibliographer developers")]
+[assembly: AssemblyCopyright("Copyright ©2005-2019 Bibliographer developers")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

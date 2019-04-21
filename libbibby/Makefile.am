@@ -23,6 +23,8 @@ SOURCES = 						\
 	$(srcdir)/BibtexRecords.cs			\
 	$(srcdir)/BibtexRecordType.cs			\
 	$(srcdir)/BibtexRecordTypeLibrary.cs		\
+    $(srcdir)/DatabaseStore.cs      \
+    $(srcdir)/DatabaseStoreStatic.cs    \
 	$(srcdir)/Debug.cs				\
 	$(srcdir)/IntArrayList.cs			\
 	$(srcdir)/StringArrayList.cs

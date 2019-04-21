@@ -25,7 +25,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Gtk;
 using libbibby;
+using static bibliographer.Debug;
 
 namespace bibliographer
 {
@@ -37,7 +39,7 @@ namespace bibliographer
 
         public static void SetProcessName (string name)
         {
-            if (Prctl (15,             /* PR_SET_NAME */Encoding.ASCII.GetBytes (name + "\0"), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) != 0) {
+            if (Prctl (15, Encoding.ASCII.GetBytes (name + "\0"), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) != 0) {
                 throw new ApplicationException ("Error setting process name.");
             }
         }
@@ -47,8 +49,8 @@ namespace bibliographer
     {
         public static void Main (string[] args)
         {
-			BibliographerMainWindow window;
-
+			BibliographerMainWindow mainWindow;
+            Builder gui;
 			string filename;
 
             try {
@@ -98,29 +100,44 @@ namespace bibliographer
             
             Cache.Initialise ();
 
-			Gtk.Application.Init ();
+			Application.Init ();
             try {
-                window = new BibliographerMainWindow ();
 
-                window.am.alterationMonitorThread.Start ();
-                window.am.thumbGenThread.Start ();
-                window.am.indexerThread.Start ();
-                window.am.doiQueryThread.Start ();
+                gui = new Builder ();
+                System.IO.Stream guiStream = System.Reflection.Assembly.GetExecutingAssembly ().GetManifestResourceStream ("bibliographer.glade");
+                try {
+                    System.IO.StreamReader reader = new System.IO.StreamReader (guiStream);
+                    gui.AddFromString (reader.ReadToEnd ());
 
-                Gtk.Application.Run ();
+                } catch (ArgumentNullException e) {
+                    WriteLine (0, "GUI configuration file not found.\n" + e.Message);
+                }
 
-                window.am.FlushQueues();
-                window.am.alterationMonitorThread.Abort ();
-                window.am.alterationMonitorThread.Join ();
-                window.am.indexerThread.Abort ();
-                window.am.indexerThread.Join ();
-                window.am.thumbGenThread.Abort ();
-                window.am.thumbGenThread.Join ();
-                window.am.doiQueryThread.Abort ();
-                window.am.doiQueryThread.Join ();
+                mainWindow = new BibliographerMainWindow (gui);
+                mainWindow.am.alterationMonitorThread.Start ();
+                mainWindow.am.thumbGenThread.Start ();
+                mainWindow.am.indexerThread.Start ();
+                mainWindow.am.doiQueryThread.Start ();
+
+                Application.Run ();
+
+                mainWindow.am.FlushQueues();
+                mainWindow.am.alterationMonitorThread.Abort ();
+                mainWindow.am.alterationMonitorThread.Join ();
+                mainWindow.am.indexerThread.Abort ();
+                mainWindow.am.indexerThread.Join ();
+                mainWindow.am.thumbGenThread.Abort ();
+                mainWindow.am.thumbGenThread.Join ();
+                mainWindow.am.doiQueryThread.Abort ();
+                mainWindow.am.doiQueryThread.Join ();
+
+                mainWindow.sp.splashThread.Abort ();
+                mainWindow.sp.splashThread.Join ();
 
             } catch (NullReferenceException e) {
-                Debug.WriteLine (0, "Bibliographer window not initialized.\n" + e.Message);
+                WriteLine (0, "Bibliographer window not initialized.");
+                WriteLine (0, e.Message);
+                WriteLine (0, e.StackTrace);
             }
         }
     }

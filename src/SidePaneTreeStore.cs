@@ -24,6 +24,7 @@
 
 using System;
 using libbibby;
+using static bibliographer.Debug;
 
 namespace bibliographer
 {
@@ -46,8 +47,7 @@ namespace bibliographer
             var coltype = new GLib.GType[1];
             coltype[0] = (GLib.GType)typeof(string);
             ColumnTypes = coltype;
-            
-            Debug.WriteLine (5, "Adding Side Pane Filter Categories");
+            WriteLine (10, "Adding Side Pane Filter Categories");
             
             iterAll = AppendNode ();
             SetValue (iterAll, 0, "All");
@@ -63,30 +63,29 @@ namespace bibliographer
 
         void OnBibtexRecordModified (object o, EventArgs e)
         {
-            Debug.WriteLine (5, "BibtexRecordModified");
+            WriteLine (10, "BibtexRecordModified");
             BibtexRecord btRecord;
             btRecord = (BibtexRecord)o;
-            
-            Debug.WriteLine (10, btRecord.ToBibtexString ());
+            WriteLine (10, btRecord.ToBibtexString ());
             
             UpdateTreeStore (btRecord);
         }
 
         void OnBibtexRecordAdded (object o, EventArgs e)
         {
-            Debug.WriteLine (5, "BibtexRecordAdded");
+            WriteLine (10, "BibtexRecordAdded");
             BibtexRecord btRecord;
             btRecord = (BibtexRecord)o;
-            Debug.WriteLine (10, btRecord.ToBibtexString ());
+            WriteLine (10, btRecord.ToBibtexString ());
             UpdateTreeStore (btRecord);
         }
 
         void OnBibtexRecordDeleted (object o, EventArgs e)
         {
-            Debug.WriteLine (5, "BibtexRecordDeleted");
+            WriteLine (10, "BibtexRecordDeleted");
             BibtexRecord btRecord;
             btRecord = (BibtexRecord)o;
-            Debug.WriteLine (10, btRecord.ToBibtexString ());
+            WriteLine (10, btRecord.ToBibtexString ());
             UpdateTreeStore (btRecord);
         }
 
@@ -99,7 +98,7 @@ namespace bibliographer
 
         public void UpdateTreeStore (BibtexRecord btRecord)
         {
-            Debug.WriteLine (5, "Updating TreeStore");
+            WriteLine (10, "Updating TreeStore");
             UpdateAuthors (btRecord);
             UpdateJournals (btRecord);
             UpdateYears (btRecord);
@@ -116,14 +115,13 @@ namespace bibliographer
                 
                 // Insert Author
                 StringArrayList treeAuthors = GetAuthors ();
-                Debug.WriteLine (5, "Checking if Author {0} is in filter list", author);
+                WriteLine (10, "Checking if Author {0} is in filter list", author);
                 if ((!treeAuthors.Contains (author)) && (author != null) && (author != "")) {
-                    // Tree does not contain the new author, so we're inserting it
-                    Debug.WriteLine (5, "Inserting Author {0} into Filter List", author);
+                    WriteLine (10, "Inserting Author {0} into Filter List", author);
                     AppendValues (iterAuth, author);
                 }
             }
-            Debug.WriteLine (10, "Finished inserting Authors into Filter List");
+            WriteLine (10, "Finished inserting Authors into Filter List");
             
             // Iterate through tree and remove authors that are not in the bibtexRecords
             Gtk.TreeIter iter;
@@ -136,7 +134,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeAuth.Add (author1);
                 } else {
-                    Debug.WriteLine (5, "Removing Author {0} from Side Pane", author1);
+                    WriteLine (10, "Removing Author {0} from Side Pane", author1);
                     Remove (ref iter);
                 }
             }
@@ -154,8 +152,7 @@ namespace bibliographer
                 // Insert Journal
                 StringArrayList treeJournals = GetJournals ();
                 if ((!treeJournals.Contains (journal)) && (journal != null) && (journal != "")) {
-                    // Tree does not contain the new journal, so we're inserting it
-                    Debug.WriteLine (5, "Inserting Journal into Filter List");
+                    WriteLine (10, "Inserting Journal into Filter List");
                     AppendValues (iterJourn, journal);
                 }
             }
@@ -171,7 +168,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeJourn.Add (journal1);
                 } else {
-                    Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal1);
+                    WriteLine (10, "Removing Journal {0} from Side Pane", journal1);
                     Remove (ref iter);
                 }
             }
@@ -189,8 +186,7 @@ namespace bibliographer
                 // Insert Year
                 StringArrayList treeYear = GetYears ();
                 if ((!treeYear.Contains (year)) && (year != null) && (year != "")) {
-                    // Tree does not contain the new year, so we're inserting it
-                    Debug.WriteLine (5, "Inserting Year into Filter List");
+                    WriteLine (10, "Inserting Year into Filter List");
                     AppendValues (iterYear, year);
                 }
             }
@@ -206,7 +202,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeYr.Add (year1);
                 } else {
-                    Debug.WriteLine (5, "Removing Year {0} from Side Pane", year1);
+                    WriteLine (10, "Removing Year {0} from Side Pane", year1);
                     Remove (ref iter);
                 }
             }
@@ -226,8 +222,7 @@ namespace bibliographer
                 // Insert Author
                 StringArrayList treeAuthors = GetAuthors ();
                 if ((!treeAuthors.Contains (author)) && (author != null) && (author != "")) {
-                    // Tree does not contain the new author, so we're inserting it
-                    Debug.WriteLine (5, "Inserting Author {0} into Filter List", author);
+                    WriteLine (10, "Inserting Author {0} into Filter List", author);
                     AppendValues (iterAuth, author);
                 }
             }
@@ -243,7 +238,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeAuth.Add (author1);
                 } else {
-                    Debug.WriteLine (5, "Removing Author {0} from Side Pane", author1);
+                    WriteLine (10, "Removing Author {0} from Side Pane", author1);
                     Remove (ref iter);
                 }
             }
@@ -260,8 +255,7 @@ namespace bibliographer
             // Insert Journal
             StringArrayList treeJournals = GetJournals ();
             if ((!treeJournals.Contains (journal)) && (journal != null) && (journal != "")) {
-                // Tree does not contain the new journal, so we're inserting it
-                Debug.WriteLine (5, "Inserting Journal into Filter List");
+                WriteLine (10, "Inserting Journal into Filter List");
                 AppendValues (iterJourn, journal);
             }
             
@@ -276,7 +270,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeJourn.Add (journal1);
                 } else {
-                    Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal1);
+                    WriteLine (10, "Removing Journal {0} from Side Pane", journal1);
                     Remove (ref iter);
                 }
             }
@@ -292,8 +286,7 @@ namespace bibliographer
             // Insert Year
             StringArrayList treeYear = GetYears ();
             if ((!treeYear.Contains (year)) && (year != null) && (year != "")) {
-                // Tree does not contain the new year, so we're inserting it
-                Debug.WriteLine (5, "Inserting Year into Filter List");
+                WriteLine (10, "Inserting Year into Filter List");
                 AppendValues (iterYear, year);
             }
             
@@ -308,7 +301,7 @@ namespace bibliographer
                     IterNext (ref iter);
                     treeYr.Add (year1);
                 } else {
-                    Debug.WriteLine (5, "Removing Year {0} from Side Pane", year1);
+                    WriteLine (10, "Removing Year {0} from Side Pane", year1);
                     Remove (ref iter);
                 }
             }
@@ -335,7 +328,7 @@ namespace bibliographer
 							if (bibAuthors.Contains (author))
 								IterNext (ref iter);
 							else {
-								Debug.WriteLine (5, "Removing Author {0} from Side Pane", author);
+                                WriteLine (10, "Removing Author {0} from Side Pane", author);
 								Remove (ref iter);
 							}
 						}
@@ -344,14 +337,14 @@ namespace bibliographer
 							if (!(treeAuthors.Contains (bibAuthors [i]))) {
 								// Add bibAuthor to the TreeStore
 								if (bibAuthors [i] != "") {
-									Debug.WriteLine (5, "Inserting Author {0} to Side Pane", bibAuthors [i]);
+                                    WriteLine (10, "Inserting Author {0} to Side Pane", bibAuthors [i]);
 									Gtk.TreeIter insert = InsertNode (iterAuth, i);
 									SetValue (insert, 0, bibAuthors [i]);
 								}
 							}
 						}
 					} else {
-						Debug.WriteLine (5, "Generating Author Filter List");
+                        WriteLine (10, "Generating Author Filter List");
 						for (int i = 0; i < bibAuthors.Count; i++) {
 							if (bibAuthors [i] != "")
 								AppendValues (iterAuth, bibAuthors [i]);
@@ -374,7 +367,7 @@ namespace bibliographer
 							if (bibYears.Contains (year))
 								IterNext (ref iter);
 							else {
-								Debug.WriteLine (5, "Removing Year {0} from Side Pane", year);
+                                WriteLine (10, "Removing Year {0} from Side Pane", year);
 								Remove (ref iter);
 							}
 						}
@@ -383,14 +376,14 @@ namespace bibliographer
 							if (!(treeYears.Contains (bibYears [i]))) {
 								// Add bibYear to the TreeStore
 								if (bibYears [i] != "") {
-									Debug.WriteLine (5, "Inserting Year {0} to Side Pane", bibYears [i]);
+                                    WriteLine (10, "Inserting Year {0} to Side Pane", bibYears [i]);
 									Gtk.TreeIter insert = InsertNode (iterYear, i);
 									SetValue (insert, 0, bibYears [i]);
 								}
 							}
 						}
 					} else {
-						Debug.WriteLine (5, "Generating Year Filter List");
+                        WriteLine (10, "Generating Year Filter List");
 						for (int i = 0; i < bibYears.Count; i++) {
 							if (bibYears [i] != "")
 								AppendValues (iterYear, bibYears [i]);
@@ -413,7 +406,7 @@ namespace bibliographer
 							if (bibYears.Contains (journal))
 								IterNext (ref iter);
 							else {
-								Debug.WriteLine (5, "Removing Journal {0} from Side Pane", journal);
+                                WriteLine (10, "Removing Journal {0} from Side Pane", journal);
 								Remove (ref iter);
 							}
 						}
@@ -422,14 +415,14 @@ namespace bibliographer
 							if (!(treeJournals.Contains (bibJournals [i]))) {
 								// Add bibYear to the TreeStore
 								if (bibJournals [i] != "") {
-									Debug.WriteLine (5, "Inserting Journal {0} to Side Pane", bibJournals [i]);
+                                    WriteLine (10, "Inserting Journal {0} to Side Pane", bibJournals [i]);
 									Gtk.TreeIter insert = InsertNode (iterJourn, i);
 									SetValue (insert, 0, bibJournals [i]);
 								}
 							}
 						}
 					} else {
-						Debug.WriteLine (5, "Generating Journal Filter List");
+                        WriteLine (10, "Generating Journal Filter List");
 						for (int i = 0; i < bibJournals.Count; i++) {
 							if (bibJournals [i] != "")
 								AppendValues (iterJourn, bibJournals [i]);
@@ -438,7 +431,7 @@ namespace bibliographer
 				}
 				threadLock = false;
 			} else {
-				Debug.WriteLine (2, "Thread is locked");
+                WriteLine (2, "Thread is locked");
 			}
         }
 
@@ -453,7 +446,7 @@ namespace bibliographer
 
         StringArrayList GetAuthors ()
         {
-            Debug.WriteLine (10, "SidePaneTreeStore.GetAuthors()");
+            WriteLine (10, "SidePaneTreeStore.GetAuthors()");
             var authors = new StringArrayList ();
             
             if (IterHasChild (iterAuth)) {
@@ -463,7 +456,7 @@ namespace bibliographer
                 
                 while (IterIsValid (iter)) {
                     string author = (string)GetValue (iter, 0);
-                    Debug.WriteLine (10, "Add the Author {0} to an output list", author);
+                    WriteLine (10, "Add the Author {0} to an output list", author);
                     authors.Add (author);
                     if (!IterNext (ref iter))
                         break;

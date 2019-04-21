@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.12"/>
-  <object class="GtkApplicationWindow" id="bibliographer.BibliographerMainWindow">
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkApplicationWindow" id="bibliographerMainWindow">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="default_width">640</property>
     <property name="default_height">480</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="vbox1">
         <property name="visible">True</property>
@@ -27,7 +30,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="FileImportFolder">
+                      <object class="GtkMenuItem" id="menuFileImportFolder">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Import Folder</property>
@@ -40,7 +43,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="FileQuit">
+                      <object class="GtkMenuItem" id="menuFileQuit">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Quit</property>
@@ -62,28 +65,27 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="EditAddRecord">
+                      <object class="GtkMenuItem" id="menuEditAddRecord">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Add Record</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="EditRemoveRecord">
+                      <object class="GtkMenuItem" id="menuEditRemoveRecord">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Remove Record</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="EditAddRecordFromBibtex">
-                        <property name="visible">True</property>
+                      <object class="GtkMenuItem" id="menuEditAddRecordFromBibtex">
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Add Record from BibTeX...</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="EditAddRecordClipboard">
+                      <object class="GtkMenuItem" id="menuEditAddRecordClipboard">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Add Record from Clipboard</property>
@@ -104,7 +106,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckMenuItem" id="ViewSidebar">
+                      <object class="GtkCheckMenuItem" id="menuViewSidebar">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Sidebar</property>
@@ -112,7 +114,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="ViewRecordDetailsView">
+                      <object class="GtkMenuItem" id="menuViewRecordDetailsView">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Record Details View</property>
@@ -122,23 +124,23 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkRadioMenuItem" id="ViewRecordsAction">
+                              <object class="GtkRadioMenuItem" id="menuViewRecordsAction">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">View Records</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">EditRecordsAction</property>
+                                <property name="group">menuEditRecordsAction</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkRadioMenuItem" id="EditRecordsAction">
+                              <object class="GtkRadioMenuItem" id="menuEditRecordsAction">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Edit Records</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
-                                <property name="group">ViewRecordsAction</property>
+                                <property name="group">menuViewRecordsAction</property>
                               </object>
                             </child>
                           </object>
@@ -146,7 +148,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckMenuItem" id="ViewRecordDetails">
+                      <object class="GtkCheckMenuItem" id="menuViewRecordDetails">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Record Details</property>
@@ -160,7 +162,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="ViewColumns">
+                      <object class="GtkMenuItem" id="menuViewColumns">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Columns...</property>
@@ -168,7 +170,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckMenuItem" id="ViewFullScreen">
+                      <object class="GtkCheckMenuItem" id="menuViewFullScreen">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Full Screen</property>
@@ -191,7 +193,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="HelpAbout">
+                      <object class="GtkMenuItem" id="menuHelpAbout">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">About</property>
@@ -222,7 +224,7 @@
                 <property name="hexpand">True</property>
                 <property name="vexpand">False</property>
                 <child>
-                  <object class="GtkToolButton" id="ToolAddRecord">
+                  <object class="GtkToolButton" id="toolbarAddRecord">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Add a new record</property>
@@ -235,7 +237,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="ToolRemoveRecord">
+                  <object class="GtkToolButton" id="toolbarRemoveRecord">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Remove selected record</property>
@@ -303,7 +305,7 @@
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkPaned" id="MainVpane">
+                  <object class="GtkPaned" id="mainVpane">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="vexpand">True</property>
@@ -332,7 +334,7 @@
                         <property name="border_width">2</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkBox" id="RecordView">
+                          <object class="GtkBox" id="recordView">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
@@ -383,7 +385,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="RecordEditor">
+                          <object class="GtkBox" id="recordEditor">
                             <property name="height_request">150</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -394,7 +396,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="column_spacing">10</property>
                                 <child>
-                                  <object class="GtkLabel" id="lblRecordType">
+                                  <object class="GtkLabel" id="labelRecordType">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">Record Type</property>
@@ -407,7 +409,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="lblBibtexKey">
+                                  <object class="GtkLabel" id="labelBibtexKey">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">Record Key</property>
@@ -427,7 +429,6 @@
                                     <property name="margin_top">10</property>
                                     <property name="margin_bottom">10</property>
                                     <property name="hexpand">True</property>
-                                    <signal name="changed" handler="OnEntryReqBibtexKeyChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -442,7 +443,6 @@
                                     <property name="receives_default">True</property>
                                     <property name="margin_top">10</property>
                                     <property name="margin_bottom">10</property>
-                                    <signal name="clicked" handler="OnButtonBibtexKeyGenerateClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -612,13 +612,12 @@
                             <property name="valign">baseline</property>
                             <property name="layout_style">start</property>
                             <child>
-                              <object class="GtkToggleButton" id="ToggleEditRecords">
+                              <object class="GtkToggleButton" id="toggleEditRecords">
                                 <property name="label" translatable="yes">E_dit Records</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="use_underline">True</property>
-                                <signal name="toggled" handler="OnToggleEditRecordsActivated" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -662,7 +661,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="bibliographerStatusBar">
+          <object class="GtkStatusbar" id="statusbarMainWindow">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_start">10</property>
@@ -679,13 +678,16 @@
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="BibtexEntryDialog">
+  <object class="GtkDialog" id="dialogBibtexEntry">
     <property name="width_request">400</property>
     <property name="height_request">300</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BibTeX entry</property>
     <property name="type_hint">dialog</property>
-    <property name="transient_for">bibliographer.BibliographerMainWindow</property>
+    <property name="transient_for">bibliographerMainWindow</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -714,7 +716,7 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="BibtexLabel">
+              <object class="GtkLabel" id="labelBibtexEntryDialog">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Please enter your BibTeX entry below:</property>
@@ -735,7 +737,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkTextView" id="BibtexTextView">
+                      <object class="GtkTextView" id="textViewBibtexEntryDialog">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>

@@ -49,7 +49,7 @@ namespace bibliographer
 
         public void AddTri (Tri t, int id)
         {
-            Debug.WriteLine (5, "Adding tri to supertri for record {0}", id);
+            Debug.WriteLine (10, "Adding tri to supertri for record {0}", id);
             NextSuperTriNode (root, t.root, id);
         }
 
